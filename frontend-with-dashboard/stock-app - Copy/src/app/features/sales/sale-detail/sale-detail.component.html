@@ -1,0 +1,90 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1>{{ 'SALES.DETAIL.TITLE' | translate }}{{ sale?.id }}</h1>
+      <p class="page-subtitle">{{ 'SALES.DETAIL.SUBTITLE' | translate }}</p>
+    </div>
+    <div class="header-actions">
+      <button mat-stroked-button routerLink="/sales">
+        <mat-icon>arrow_back</mat-icon> {{ 'SALES.DETAIL.BACK' | translate }}
+      </button>
+      <button mat-flat-button color="primary" [routerLink]="['/sales', sale?.id, 'edit']" *ngIf="sale">
+        <mat-icon>edit</mat-icon> {{ 'SALES.DETAIL.EDIT' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="spinner-wrap"><mat-spinner diameter="40"></mat-spinner></div>
+
+  <div *ngIf="!loading && sale">
+    <div class="info-grid">
+      <mat-card class="info-card">
+        <mat-card-content>
+          <div class="info-label">{{ 'SALES.DETAIL.BRANCH' | translate }}</div>
+          <div class="info-value">{{ sale.branch?.branchName || ('COMMON.NONE' | translate) }}</div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="info-card">
+        <mat-card-content>
+          <div class="info-label">{{ 'SALES.DETAIL.PAYMENT' | translate }}</div>
+          <div class="info-value"><span class="badge">{{ sale.paymentMethod || ('COMMON.NA' | translate) }}</span></div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="info-card">
+        <mat-card-content>
+          <div class="info-label">{{ 'SALES.DETAIL.CHANNEL' | translate }}</div>
+          <div class="info-value"><span class="badge channel">{{ sale.channel || ('COMMON.NA' | translate) }}</span></div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="info-card">
+        <mat-card-content>
+          <div class="info-label">{{ 'SALES.DETAIL.DATE' | translate }}</div>
+          <div class="info-value">{{ sale.createdAt | date:'medium' }}</div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="info-card" *ngIf="sale.externalRef">
+        <mat-card-content>
+          <div class="info-label">{{ 'SALES.DETAIL.EXT_REF' | translate }}</div>
+          <div class="info-value">{{ sale.externalRef }}</div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <mat-card class="items-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'SALES.DETAIL.LINE_ITEMS' | translate }} ({{ sale.items?.length || 0 }})</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="sale.items || []" class="data-table">
+          <ng-container matColumnDef="product">
+            <th mat-header-cell *matHeaderCellDef>{{ 'SALES.DETAIL.TABLE.PRODUCT' | translate }}</th>
+            <td mat-cell *matCellDef="let row"><strong>{{ row.product?.name || row.productId }}</strong></td>
+          </ng-container>
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>{{ 'SALES.DETAIL.TABLE.QTY' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.quantity }}</td>
+          </ng-container>
+          <ng-container matColumnDef="unitPrice">
+            <th mat-header-cell *matHeaderCellDef>{{ 'SALES.DETAIL.TABLE.UNIT_PRICE' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.unitPrice | currency }}</td>
+          </ng-container>
+          <ng-container matColumnDef="lineTotal">
+            <th mat-header-cell *matHeaderCellDef>{{ 'SALES.DETAIL.TABLE.LINE_TOTAL' | translate }}</th>
+            <td mat-cell *matCellDef="let row" class="amount">{{ row.lineTotal | currency }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="itemColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: itemColumns;"></tr>
+        </table>
+
+        <mat-divider class="divider"></mat-divider>
+        <div class="totals">
+          <div class="total-row"><span>{{ 'SALES.DETAIL.SUBTOTAL' | translate }}</span><strong>{{ subtotal | currency }}</strong></div>
+          <div class="total-row" *ngIf="sale.discountAmount"><span>{{ 'SALES.DETAIL.DISCOUNT' | translate }}</span><strong>-{{ sale.discountAmount | currency }}</strong></div>
+          <div class="total-row" *ngIf="sale.taxAmount"><span>{{ 'SALES.DETAIL.TAX' | translate }}</span><strong>+{{ sale.taxAmount | currency }}</strong></div>
+          <mat-divider class="mini-divider"></mat-divider>
+          <div class="total-row grand"><span>{{ 'SALES.DETAIL.GRAND_TOTAL' | translate }}</span><strong>{{ sale.totalAmount | currency }}</strong></div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

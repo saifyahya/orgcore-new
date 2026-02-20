@@ -1,0 +1,10 @@
+@use '../../../shared/styles/page' as *;
+.page-container { max-width: 1200px; }
+.type-badge { padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+.type-in { background: var(--badge-green-bg); color: var(--badge-green-text); }
+.type-out { background: var(--badge-red-bg); color: var(--badge-red-text); }
+.type-adjustment { background: var(--badge-yellow-bg); color: var(--badge-yellow-text); }
+.type-transfer { background: var(--badge-blue-bg); color: var(--badge-blue-text); }
+.qty { font-weight: 700; font-size: 14px; }
+.qty.in { color: #16a34a; }
+.qty.out { color: #dc2626; }

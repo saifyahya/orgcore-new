@@ -1,0 +1,21 @@
+@use '../../../shared/styles/page' as *;
+.page-container { max-width: 900px; }
+.form-card { margin-bottom: 20px; }
+.form-card mat-card-header { padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.card-actions { margin-inline-start: auto; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; padding-top: 12px; }
+.items-header {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 40px; gap: 12px;
+  padding: 8px 0; font-size: 12px; font-weight: 600; color: var(--text-secondary);
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.item-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 40px; gap: 12px; align-items: flex-start; }
+.item-row mat-form-field { margin-bottom: -12px; }
+.items-empty { text-align: center; padding: 24px; color: var(--text-muted); font-size: 14px; }
+.divider, .mini-divider { margin: 16px 0; }
+.total-summary { display: flex; flex-direction: column; gap: 6px; max-width: 280px; margin-inline-start: auto; }
+.total-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-secondary); }
+.total-row.grand { font-size: 16px; color: var(--text-primary); }
+.total-row.grand strong { font-size: 18px; color: var(--accent); }
+.form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
+.btn-spinner { display: inline-block; margin-inline-end: 6px; }

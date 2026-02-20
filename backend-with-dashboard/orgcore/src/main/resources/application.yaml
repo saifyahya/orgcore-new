@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: orgcore
+
+  mvc:
+    servlet:
+      path: /api
+
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=orgcore;encrypt=true;trustServerCertificate=true
+    username: orgcore_user
+    password: StrongPass#12345
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: update   # use validate in production
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.SQLServerDialect
+        jdbc:
+          time_zone: UTC
+
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: trace
+

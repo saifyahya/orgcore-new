@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>{{ (isEdit ? 'INVENTORY.FORM.TITLE_EDIT' : 'INVENTORY.FORM.TITLE_NEW') | translate }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'INVENTORY.FORM.BRANCH_LABEL' | translate }} *</mat-label>
+      <mat-select formControlName="branchId">
+        <mat-option *ngFor="let b of data.branches" [value]="b.id">{{ b.branchName }}</mat-option>
+      </mat-select>
+      <mat-error>{{ 'INVENTORY.FORM.REQUIRED' | translate }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'INVENTORY.FORM.PRODUCT_LABEL' | translate }} *</mat-label>
+      <mat-select formControlName="productId">
+        <mat-option *ngFor="let p of products" [value]="p.id">{{ p.name }}</mat-option>
+      </mat-select>
+      <mat-error>{{ 'INVENTORY.FORM.REQUIRED' | translate }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'INVENTORY.FORM.QUANTITY_LABEL' | translate }} *</mat-label>
+      <input matInput type="number" formControlName="quantity" placeholder="0" min="0">
+      <mat-error>{{ 'INVENTORY.FORM.QTY_REQUIRED' | translate }}</mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button [mat-dialog-close]="false" [disabled]="saving">{{ 'INVENTORY.FORM.CANCEL' | translate }}</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="form.invalid || saving">
+    {{ (isEdit ? 'INVENTORY.FORM.UPDATE_BTN' : 'INVENTORY.FORM.CREATE_BTN') | translate }}
+  </button>
+</mat-dialog-actions>

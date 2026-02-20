@@ -1,0 +1,134 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1>{{ (isEdit ? 'SALES.FORM.TITLE_EDIT' : 'SALES.FORM.TITLE_NEW') | translate }}{{ isEdit ? saleId : '' }}</h1>
+      <p class="page-subtitle">{{ 'SALES.FORM.SUBTITLE' | translate }}</p>
+    </div>
+    <button mat-stroked-button routerLink="/sales">
+      <mat-icon>arrow_back</mat-icon> {{ 'SALES.BACK' | translate }}
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="spinner-wrap"><mat-spinner diameter="40"></mat-spinner></div>
+
+  <form [formGroup]="form" (ngSubmit)="save()" *ngIf="!loading">
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'SALES.FORM.SALE_INFO' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'SALES.FORM.BRANCH_LABEL' | translate }} *</mat-label>
+            <mat-select formControlName="branchId">
+              <mat-option *ngFor="let b of branches" [value]="b.id">{{ b.branchName }}</mat-option>
+            </mat-select>
+            <mat-error>{{ 'SALES.FORM.BRANCH_REQUIRED' | translate }}</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'SALES.FORM.PAYMENT_LABEL' | translate }}</mat-label>
+            <mat-select formControlName="paymentMethod">
+              <mat-option *ngFor="let pm of paymentMethods" [value]="pm">{{ pm }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'SALES.FORM.CHANNEL_LABEL' | translate }}</mat-label>
+            <mat-select formControlName="channel">
+              <mat-option *ngFor="let ch of channels" [value]="ch">{{ ch }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'SALES.FORM.EXT_REF_LABEL' | translate }}</mat-label>
+            <input matInput formControlName="externalRef" [placeholder]="'SALES.FORM.EXT_REF_PLACEHOLDER' | translate">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'SALES.FORM.DISCOUNT_LABEL' | translate }}</mat-label>
+            <input matInput type="number" formControlName="discountAmount" placeholder="0.00">
+            <span matPrefix>$&nbsp;</span>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'SALES.FORM.TAX_LABEL' | translate }}</mat-label>
+            <input matInput type="number" formControlName="taxAmount" placeholder="0.00">
+            <span matPrefix>$&nbsp;</span>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'SALES.FORM.SALE_ITEMS' | translate }}</mat-card-title>
+        <div class="card-actions">
+          <button type="button" mat-stroked-button color="primary" (click)="addItem()">
+            <mat-icon>add</mat-icon> {{ 'SALES.FORM.ADD_ITEM' | translate }}
+          </button>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="items-header">
+          <span>{{ 'SALES.FORM.PRODUCT_COL' | translate }}</span>
+          <span>{{ 'SALES.FORM.QTY_COL' | translate }}</span>
+          <span>{{ 'SALES.FORM.UNIT_PRICE_COL' | translate }}</span>
+          <span>{{ 'SALES.FORM.LINE_TOTAL_COL' | translate }}</span>
+          <span></span>
+        </div>
+        <div formArrayName="items">
+          <div class="item-row" *ngFor="let item of items.controls; let i = index" [formGroupName]="i">
+            <mat-form-field appearance="outline">
+              <mat-select formControlName="productId" [placeholder]="'SALES.FORM.SELECT_PRODUCT' | translate" (selectionChange)="onProductChange(i)">
+                <mat-option *ngFor="let p of products" [value]="p.id">{{ p.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <input matInput type="number" formControlName="quantity" placeholder="1" min="1" (input)="calculateLineTotal(i)">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <input matInput type="number" formControlName="unitPrice" placeholder="0.00" (input)="calculateLineTotal(i)">
+              <span matPrefix>$&nbsp;</span>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <input matInput type="number" formControlName="lineTotal" placeholder="0.00" readonly>
+              <span matPrefix>$&nbsp;</span>
+            </mat-form-field>
+            <button type="button" mat-icon-button color="warn" (click)="removeItem(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="items-empty" *ngIf="items.length === 0">
+          <p>{{ 'SALES.FORM.NO_ITEMS' | translate }}</p>
+        </div>
+
+        <mat-divider class="divider"></mat-divider>
+        <div class="total-summary">
+          <div class="total-row">
+            <span>{{ 'SALES.FORM.SUBTOTAL' | translate }}</span>
+            <strong>{{ subtotal | currency }}</strong>
+          </div>
+          <div class="total-row">
+            <span>{{ 'SALES.FORM.DISCOUNT_ROW' | translate }}</span>
+            <strong>-{{ (form.get('discountAmount')?.value || 0) | currency }}</strong>
+          </div>
+          <div class="total-row">
+            <span>{{ 'SALES.FORM.TAX_ROW' | translate }}</span>
+            <strong>+{{ (form.get('taxAmount')?.value || 0) | currency }}</strong>
+          </div>
+          <mat-divider class="mini-divider"></mat-divider>
+          <div class="total-row grand">
+            <span>{{ 'SALES.FORM.GRAND_TOTAL' | translate }}</span>
+            <strong>{{ grandTotal | currency }}</strong>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="form-actions">
+      <button type="button" mat-stroked-button routerLink="/sales" [disabled]="saving">{{ 'SALES.FORM.CANCEL' | translate }}</button>
+      <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid || saving || items.length === 0">
+        <mat-spinner *ngIf="saving" diameter="18" class="btn-spinner"></mat-spinner>
+        {{ (isEdit ? 'SALES.FORM.UPDATE_BTN' : 'SALES.FORM.CREATE_BTN') | translate }}
+      </button>
+    </div>
+  </form>
+</div>

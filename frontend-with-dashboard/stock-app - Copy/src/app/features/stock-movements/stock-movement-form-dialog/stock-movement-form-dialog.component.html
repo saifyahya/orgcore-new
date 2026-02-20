@@ -1,0 +1,72 @@
+<h2 mat-dialog-title>{{ 'STOCK_MOVEMENTS.FORM.TITLE' | translate }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form">
+    <div class="two-col">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'STOCK_MOVEMENTS.FORM.BRANCH_LABEL' | translate }} *</mat-label>
+        <mat-select formControlName="branchId">
+          <mat-option *ngFor="let b of data.branches" [value]="b.id">{{ b.branchName }}</mat-option>
+        </mat-select>
+        <mat-error>{{ 'STOCK_MOVEMENTS.FORM.REQUIRED' | translate }}</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'STOCK_MOVEMENTS.FORM.PRODUCT_LABEL' | translate }} *</mat-label>
+        <mat-select formControlName="productId">
+          <mat-option *ngFor="let p of data.products" [value]="p.id">{{ p.name }}</mat-option>
+        </mat-select>
+        <mat-error>{{ 'STOCK_MOVEMENTS.FORM.REQUIRED' | translate }}</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="two-col">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'STOCK_MOVEMENTS.FORM.TYPE_LABEL' | translate }} *</mat-label>
+        <mat-select formControlName="type">
+          <mat-option *ngFor="let t of movementTypes" [value]="t">{{ t }}</mat-option>
+        </mat-select>
+        <mat-error>{{ 'STOCK_MOVEMENTS.FORM.REQUIRED' | translate }}</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'STOCK_MOVEMENTS.FORM.REASON_LABEL' | translate }} *</mat-label>
+        <mat-select formControlName="reason">
+          <mat-option *ngFor="let r of movementReasons" [value]="r">{{ r }}</mat-option>
+        </mat-select>
+        <mat-error>{{ 'STOCK_MOVEMENTS.FORM.REQUIRED' | translate }}</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="two-col">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'STOCK_MOVEMENTS.FORM.QTY_LABEL' | translate }} *</mat-label>
+        <input matInput type="number" formControlName="quantity" placeholder="0" min="1">
+        <mat-error>{{ 'STOCK_MOVEMENTS.FORM.QTY_REQUIRED' | translate }}</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'STOCK_MOVEMENTS.FORM.UNIT_COST_LABEL' | translate }}</mat-label>
+        <input matInput type="number" formControlName="unitCost" placeholder="0.00">
+        <span matPrefix>$&nbsp;</span>
+      </mat-form-field>
+    </div>
+    <div class="two-col">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'STOCK_MOVEMENTS.FORM.REF_TYPE_LABEL' | translate }}</mat-label>
+        <mat-select formControlName="refType">
+          <mat-option [value]="null">{{ 'STOCK_MOVEMENTS.FORM.NONE' | translate }}</mat-option>
+          <mat-option *ngFor="let r of refTypes" [value]="r">{{ r }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'STOCK_MOVEMENTS.FORM.REF_ID_LABEL' | translate }}</mat-label>
+        <input matInput formControlName="refId" [placeholder]="'STOCK_MOVEMENTS.FORM.REF_ID_PLACEHOLDER' | translate">
+      </mat-form-field>
+    </div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'STOCK_MOVEMENTS.FORM.NOTE_LABEL' | translate }}</mat-label>
+      <textarea matInput formControlName="note" rows="2" [placeholder]="'STOCK_MOVEMENTS.FORM.NOTE_PLACEHOLDER' | translate"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button [mat-dialog-close]="false" [disabled]="saving">{{ 'STOCK_MOVEMENTS.FORM.CANCEL' | translate }}</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="form.invalid || saving">
+    {{ 'STOCK_MOVEMENTS.FORM.SUBMIT' | translate }}
+  </button>
+</mat-dialog-actions>

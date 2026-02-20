@@ -1,0 +1,5 @@
+@use '../../../shared/styles/page' as *;
+.page-container { max-width: 1100px; }
+.qty-badge { padding: 3px 10px; border-radius: 12px; font-size: 13px; font-weight: 600; }
+.qty-badge.low { background: var(--badge-red-bg); color: var(--badge-red-text); }
+.qty-badge.ok { background: var(--badge-green-bg); color: var(--badge-green-text); }

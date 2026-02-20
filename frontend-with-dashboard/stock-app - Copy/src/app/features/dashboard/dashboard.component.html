@@ -1,0 +1,89 @@
+<div class="dash-page">
+
+  <!-- ══ Header ═══════════════════════════════════════════════════════════════ -->
+  <div class="dash-header">
+    <div>
+      <h1>{{ 'DASHBOARD.TITLE' | translate }}</h1>
+      <p class="dash-subtitle">{{ 'DASHBOARD.SUBTITLE' | translate }}</p>
+    </div>
+    <div class="dash-header-actions">
+      <mat-form-field appearance="outline" class="year-field">
+        <mat-label>{{ 'DASHBOARD.ANALYTICS.BRANCH_LABEL' | translate }}</mat-label>
+        <mat-select [(ngModel)]="selectedBranch" (ngModelChange)="onBranchChange()">
+          <mat-option [value]="null">{{ 'DASHBOARD.ANALYTICS.ALL_BRANCHES' | translate }}</mat-option>
+          <mat-option *ngFor="let b of branches" [value]="b.id">{{ b.branchName }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="year-field">
+        <mat-label>{{ 'DASHBOARD.ANALYTICS.YEAR_LABEL' | translate }}</mat-label>
+        <mat-select [(ngModel)]="selectedYear" (ngModelChange)="onYearChange()">
+          <mat-option *ngFor="let y of availableYears" [value]="y">{{ y }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-flat-button color="primary" routerLink="/sales/new" class="new-sale-btn">
+        <mat-icon>add</mat-icon>{{ 'DASHBOARD.NEW_SALE' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ Loading ═══════════════════════════════════════════════════════════════ -->
+  <div class="dash-loading" *ngIf="loading">
+    <mat-spinner diameter="44"></mat-spinner>
+    <span>{{ 'COMMON.LOADING' | translate }}</span>
+  </div>
+
+  <ng-container *ngIf="!loading">
+
+    <!-- ══ KPI Grid ═══════════════════════════════════════════════════════════ -->
+    <div class="kpi-grid">
+      <mat-card class="kpi-card" *ngFor="let k of kpiCards" [routerLink]="k.route">
+        <mat-card-content>
+          <div class="kpi-icon" [style.background]="k.color + '1a'">
+            <mat-icon [style.color]="k.color">{{ k.icon }}</mat-icon>
+          </div>
+          <div class="kpi-text">
+            <div class="kpi-value">{{ k.value }}</div>
+            <div class="kpi-label">{{ k.key | translate }}</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- ══ Recent Sales ═══════════════════════════════════════════════════════ -->
+    <mat-card class="table-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'DASHBOARD.RECENT_SALES' | translate }}</mat-card-title>
+        <a mat-button color="primary" routerLink="/sales" class="view-all">{{ 'DASHBOARD.VIEW_ALL' | translate }}</a>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="empty-state" *ngIf="recentSales.length === 0">
+          <mat-icon>receipt_long</mat-icon>
+          <p>{{ 'DASHBOARD.NO_RECENT_SALES' | translate }}</p>
+        </div>
+        <div class="tbl-wrap" *ngIf="recentSales.length > 0">
+          <table class="data-table">
+            <thead><tr>
+              <th>{{ 'DASHBOARD.TABLE.SALE_NO' | translate }}</th>
+              <th>{{ 'DASHBOARD.TABLE.BRANCH'  | translate }}</th>
+              <th>{{ 'DASHBOARD.TABLE.TOTAL'   | translate }}</th>
+              <th>{{ 'DASHBOARD.TABLE.PAYMENT' | translate }}</th>
+              <th>{{ 'DASHBOARD.TABLE.CHANNEL' | translate }}</th>
+              <th>{{ 'DASHBOARD.TABLE.DATE'    | translate }}</th>
+            </tr></thead>
+            <tbody>
+              <tr *ngFor="let s of recentSales" [routerLink]="['/sales', s.id]" class="row-link">
+                <td>#{{ s.id }}</td>
+                <td>{{ s.branch?.branchName || '—' }}</td>
+                <td class="amount">{{ s.totalAmount | currency }}</td>
+                <td><span class="badge">{{ s.paymentMethod ? (('COMMON.' + s.paymentMethod) | translate) : '—' }}</span></td>
+                <td><span class="badge badge--channel">{{ s.channel || '—' }}</span></td>
+                <td>{{ s.createdAt | date:'short' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </ng-container>
+</div>

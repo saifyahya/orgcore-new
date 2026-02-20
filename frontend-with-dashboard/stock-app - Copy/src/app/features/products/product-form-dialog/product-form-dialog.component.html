@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>{{ (isEdit ? 'PRODUCTS.EDIT_PRODUCT' : 'PRODUCTS.ADD_PRODUCT') | translate }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'PRODUCTS.FORM.NAME_LABEL' | translate }} *</mat-label>
+      <input matInput formControlName="name" [placeholder]="'PRODUCTS.FORM.NAME_PLACEHOLDER' | translate">
+      <mat-error *ngIf="form.get('name')?.hasError('required')">{{ 'PRODUCTS.FORM.NAME_REQUIRED' | translate }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'PRODUCTS.FORM.DESCRIPTION_LABEL' | translate }}</mat-label>
+      <textarea matInput formControlName="description" rows="2"></textarea>
+    </mat-form-field>
+    <div class="two-col">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'PRODUCTS.FORM.CATEGORY_LABEL' | translate }}</mat-label>
+        <mat-select formControlName="categoryId">
+          <mat-option [value]="null">{{ 'PRODUCTS.FORM.NONE' | translate }}</mat-option>
+          <mat-option *ngFor="let c of data.categories" [value]="c.id">{{ c.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'PRODUCTS.FORM.STATUS_LABEL' | translate }}</mat-label>
+        <mat-select formControlName="isActive">
+          <mat-option [value]="1">{{ 'COMMON.ACTIVE' | translate }}</mat-option>
+          <mat-option [value]="0">{{ 'COMMON.INACTIVE' | translate }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="two-col">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'PRODUCTS.FORM.PRICE_LABEL' | translate }}</mat-label>
+        <input matInput type="number" formControlName="price" placeholder="0.00">
+        <span matPrefix>$&nbsp;</span>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'PRODUCTS.FORM.DISCOUNT_LABEL' | translate }}</mat-label>
+        <input matInput type="number" formControlName="discount" placeholder="0">
+        <span matSuffix>%</span>
+      </mat-form-field>
+    </div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'PRODUCTS.FORM.IMAGE_LABEL' | translate }}</mat-label>
+      <input matInput formControlName="image" [placeholder]="'PRODUCTS.FORM.IMAGE_PLACEHOLDER' | translate">
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button [mat-dialog-close]="false" [disabled]="saving">{{ 'COMMON.CANCEL' | translate }}</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="form.invalid || saving">
+    {{ (isEdit ? 'COMMON.UPDATE' : 'COMMON.CREATE') | translate }}
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,303 @@
+@use '@angular/material' as mat;
+
+// =============================================
+// CSS CUSTOM PROPERTIES — LIGHT THEME (default)
+// =============================================
+:root,
+[data-theme='light'] {
+  --page-bg: #f1f5f9;
+  --card-bg: #ffffff;
+  --toolbar-bg: #0f172a;
+  --sidenav-bg: #1e293b;
+  --sidenav-header-bg: #0f172a;
+  --sidenav-text: #f1f5f9;
+  --sidenav-subtext: #94a3b8;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+
+  --border-color: #e2e8f0;
+  --border-light: #f1f5f9;
+  --hover-bg: #f8fafc;
+  --chip-bg: #f1f5f9;
+
+  --accent: #0ea5e9;
+  --accent-hover: #0284c7;
+
+  --badge-bg: #e2e8f0;
+  --badge-text: #475569;
+  --badge-blue-bg: #dbeafe;
+  --badge-blue-text: #1e40af;
+  --badge-green-bg: #dcfce7;
+  --badge-green-text: #16a34a;
+  --badge-red-bg: #fee2e2;
+  --badge-red-text: #dc2626;
+  --badge-yellow-bg: #fef3c7;
+  --badge-yellow-text: #92400e;
+  --badge-purple-bg: #ede9fe;
+  --badge-purple-text: #7c3aed;
+}
+
+// =============================================
+// DARK THEME
+// =============================================
+[data-theme='dark'] {
+  --page-bg: #0f172a;
+  --card-bg: #1e293b;
+  --toolbar-bg: #020617;
+  --sidenav-bg: #0f172a;
+  --sidenav-header-bg: #020617;
+  --sidenav-text: #e2e8f0;
+  --sidenav-subtext: #64748b;
+
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --border-color: #334155;
+  --border-light: #1e293b;
+  --hover-bg: #273549;
+  --chip-bg: #1e293b;
+
+  --accent: #38bdf8;
+  --accent-hover: #0ea5e9;
+
+  --badge-bg: #334155;
+  --badge-text: #94a3b8;
+  --badge-blue-bg: #1e3a5f;
+  --badge-blue-text: #93c5fd;
+  --badge-green-bg: #14532d;
+  --badge-green-text: #86efac;
+  --badge-red-bg: #450a0a;
+  --badge-red-text: #fca5a5;
+  --badge-yellow-bg: #451a03;
+  --badge-yellow-text: #fcd34d;
+  --badge-purple-bg: #2e1065;
+  --badge-purple-text: #c4b5fd;
+}
+
+// =============================================
+// RESET & BASE
+// =============================================
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background: var(--page-bg);
+  color: var(--text-primary);
+  transition: background 0.2s, color 0.2s;
+}
+
+// =============================================
+// ANGULAR MATERIAL DARK OVERRIDES
+// =============================================
+[data-theme='dark'] {
+  .mat-mdc-card {
+    background: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-table {
+    background: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-row,
+  .mdc-data-table__row {
+    background: var(--card-bg);
+    color: var(--text-primary);
+
+    &:hover {
+      background: var(--hover-bg) !important;
+    }
+  }
+
+  .mat-mdc-header-row {
+    background: var(--card-bg) !important;
+  }
+
+  .mat-mdc-header-cell {
+    color: var(--text-secondary) !important;
+    border-bottom-color: var(--border-color) !important;
+  }
+
+  .mat-mdc-cell {
+    color: var(--text-primary) !important;
+    border-bottom-color: var(--border-light) !important;
+  }
+
+  .mat-mdc-form-field {
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled) {
+
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: var(--border-color) !important;
+      }
+    }
+
+    .mat-mdc-input-element {
+      color: var(--text-primary) !important;
+    }
+
+    .mat-mdc-floating-label {
+      color: var(--text-secondary) !important;
+    }
+
+    .mdc-text-field {
+      background: var(--card-bg) !important;
+    }
+  }
+
+  .mat-mdc-select-value {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-option {
+    color: var(--text-primary);
+    background: var(--card-bg);
+  }
+
+  .mat-mdc-option:hover {
+    background: var(--hover-bg) !important;
+  }
+
+  .mat-select-panel,
+  .mat-mdc-select-panel {
+    background: var(--card-bg) !important;
+  }
+
+  .mat-mdc-dialog-container {
+    background: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mdc-dialog__surface {
+    background: var(--card-bg) !important;
+  }
+
+  h2[mat-dialog-title] {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-snack-bar-container {
+    --mdc-snackbar-container-color: #1e293b;
+  }
+
+  .mat-divider {
+    border-top-color: var(--border-color) !important;
+  }
+
+  .mat-mdc-list-item {
+    color: var(--sidenav-subtext) !important;
+  }
+
+  .mat-mdc-nav-list .mat-mdc-list-item:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  .mat-stepper-horizontal,
+  .mat-stepper-vertical {
+    background: var(--card-bg) !important;
+  }
+
+  .mat-step-header {
+    background: var(--card-bg) !important;
+  }
+
+  .mat-step-header:hover {
+    background: var(--hover-bg) !important;
+  }
+
+  .mat-step-label {
+    color: var(--text-secondary) !important;
+  }
+
+  .mat-step-label.mat-step-label-active {
+    color: var(--text-primary) !important;
+  }
+}
+
+// =============================================
+// SNACKBAR STYLES
+// =============================================
+.snack-success .mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: #16a34a;
+  --mdc-snackbar-supporting-text-color: white;
+}
+
+.snack-error .mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: #dc2626;
+  --mdc-snackbar-supporting-text-color: white;
+}
+
+.snack-info .mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: #0ea5e9;
+  --mdc-snackbar-supporting-text-color: white;
+}
+
+// =============================================
+// MAT TABLE
+// =============================================
+.mat-mdc-row:hover {
+  background: var(--hover-bg);
+}
+
+// =============================================
+// MAT CARD
+// =============================================
+.mat-mdc-card {
+  background: var(--card-bg) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06) !important;
+}
+
+// =============================================
+// SCROLLBAR
+// =============================================
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--page-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+// =============================================
+// MAT HEADER CELL
+// =============================================
+.mat-mdc-header-cell {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--text-secondary) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+// =============================================
+// RTL SUPPORT
+// =============================================
+[dir='rtl'] {
+  .mat-mdc-card {
+    text-align: right;
+  }
+}

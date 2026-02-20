@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>{{ (isEdit ? 'BRANCHES.EDIT_BRANCH' : 'BRANCHES.ADD_BRANCH') | translate }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'BRANCHES.FORM.NAME_LABEL' | translate }} *</mat-label>
+      <input matInput formControlName="branchName" [placeholder]="'BRANCHES.FORM.NAME_PLACEHOLDER' | translate">
+      <mat-error *ngIf="form.get('branchName')?.hasError('required')">{{ 'BRANCHES.FORM.NAME_REQUIRED' | translate
+        }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'BRANCHES.FORM.ADDRESS_LABEL' | translate }}</mat-label>
+      <textarea matInput formControlName="address" [placeholder]="'BRANCHES.FORM.ADDRESS_PLACEHOLDER' | translate"
+        rows="2"></textarea>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'BRANCHES.FORM.STATUS_LABEL' | translate }}</mat-label>
+      <mat-select formControlName="isActive">
+        <mat-option [value]="1">{{ 'COMMON.ACTIVE' | translate }}</mat-option>
+        <mat-option [value]="0">{{ 'COMMON.INACTIVE' | translate }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button [mat-dialog-close]="false" [disabled]="saving">{{ 'COMMON.CANCEL' | translate }}</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="form.invalid || saving">
+    <mat-spinner *ngIf="saving" diameter="18" class="btn-spinner"></mat-spinner>
+    {{ (isEdit ? 'COMMON.UPDATE' : 'COMMON.CREATE') | translate }}
+  </button>
+</mat-dialog-actions>

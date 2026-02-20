@@ -1,0 +1,351 @@
+<div class="dash-page">
+
+  <!-- ══ Header ═══════════════════════════════════════════════════════════════ -->
+  <div class="dash-header">
+    <div>
+      <h1>{{ 'NAV.REPORTS' | translate }}</h1>
+      <p class="dash-subtitle">{{ 'REPORTS.SUBTITLE' | translate }}</p>
+    </div>
+    <div class="dash-header-actions">
+      <mat-form-field appearance="outline" class="year-field">
+        <mat-label>{{ 'DASHBOARD.ANALYTICS.BRANCH_LABEL' | translate }}</mat-label>
+        <mat-select [(ngModel)]="selectedBranch" (ngModelChange)="onBranchChange()">
+          <mat-option [value]="null">{{ 'DASHBOARD.ANALYTICS.ALL_BRANCHES' | translate }}</mat-option>
+          <mat-option *ngFor="let b of branches" [value]="b.id">{{ b.branchName }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="year-field">
+        <mat-label>{{ 'DASHBOARD.ANALYTICS.YEAR_LABEL' | translate }}</mat-label>
+        <mat-select [(ngModel)]="selectedYear" (ngModelChange)="onYearChange()">
+          <mat-option *ngFor="let y of availableYears" [value]="y">{{ y }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="year-field">
+        <mat-label>{{ 'DASHBOARD.ANALYTICS.MONTH_LABEL' | translate }}</mat-label>
+        <mat-select [(ngModel)]="selectedMonth" (ngModelChange)="onMonthChange()">
+          <mat-option [value]="1">{{ 'COMMON.JANUARY' | translate }}</mat-option>
+          <mat-option [value]="2">{{ 'COMMON.FEBRUARY' | translate }}</mat-option>
+          <mat-option [value]="3">{{ 'COMMON.MARCH' | translate }}</mat-option>
+          <mat-option [value]="4">{{ 'COMMON.APRIL' | translate }}</mat-option>
+          <mat-option [value]="5">{{ 'COMMON.MAY' | translate }}</mat-option>
+          <mat-option [value]="6">{{ 'COMMON.JUNE' | translate }}</mat-option>
+          <mat-option [value]="7">{{ 'COMMON.JULY' | translate }}</mat-option>
+          <mat-option [value]="8">{{ 'COMMON.AUGUST' | translate }}</mat-option>
+          <mat-option [value]="9">{{ 'COMMON.SEPTEMBER' | translate }}</mat-option>
+          <mat-option [value]="10">{{ 'COMMON.OCTOBER' | translate }}</mat-option>
+          <mat-option [value]="11">{{ 'COMMON.NOVEMBER' | translate }}</mat-option>
+          <mat-option [value]="12">{{ 'COMMON.DECEMBER' | translate }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- ══ Loading ═══════════════════════════════════════════════════════════════ -->
+  <div class="dash-loading" *ngIf="loading">
+    <mat-spinner diameter="44"></mat-spinner>
+    <span>{{ 'COMMON.LOADING' | translate }}</span>
+  </div>
+
+  <ng-container *ngIf="!loading">
+
+    <!-- ══ Tabs ═══════════════════════════════════════════════════════════════ -->
+    <mat-tab-group
+      class="dash-tab-group"
+      animationDuration="180ms"
+      (selectedIndexChange)="onTabChange($event)">
+
+      <!-- ─── TAB 1: Overview ──────────────────────────────────────────────── -->
+      <mat-tab [label]="'DASHBOARD.ANALYTICS.TAB_OVERVIEW' | translate">
+        <div class="tab-pane">
+
+          <!-- Row 1: Line chart + Bar chart -->
+          <div class="chart-row">
+            <mat-card class="chart-card">
+              <mat-card-header>
+                <mat-card-title>{{ 'DASHBOARD.ANALYTICS.CHART_MONTHLY_AMT' | translate }}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="canvas-box">
+                <canvas id="canvas-monthly-amount" #chartCanvas></canvas>
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="chart-card">
+              <mat-card-header>
+                <mat-card-title>{{ 'DASHBOARD.ANALYTICS.CHART_MONTHLY_ORD' | translate }}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="canvas-box">
+                <canvas id="canvas-monthly-orders" #chartCanvas></canvas>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <!-- Row 2: Pie + Doughnut -->
+          <div class="chart-row">
+            <mat-card class="chart-card">
+              <mat-card-header>
+                <mat-card-title>{{ 'DASHBOARD.ANALYTICS.CHART_CAT' | translate }}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="canvas-box canvas-box--round">
+                <canvas id="canvas-category" #chartCanvas></canvas>
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="chart-card">
+              <mat-card-header>
+                <mat-card-title>{{ 'DASHBOARD.ANALYTICS.CHART_PAYMENT' | translate }}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="canvas-box canvas-box--round">
+                <canvas id="canvas-payment" #chartCanvas></canvas>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+        </div>
+      </mat-tab>
+
+      <!-- ─── TAB 2: Monthly ───────────────────────────────────────────────── -->
+      <mat-tab [label]="'DASHBOARD.ANALYTICS.TAB_MONTHLY' | translate">
+        <div class="tab-pane">
+
+          <mat-card class="chart-card chart-card--full">
+            <mat-card-header>
+              <mat-card-title>{{ 'DASHBOARD.ANALYTICS.CHART_MONTHLY_AMT' | translate }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="canvas-box canvas-box--tall">
+              <canvas id="canvas-monthly-amount-full" #chartCanvas></canvas>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="chart-card chart-card--full">
+            <mat-card-header>
+              <mat-card-title>{{ 'DASHBOARD.ANALYTICS.CHART_MONTHLY_ORD' | translate }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="canvas-box canvas-box--tall">
+              <canvas id="canvas-monthly-orders-full" #chartCanvas></canvas>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Monthly breakdown table -->
+          <mat-card class="table-card">
+            <mat-card-header>
+              <mat-card-title>{{ 'DASHBOARD.ANALYTICS.MONTHLY_BREAKDOWN' | translate }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="tbl-wrap">
+                <table class="data-table">
+                  <thead><tr>
+                    <th>{{ 'DASHBOARD.ANALYTICS.MONTH' | translate }}</th>
+                    <th>{{ 'DASHBOARD.ANALYTICS.AMOUNT' | translate }}</th>
+                    <th>{{ 'DASHBOARD.ANALYTICS.INVOICES_COUNT' | translate }}</th>
+                    <th>{{ 'DASHBOARD.ANALYTICS.SALES_COUNT' | translate }}</th>
+                    <th>{{ 'DASHBOARD.ANALYTICS.AVG_ORDER' | translate }}</th>
+                  </tr></thead>
+                  <tbody>
+                    <tr *ngFor="let m of monthly">
+                      <td><strong>{{ ('COMMON.' + m.monthLabel) | translate }}</strong></td>
+                      <td class="amount">{{ m.totalAmount | currency }}</td>
+                      <td>{{ m.orderCount | number }}</td>
+                      <td>{{ m.individualCount | number }}</td>
+                      <td>{{ (m.orderCount > 0 ? m.totalAmount / m.orderCount : 0) | currency }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+        </div>
+      </mat-tab>
+
+      <!-- ─── TAB 3: Weekly ────────────────────────────────────────────────── -->
+      <mat-tab [label]="'DASHBOARD.ANALYTICS.TAB_WEEKLY' | translate">
+        <div class="tab-pane">
+
+          <mat-card class="chart-card chart-card--full">
+            <mat-card-header>
+              <mat-card-title>{{ 'DASHBOARD.ANALYTICS.CHART_WEEKLY' | translate }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="canvas-box canvas-box--tall">
+              <canvas id="canvas-weekly" #chartCanvas></canvas>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Day cards -->
+          <div class="day-cards">
+            <mat-card class="day-card" *ngFor="let w of weekly; let i = index">
+              <mat-card-content>
+                <div class="day-name">{{ ('COMMON.' + w.dayLabel) | translate }}</div>
+                <div class="day-amount">{{ w.totalAmount | currency:'USD':'symbol':'1.0-0' }}</div>
+                <div class="day-orders">{{ w.orderCount }} {{ 'DASHBOARD.ANALYTICS.INVOICES_COUNT' | translate }}</div>
+                <div class="day-orders">{{ w.individualCount }} {{ 'DASHBOARD.ANALYTICS.SALES_COUNT' | translate }}</div>
+                <div class="day-bar">
+                  <div class="day-fill"
+                    [style.width.%]="weekly.length ? (w.totalAmount / (weekly[0].totalAmount || 1)) * 100 : 0"
+                    [style.background]="PALETTE[i % PALETTE.length]">
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+        </div>
+      </mat-tab>
+
+      <!-- ─── TAB 4: Top Products ──────────────────────────────────────────── -->
+      <mat-tab [label]="'DASHBOARD.ANALYTICS.TAB_PRODUCTS' | translate">
+        <div class="tab-pane">
+
+          <div class="tab-toolbar">
+            <mat-button-toggle-group [(ngModel)]="topMode" (ngModelChange)="onTopModeChange()">
+              <mat-button-toggle value="qty">{{ 'DASHBOARD.ANALYTICS.BY_UNITS' | translate }}</mat-button-toggle>
+              <mat-button-toggle value="rev">{{ 'DASHBOARD.ANALYTICS.BY_REVENUE' | translate }}</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+
+          <mat-card class="chart-card chart-card--full">
+            <mat-card-header>
+              <mat-card-title>
+                {{ (topMode === 'qty' ? 'DASHBOARD.ANALYTICS.CHART_TOP_QTY' : 'DASHBOARD.ANALYTICS.CHART_TOP_REV') | translate }}
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="canvas-box canvas-box--products">
+              <canvas id="canvas-top-products" #chartCanvas></canvas>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Ranked list -->
+          <mat-card class="table-card">
+            <mat-card-header>
+              <mat-card-title>{{ 'DASHBOARD.ANALYTICS.PRODUCT_RANKING' | translate }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="rank-list">
+                <div class="rank-row" *ngFor="let p of currentTopList; let i = index">
+                  <div class="rank-pos" [class.gold]="i===0" [class.silver]="i===1" [class.bronze]="i===2">#{{ i + 1 }}</div>
+                  <div class="rank-thumb">
+                    <img *ngIf="p.productImage" [src]="p.productImage" [alt]="p.productName" onerror="this.style.display='none'">
+                    <mat-icon *ngIf="!p.productImage">inventory_2</mat-icon>
+                  </div>
+                  <div class="rank-info">
+                    <div class="rank-name">{{ p.productName }}</div>
+                    <div class="rank-bar">
+                      <div class="rank-fill"
+                        [style.width.%]="topBarPct(p)"
+                        [style.background]="'hsl(' + (i * 36) + ', 70%, 55%)'">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="rank-val">
+                    <span *ngIf="topMode === 'qty'">{{ p.totalQuantity | number }} {{ 'DASHBOARD.ANALYTICS.UNITS' | translate }}</span>
+                    <span *ngIf="topMode === 'rev'">{{ p.totalRevenue | currency }}</span>
+                  </div>
+                </div>
+                <div class="empty-state" *ngIf="currentTopList.length === 0">
+                  <mat-icon>bar_chart</mat-icon>
+                  <p>{{ 'DASHBOARD.ANALYTICS.NO_DATA' | translate }}</p>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+        </div>
+      </mat-tab>
+
+      <!-- ─── TAB 5: By Category ───────────────────────────────────────────── -->
+      <mat-tab [label]="'DASHBOARD.ANALYTICS.TAB_CATEGORIES' | translate">
+        <div class="tab-pane">
+          <div class="chart-row">
+
+            <!-- Pie chart -->
+            <mat-card class="chart-card">
+              <mat-card-header>
+                <mat-card-title>{{ 'DASHBOARD.ANALYTICS.CHART_CAT' | translate }}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="canvas-box canvas-box--round">
+                <canvas id="canvas-category" #chartCanvas></canvas>
+              </mat-card-content>
+            </mat-card>
+
+            <!-- Category breakdown -->
+            <mat-card class="chart-card">
+              <mat-card-header>
+                <mat-card-title>{{ 'DASHBOARD.ANALYTICS.CATEGORY_BREAKDOWN' | translate }}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="cat-list">
+                  <div class="cat-row" *ngFor="let c of categories; let i = index">
+                    <div class="cat-dot" [style.background]="'hsl(' + (i*36) + ',70%,55%)'"></div>
+                    <div class="cat-body">
+                      <div class="cat-name">{{ c.categoryName }}</div>
+                      <div class="cat-bar">
+                        <div class="cat-fill"
+                          [style.width.%]="catPct(c)"
+                          [style.background]="'hsl(' + (i*36) + ',70%,55%)'">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="cat-stats">
+                      <span class="cat-rev">{{ c.totalRevenue | currency:'USD':'symbol':'1.0-0' }}</span>
+                      <span class="cat-qty">{{ c.totalQuantity | number }} units</span>
+                    </div>
+                  </div>
+                  <div class="empty-state" *ngIf="categories.length === 0">
+                    <mat-icon>category</mat-icon>
+                    <p>{{ 'DASHBOARD.ANALYTICS.NO_DATA' | translate }}</p>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- ─── TAB 6: By Payment ────────────────────────────────────────────── -->
+      <mat-tab [label]="'DASHBOARD.ANALYTICS.TAB_PAYMENT' | translate">
+        <div class="tab-pane">
+          <div class="chart-row">
+
+            <!-- Doughnut chart -->
+            <mat-card class="chart-card">
+              <mat-card-header>
+                <mat-card-title>{{ 'DASHBOARD.ANALYTICS.CHART_PAYMENT' | translate }}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content class="canvas-box canvas-box--round">
+                <canvas id="canvas-payment" #chartCanvas></canvas>
+              </mat-card-content>
+            </mat-card>
+
+            <!-- Payment method breakdown -->
+            <mat-card class="chart-card">
+              <mat-card-header>
+                <mat-card-title>{{ 'DASHBOARD.ANALYTICS.PAYMENT_BREAKDOWN' | translate }}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="pay-list">
+                  <div class="pay-row" *ngFor="let p of payments; let i = index">
+                    <div class="pay-icon" [style.background]="PALETTE[i % PALETTE.length] + '22'" [style.color]="PALETTE[i % PALETTE.length]">
+                      <mat-icon>{{ p.paymentMethod === 'CASH' ? 'payments' : p.paymentMethod === 'CARD' ? 'credit_card' : p.paymentMethod === 'TRANSFER' ? 'account_balance' : 'account_balance_wallet' }}</mat-icon>
+                    </div>
+                    <div class="pay-info">
+                      <div class="pay-method">{{ ('COMMON.' + p.paymentMethod) | translate }}</div>
+                      <div class="pay-count">{{ p.orderCount | number }} {{ 'DASHBOARD.ANALYTICS.INVOICES_COUNT' | translate }}</div>
+                    </div>
+                    <div class="pay-total">{{ p.totalAmount | currency:'USD':'symbol':'1.0-0' }}</div>
+                  </div>
+                  <div class="empty-state" *ngIf="payments.length === 0">
+                    <mat-icon>payment</mat-icon>
+                    <p>{{ 'DASHBOARD.ANALYTICS.NO_DATA' | translate }}</p>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+          </div>
+        </div>
+      </mat-tab>
+
+    </mat-tab-group>
+
+  </ng-container>
+</div>

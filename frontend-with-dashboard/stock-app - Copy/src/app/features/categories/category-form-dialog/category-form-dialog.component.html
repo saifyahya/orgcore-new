@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>{{ (isEdit ? 'CATEGORIES.EDIT_CATEGORY' : 'CATEGORIES.ADD_CATEGORY') | translate }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'CATEGORIES.FORM.NAME_LABEL' | translate }} *</mat-label>
+      <input matInput formControlName="name" [placeholder]="'CATEGORIES.FORM.NAME_PLACEHOLDER' | translate">
+      <mat-error *ngIf="form.get('name')?.hasError('required')">{{ 'CATEGORIES.FORM.NAME_REQUIRED' | translate }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'CATEGORIES.FORM.DESCRIPTION_LABEL' | translate }}</mat-label>
+      <textarea matInput formControlName="description" [placeholder]="'CATEGORIES.FORM.DESCRIPTION_PLACEHOLDER' | translate" rows="2"></textarea>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'CATEGORIES.FORM.STATUS_LABEL' | translate }}</mat-label>
+      <mat-select formControlName="isActive">
+        <mat-option [value]="1">{{ 'COMMON.ACTIVE' | translate }}</mat-option>
+        <mat-option [value]="0">{{ 'COMMON.INACTIVE' | translate }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button [mat-dialog-close]="false" [disabled]="saving">{{ 'COMMON.CANCEL' | translate }}</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="form.invalid || saving">
+    {{ (isEdit ? 'COMMON.UPDATE' : 'COMMON.CREATE') | translate }}
+  </button>
+</mat-dialog-actions>

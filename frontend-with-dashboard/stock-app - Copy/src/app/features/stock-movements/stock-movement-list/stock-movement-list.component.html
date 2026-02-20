@@ -1,0 +1,92 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1>{{ 'STOCK_MOVEMENTS.TITLE' | translate }}</h1>
+      <p class="page-subtitle">{{ 'STOCK_MOVEMENTS.SUBTITLE' | translate }}</p>
+    </div>
+    <button mat-flat-button color="primary" (click)="openForm()">
+      <mat-icon>add</mat-icon> {{ 'STOCK_MOVEMENTS.RECORD' | translate }}
+    </button>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <div class="table-toolbar">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>{{ 'STOCK_MOVEMENTS.BRANCH_FILTER' | translate }}</mat-label>
+          <mat-select [(ngModel)]="filters.branchId" (ngModelChange)="loadData()">
+            <mat-option [value]="null">{{ 'STOCK_MOVEMENTS.ALL_BRANCHES' | translate }}</mat-option>
+            <mat-option *ngFor="let b of branches" [value]="b.id">{{ b.branchName }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>{{ 'STOCK_MOVEMENTS.TYPE_FILTER' | translate }}</mat-label>
+          <mat-select [(ngModel)]="filters.type" (ngModelChange)="loadData()">
+            <mat-option [value]="null">{{ 'STOCK_MOVEMENTS.ALL_TYPES' | translate }}</mat-option>
+            <mat-option *ngFor="let t of movementTypes" [value]="t">{{ t }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div *ngIf="loading" class="spinner-wrap"><mat-spinner diameter="40"></mat-spinner></div>
+
+      <table mat-table [dataSource]="movements" class="data-table" *ngIf="!loading">
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>{{ 'STOCK_MOVEMENTS.TABLE.ID' | translate }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.id }}</td>
+        </ng-container>
+        <ng-container matColumnDef="branchId">
+          <th mat-header-cell *matHeaderCellDef>{{ 'STOCK_MOVEMENTS.TABLE.BRANCH' | translate }}</th>
+          <td mat-cell *matCellDef="let row">{{ getBranchName(row.branchId) }}</td>
+        </ng-container>
+        <ng-container matColumnDef="productId">
+          <th mat-header-cell *matHeaderCellDef>{{ 'STOCK_MOVEMENTS.TABLE.PRODUCT' | translate }}</th>
+          <td mat-cell *matCellDef="let row">{{ getProductName(row.productId) }}</td>
+        </ng-container>
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>{{ 'STOCK_MOVEMENTS.TABLE.TYPE' | translate }}</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="type-badge" [class]="'type-' + row.type?.toLowerCase()">{{ row.type }}</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="reason">
+          <th mat-header-cell *matHeaderCellDef>{{ 'STOCK_MOVEMENTS.TABLE.REASON' | translate }}</th>
+          <td mat-cell *matCellDef="let row"><span class="badge">{{ row.reason }}</span></td>
+        </ng-container>
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>{{ 'STOCK_MOVEMENTS.TABLE.QUANTITY' | translate }}</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="qty" [class.in]="row.type === 'IN'" [class.out]="row.type === 'OUT'">
+              {{ row.type === 'IN' || row.type === 'ADJUSTMENT' ? '+' : '-' }}{{ row.quantity }}
+            </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="unitCost">
+          <th mat-header-cell *matHeaderCellDef>{{ 'STOCK_MOVEMENTS.TABLE.UNIT_COST' | translate }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.unitCost ? (row.unitCost | currency) : ('COMMON.NONE' | translate) }}</td>
+        </ng-container>
+        <ng-container matColumnDef="note">
+          <th mat-header-cell *matHeaderCellDef>{{ 'STOCK_MOVEMENTS.TABLE.NOTE' | translate }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.note || ('COMMON.NONE' | translate) }}</td>
+        </ng-container>
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef>{{ 'STOCK_MOVEMENTS.TABLE.DATE' | translate }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.createdAt | date:'short' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>{{ 'STOCK_MOVEMENTS.TABLE.ACTIONS' | translate }}</th>
+          <td mat-cell *matCellDef="let row">
+            <button mat-icon-button color="warn" (click)="delete(row)" [matTooltip]="'COMMON.DELETE' | translate"><mat-icon>delete</mat-icon></button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell empty-msg" [attr.colspan]="displayedColumns.length">
+            <mat-icon>swap_vert</mat-icon><p>{{ 'STOCK_MOVEMENTS.NO_MOVEMENTS' | translate }}</p>
+          </td>
+        </tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+</div>

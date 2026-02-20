@@ -1,0 +1,10 @@
+@use '../../../shared/styles/page' as *;
+.page-container { max-width: 1200px; }
+.summary-row { display: flex; gap: 12px; margin-bottom: 16px; }
+.summary-chip { padding: 4px 14px; background: var(--chip-bg); border-radius: 20px; font-size: 13px; color: var(--text-secondary); }
+.summary-chip.primary { background: var(--badge-blue-bg); color: var(--badge-blue-text); }
+.badge.channel-manual { background: var(--badge-yellow-bg); color: var(--badge-yellow-text); }
+.badge.channel-import { background: var(--badge-green-bg); color: var(--badge-green-text); }
+.badge.channel-pos { background: var(--badge-blue-bg); color: var(--badge-blue-text); }
+.badge.channel-api { background: var(--badge-purple-bg); color: var(--badge-purple-text); }
+.clickable-row:hover { background: var(--hover-bg); cursor: pointer; }
