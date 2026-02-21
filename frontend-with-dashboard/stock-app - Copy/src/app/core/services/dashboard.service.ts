@@ -25,32 +25,36 @@ export class DashboardService {
   }
 
   getWeeklySalesByDay(monthDate: string, branchId: number | null): Observable<WeeklyDaySeries[]> {
-    const params: any = { monthDate };
+    const params: any = { startDate:monthDate };
     if (branchId !== null) params.branchId = branchId;
     return this.api.get<WeeklyDaySeries[]>(`${this.base}/weekly-sales`, params);
   }
 
-  getSalesByPaymentMethod(branchId: number | null, startDate: string, endDate: string): Observable<PaymentMethodSales[]> {
+  getSalesByPaymentMethod(branchId: number | null, paymentMethod: string | null, startDate: string, endDate: string): Observable<PaymentMethodSales[]> {
     const params: any = { startDate, endDate };
     if (branchId !== null) params.branchId = branchId;
+    if (paymentMethod !== null) params.paymentMethod = paymentMethod;
     return this.api.get<PaymentMethodSales[]>(`${this.base}/sales-by-payment`, params);
   }
 
-  getSalesByCategory(branchId: number | null, startDate: string, endDate: string): Observable<CategorySales[]> {
+  getSalesByCategory(branchId: number | null, categoryId: number | null, startDate: string, endDate: string): Observable<CategorySales[]> {
     const params: any = { startDate, endDate };
     if (branchId !== null) params.branchId = branchId;
+    if (categoryId !== null) params.categoryId = categoryId;
     return this.api.get<CategorySales[]>(`${this.base}/sales-by-category`, params);
   }
 
-  getTopProductsByQuantity(branchId: number | null, startDate: string, endDate: string): Observable<TopProduct[]> {
+  getTopProductsByQuantity(branchId: number | null, productId: number | null, startDate: string, endDate: string): Observable<TopProduct[]> {
     const params: any = { startDate, endDate };
     if (branchId !== null) params.branchId = branchId;
+    if (productId !== null) params.productId = productId;
     return this.api.get<TopProduct[]>(`${this.base}/top-products-qty`, params);
   }
 
-  getTopProductsByRevenue(branchId: number | null, startDate: string, endDate: string): Observable<TopProduct[]> {
+  getTopProductsByRevenue(branchId: number | null, productId: number | null, startDate: string, endDate: string): Observable<TopProduct[]> {
     const params: any = { startDate, endDate };
     if (branchId !== null) params.branchId = branchId;
+    if (productId !== null) params.productId = productId;
     return this.api.get<TopProduct[]>(`${this.base}/top-products-revenue`, params);
   }
 

@@ -226,8 +226,9 @@ export interface MonthlySeries {
 }
 
 export interface WeeklyDaySeries {
-  dayOfWeek: number;              // 1=Sunday ... 7=Saturday (SQL Server DATEPART)
-  dayLabel: string;               // "SUNDAY", "MONDAY", etc. (from backend)
+  saleDate: string;               // LocalDate from backend
+  dayOfWeek: number;              // 1=Monday ... 7=Sunday (ISO)
+  dayLabel: string;               // "MONDAY", "TUESDAY", etc. (from backend)
   totalAmount: number;
   orderCount: number;             // عدد الفواتير - number of invoices
   individualCount: number;        // عدد المبيعات - number of sales

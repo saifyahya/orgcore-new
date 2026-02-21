@@ -14,29 +14,6 @@
           <mat-option *ngFor="let b of branches" [value]="b.id">{{ b.branchName }}</mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="outline" class="year-field">
-        <mat-label>{{ 'DASHBOARD.ANALYTICS.YEAR_LABEL' | translate }}</mat-label>
-        <mat-select [(ngModel)]="selectedYear" (ngModelChange)="onYearChange()">
-          <mat-option *ngFor="let y of availableYears" [value]="y">{{ y }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="year-field">
-        <mat-label>{{ 'DASHBOARD.ANALYTICS.MONTH_LABEL' | translate }}</mat-label>
-        <mat-select [(ngModel)]="selectedMonth" (ngModelChange)="onMonthChange()">
-          <mat-option [value]="1">{{ 'COMMON.JANUARY' | translate }}</mat-option>
-          <mat-option [value]="2">{{ 'COMMON.FEBRUARY' | translate }}</mat-option>
-          <mat-option [value]="3">{{ 'COMMON.MARCH' | translate }}</mat-option>
-          <mat-option [value]="4">{{ 'COMMON.APRIL' | translate }}</mat-option>
-          <mat-option [value]="5">{{ 'COMMON.MAY' | translate }}</mat-option>
-          <mat-option [value]="6">{{ 'COMMON.JUNE' | translate }}</mat-option>
-          <mat-option [value]="7">{{ 'COMMON.JULY' | translate }}</mat-option>
-          <mat-option [value]="8">{{ 'COMMON.AUGUST' | translate }}</mat-option>
-          <mat-option [value]="9">{{ 'COMMON.SEPTEMBER' | translate }}</mat-option>
-          <mat-option [value]="10">{{ 'COMMON.OCTOBER' | translate }}</mat-option>
-          <mat-option [value]="11">{{ 'COMMON.NOVEMBER' | translate }}</mat-option>
-          <mat-option [value]="12">{{ 'COMMON.DECEMBER' | translate }}</mat-option>
-        </mat-select>
-      </mat-form-field>
     </div>
   </div>
 
@@ -51,6 +28,7 @@
     <!-- ══ Tabs ═══════════════════════════════════════════════════════════════ -->
     <mat-tab-group
       class="dash-tab-group"
+      [(selectedIndex)]="activeTab"
       animationDuration="180ms"
       (selectedIndexChange)="onTabChange($event)">
 
@@ -107,6 +85,16 @@
       <mat-tab [label]="'DASHBOARD.ANALYTICS.TAB_MONTHLY' | translate">
         <div class="tab-pane">
 
+          <!-- Year filter for monthly tab -->
+          <div class="tab-toolbar" style="margin-bottom: 20px;">
+            <mat-form-field appearance="outline" class="year-field">
+              <mat-label>{{ 'DASHBOARD.ANALYTICS.YEAR_LABEL' | translate }}</mat-label>
+              <mat-select [(ngModel)]="monthlyYear" (ngModelChange)="onMonthlyYearChange()">
+                <mat-option *ngFor="let y of availableYears" [value]="y">{{ y }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
           <mat-card class="chart-card chart-card--full">
             <mat-card-header>
               <mat-card-title>{{ 'DASHBOARD.ANALYTICS.CHART_MONTHLY_AMT' | translate }}</mat-card-title>
@@ -161,6 +149,16 @@
       <mat-tab [label]="'DASHBOARD.ANALYTICS.TAB_WEEKLY' | translate">
         <div class="tab-pane">
 
+          <!-- Date picker for weekly tab -->
+          <div class="tab-toolbar" style="margin-bottom: 20px;">
+            <mat-form-field appearance="outline" style="min-width: 200px;">
+              <mat-label>{{ 'DASHBOARD.ANALYTICS.DATE_LABEL' | translate }}</mat-label>
+              <input matInput [matDatepicker]="picker" [(ngModel)]="weeklyDate" (ngModelChange)="onWeeklyDateChange()">
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+
           <mat-card class="chart-card chart-card--full">
             <mat-card-header>
               <mat-card-title>{{ 'DASHBOARD.ANALYTICS.CHART_WEEKLY' | translate }}</mat-card-title>
@@ -174,7 +172,7 @@
           <div class="day-cards">
             <mat-card class="day-card" *ngFor="let w of weekly; let i = index">
               <mat-card-content>
-                <div class="day-name">{{ ('COMMON.' + w.dayLabel) | translate }}</div>
+                <div class="day-name">{{ ('COMMON.' + w.dayLabel) | translate }} - {{ w.saleDate }}</div>
                 <div class="day-amount">{{ w.totalAmount | currency:'USD':'symbol':'1.0-0' }}</div>
                 <div class="day-orders">{{ w.orderCount }} {{ 'DASHBOARD.ANALYTICS.INVOICES_COUNT' | translate }}</div>
                 <div class="day-orders">{{ w.individualCount }} {{ 'DASHBOARD.ANALYTICS.SALES_COUNT' | translate }}</div>
@@ -200,6 +198,42 @@
               <mat-button-toggle value="qty">{{ 'DASHBOARD.ANALYTICS.BY_UNITS' | translate }}</mat-button-toggle>
               <mat-button-toggle value="rev">{{ 'DASHBOARD.ANALYTICS.BY_REVENUE' | translate }}</mat-button-toggle>
             </mat-button-toggle-group>
+          </div>
+
+          <!-- Filters for Top Products -->
+          <div class="tab-toolbar" style="margin-bottom: 20px; gap: 12px; display: flex; flex-wrap: wrap;">
+            <mat-form-field appearance="outline" style="flex: 1; min-width: 200px;">
+              <mat-label>{{ 'DASHBOARD.ANALYTICS.PRODUCT_LABEL' | translate }}</mat-label>
+              <mat-select [(ngModel)]="selectedProduct" (ngModelChange)="onTopProductsFilterChange()">
+                <mat-option [value]="null">{{ 'DASHBOARD.ANALYTICS.ALL_PRODUCTS' | translate }}</mat-option>
+                <mat-option>
+                  <input 
+                    type="text" 
+                    [(ngModel)]="productSearchText" 
+                    (ngModelChange)="filterProducts()" 
+                    (click)="$event.stopPropagation()" 
+                    placeholder="{{ 'COMMON.SEARCH' | translate }}"
+                    style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                </mat-option>
+                <mat-option *ngFor="let product of filteredProducts" [value]="product.id">
+                  {{ product.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" style="flex: 0 0 auto; min-width: 180px;">
+              <mat-label>{{ 'DASHBOARD.ANALYTICS.FROM_DATE' | translate }}</mat-label>
+              <input matInput [matDatepicker]="startPicker" [(ngModel)]="topProductsStartDate" (ngModelChange)="onTopProductsFilterChange()">
+              <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+              <mat-datepicker #startPicker></mat-datepicker>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" style="flex: 0 0 auto; min-width: 180px;">
+              <mat-label>{{ 'DASHBOARD.ANALYTICS.TO_DATE' | translate }}</mat-label>
+              <input matInput [matDatepicker]="endPicker" [(ngModel)]="topProductsEndDate" (ngModelChange)="onTopProductsFilterChange()">
+              <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+              <mat-datepicker #endPicker></mat-datepicker>
+            </mat-form-field>
           </div>
 
           <mat-card class="chart-card chart-card--full">
@@ -254,6 +288,43 @@
       <!-- ─── TAB 5: By Category ───────────────────────────────────────────── -->
       <mat-tab [label]="'DASHBOARD.ANALYTICS.TAB_CATEGORIES' | translate">
         <div class="tab-pane">
+
+          <!-- Filters for Categories -->
+          <div class="tab-toolbar" style="margin-bottom: 20px; gap: 12px; display: flex; flex-wrap: wrap;">
+            <mat-form-field appearance="outline" style="flex: 1; min-width: 200px;">
+              <mat-label>{{ 'DASHBOARD.ANALYTICS.CATEGORY_LABEL' | translate }}</mat-label>
+              <mat-select [(ngModel)]="selectedCategory" (ngModelChange)="onCategoriesFilterChange()">
+                <mat-option [value]="null">{{ 'DASHBOARD.ANALYTICS.ALL_CATEGORIES' | translate }}</mat-option>
+                <mat-option>
+                  <input 
+                    type="text" 
+                    [(ngModel)]="categorySearchText" 
+                    (ngModelChange)="filterCategories()" 
+                    (click)="$event.stopPropagation()" 
+                    placeholder="{{ 'COMMON.SEARCH' | translate }}"
+                    style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                </mat-option>
+                <mat-option *ngFor="let category of filteredCategories" [value]="category.id">
+                  {{ category.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" style="flex: 0 0 auto; min-width: 180px;">
+              <mat-label>{{ 'DASHBOARD.ANALYTICS.FROM_DATE' | translate }}</mat-label>
+              <input matInput [matDatepicker]="catStartPicker" [(ngModel)]="categoriesStartDate" (ngModelChange)="onCategoriesFilterChange()">
+              <mat-datepicker-toggle matIconSuffix [for]="catStartPicker"></mat-datepicker-toggle>
+              <mat-datepicker #catStartPicker></mat-datepicker>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" style="flex: 0 0 auto; min-width: 180px;">
+              <mat-label>{{ 'DASHBOARD.ANALYTICS.TO_DATE' | translate }}</mat-label>
+              <input matInput [matDatepicker]="catEndPicker" [(ngModel)]="categoriesEndDate" (ngModelChange)="onCategoriesFilterChange()">
+              <mat-datepicker-toggle matIconSuffix [for]="catEndPicker"></mat-datepicker-toggle>
+              <mat-datepicker #catEndPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+
           <div class="chart-row">
 
             <!-- Pie chart -->
@@ -262,7 +333,7 @@
                 <mat-card-title>{{ 'DASHBOARD.ANALYTICS.CHART_CAT' | translate }}</mat-card-title>
               </mat-card-header>
               <mat-card-content class="canvas-box canvas-box--round">
-                <canvas id="canvas-category" #chartCanvas></canvas>
+                <canvas id="canvas-category-full" #chartCanvas></canvas>
               </mat-card-content>
             </mat-card>
 
@@ -304,6 +375,34 @@
       <!-- ─── TAB 6: By Payment ────────────────────────────────────────────── -->
       <mat-tab [label]="'DASHBOARD.ANALYTICS.TAB_PAYMENT' | translate">
         <div class="tab-pane">
+
+          <!-- Filters for Payments -->
+          <div class="tab-toolbar" style="margin-bottom: 20px; gap: 12px; display: flex; flex-wrap: wrap;">
+            <mat-form-field appearance="outline" style="flex: 1; min-width: 200px;">
+              <mat-label>{{ 'DASHBOARD.ANALYTICS.PAYMENT_METHOD_LABEL' | translate }}</mat-label>
+              <mat-select [(ngModel)]="selectedPaymentMethod" (ngModelChange)="onPaymentsFilterChange()">
+                <mat-option [value]="null">{{ 'DASHBOARD.ANALYTICS.ALL_PAYMENT_METHODS' | translate }}</mat-option>
+                <mat-option *ngFor="let method of paymentMethods" [value]="method">
+                  {{ ('COMMON.' + method) | translate }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" style="flex: 0 0 auto; min-width: 180px;">
+              <mat-label>{{ 'DASHBOARD.ANALYTICS.FROM_DATE' | translate }}</mat-label>
+              <input matInput [matDatepicker]="payStartPicker" [(ngModel)]="paymentsStartDate" (ngModelChange)="onPaymentsFilterChange()">
+              <mat-datepicker-toggle matIconSuffix [for]="payStartPicker"></mat-datepicker-toggle>
+              <mat-datepicker #payStartPicker></mat-datepicker>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" style="flex: 0 0 auto; min-width: 180px;">
+              <mat-label>{{ 'DASHBOARD.ANALYTICS.TO_DATE' | translate }}</mat-label>
+              <input matInput [matDatepicker]="payEndPicker" [(ngModel)]="paymentsEndDate" (ngModelChange)="onPaymentsFilterChange()">
+              <mat-datepicker-toggle matIconSuffix [for]="payEndPicker"></mat-datepicker-toggle>
+              <mat-datepicker #payEndPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+
           <div class="chart-row">
 
             <!-- Doughnut chart -->
@@ -312,7 +411,7 @@
                 <mat-card-title>{{ 'DASHBOARD.ANALYTICS.CHART_PAYMENT' | translate }}</mat-card-title>
               </mat-card-header>
               <mat-card-content class="canvas-box canvas-box--round">
-                <canvas id="canvas-payment" #chartCanvas></canvas>
+                <canvas id="canvas-payment-full" #chartCanvas></canvas>
               </mat-card-content>
             </mat-card>
 

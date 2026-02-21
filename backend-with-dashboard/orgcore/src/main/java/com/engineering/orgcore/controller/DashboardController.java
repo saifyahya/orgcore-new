@@ -76,9 +76,12 @@ public class DashboardController {
      */
     @GetMapping("/sales-by-payment")
     public List<PaymentMethodSalesDto> getSalesByPaymentMethod(
-            @RequestParam(required = false) Long branchId,  @RequestParam LocalDate startDate, @RequestParam LocalDate endDate
+            @RequestParam(required = false) Long branchId,
+            @RequestParam(required = false) String paymentMethod,
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate
     ) {
-        return dashboardService.getSalesByPaymentMethod(utils.getCurrentTenant(), branchId, startDate, endDate);
+        return dashboardService.getSalesByPaymentMethod(utils.getCurrentTenant(), branchId, paymentMethod, startDate, endDate);
     }
 
     // ─── Sales by Category (pie chart) ────────────────────────────────────────
@@ -89,9 +92,11 @@ public class DashboardController {
      */
     @GetMapping("/sales-by-category")
     public List<CategorySalesDto> getSalesByCategory(
-            @RequestParam(required = false) Long branchId,  @RequestParam LocalDate startDate, @RequestParam LocalDate endDate
+            @RequestParam(required = false) Long branchId,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam LocalDate startDate, @RequestParam LocalDate endDate
     ) {
-        return dashboardService.getSalesByCategory(utils.getCurrentTenant(), branchId, startDate, endDate);
+        return dashboardService.getSalesByCategory(utils.getCurrentTenant(), branchId, categoryId, startDate, endDate);
     }
 
     // ─── Top Products by Quantity (bar chart) ─────────────────────────────────
@@ -102,9 +107,12 @@ public class DashboardController {
      */
     @GetMapping("/top-products-qty")
     public List<TopProductDto> getTopProductsByQuantity(
-            @RequestParam(required = false) Long branchId,  @RequestParam LocalDate startDate, @RequestParam LocalDate endDate
+            @RequestParam(required = false) Long branchId,
+            @RequestParam(required = false) Long productId,
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate
     ) {
-        return dashboardService.getTopProductsByQuantity(utils.getCurrentTenant(), branchId, startDate, endDate);
+        return dashboardService.getTopProductsByQuantity(utils.getCurrentTenant(), branchId, productId, startDate, endDate);
     }
 
     // ─── Top Products by Revenue (bar chart) ──────────────────────────────────
@@ -115,9 +123,12 @@ public class DashboardController {
      */
     @GetMapping("/top-products-revenue")
     public List<TopProductDto> getTopProductsByRevenue(
-            @RequestParam(required = false) Long branchId,  @RequestParam LocalDate startDate, @RequestParam LocalDate endDate
+            @RequestParam(required = false) Long branchId,
+            @RequestParam(required = false) Long productId,
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate
     ) {
-        return dashboardService.getTopProductsByRevenue(utils.getCurrentTenant(), branchId, startDate, endDate);
+        return dashboardService.getTopProductsByRevenue(utils.getCurrentTenant(), branchId, productId, startDate, endDate);
     }
 
     // ─── Monthly sales for one specific product ───────────────────────────────

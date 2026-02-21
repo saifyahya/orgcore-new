@@ -11,7 +11,7 @@ public interface SaleItemRepository extends JpaRepository<SaleItem, Long> {
     @Query("""
                     SELECT SUM(si.quantity) FROM SaleItem si
                     WHERE si.tenantId = :tenantId
-                    AND (si.createdAt between :startDate AND :endDate)
+                    AND (si.createdAt >= :startDate AND si.createdAt < :endDate)
                     AND (:branchId IS NULL OR si.sale.branch.id = :branchId )
             """)
     Integer getTotalSaleItems(Long tenantId, Long branchId, LocalDateTime startDate, LocalDateTime endDate);
