@@ -9,7 +9,9 @@ import com.engineering.orgcore.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/products")
@@ -21,11 +23,12 @@ public class ProductController {
     private final Utils utils;
 
     // Create
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ProductDto create(
-            @Valid @RequestBody CreateProductDto request
+            @Valid @ModelAttribute CreateProductDto request,
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile
     ) throws NotFoundException {
-        return productService.create(utils.getCurrentTenant(), request);
+        return productService.create(utils.getCurrentTenant(), request, imageFile);
     }
 
     // Get by id
@@ -47,12 +50,13 @@ public class ProductController {
     }
 
     // Update
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ProductDto update(
             @PathVariable Long id,
-            @Valid @RequestBody CreateProductDto request
+            @Valid @ModelAttribute CreateProductDto request,
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile
     ) throws NotFoundException {
-        return productService.update(utils.getCurrentTenant(), id, request);
+        return productService.update(utils.getCurrentTenant(), id, request, imageFile);
     }
 
     // Delete

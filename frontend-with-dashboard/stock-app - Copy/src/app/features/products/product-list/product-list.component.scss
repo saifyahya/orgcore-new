@@ -1,2 +1,26 @@
 @use '../../../shared/styles/page' as *;
 .page-container { max-width: 1100px; }
+
+.product-image-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+
+  .product-thumbnail {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+  }
+
+  .no-image-icon {
+    width: 40px;
+    height: 40px;
+    color: rgba(0, 0, 0, 0.26);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

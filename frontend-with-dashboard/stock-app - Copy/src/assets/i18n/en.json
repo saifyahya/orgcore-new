@@ -182,6 +182,7 @@
     "UPDATED": "Product updated",
     "TABLE": {
       "ID": "#",
+      "IMAGE": "Image",
       "NAME": "Product Name",
       "CATEGORY": "Category",
       "PRICE": "Price",
@@ -199,8 +200,11 @@
       "STATUS_LABEL": "Status",
       "PRICE_LABEL": "Price",
       "DISCOUNT_LABEL": "Discount (%)",
-      "IMAGE_LABEL": "Image URL",
-      "IMAGE_PLACEHOLDER": "https://..."
+      "IMAGE_LABEL": "Product Image",
+      "CURRENT_IMAGE": "Current Image",
+      "IMAGE_PLACEHOLDER": "https://...",
+      "UPLOAD_IMAGE": "Upload Image",
+      "CHANGE_IMAGE": "Change Image"
     }
   },
   "SALES": {

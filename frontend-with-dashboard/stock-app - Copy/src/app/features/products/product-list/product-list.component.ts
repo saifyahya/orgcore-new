@@ -21,6 +21,7 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
 import { ProductFormDialogComponent } from '../product-form-dialog/product-form-dialog.component';
 import { Product, Category } from '../../../core/models';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-product-list',
@@ -57,7 +58,7 @@ export class ProductListComponent implements OnInit {
   pageSize = 10;
   pageIndex = 0;
 
-  displayedColumns = ['id', 'name', 'category', 'price', 'discount', 'isActive', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy', 'actions'];
+  displayedColumns = ['id', 'image', 'name', 'category', 'price', 'discount', 'isActive', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy', 'actions'];
 
   constructor(
     private productService: ProductService,
@@ -136,5 +137,9 @@ export class ProductListComponent implements OnInit {
         });
       }
     });
+  }
+
+  getImageUrl(image: string): string {
+    return `${environment.apiUrl}/images/${image}`;
   }
 }

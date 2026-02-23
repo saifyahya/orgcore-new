@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -27,9 +28,10 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final Utils utils;
     private final CategoryService categoryService;
+    private final FileStorageService fileStorageService;
 
 
-    public ProductDto create(Long tenantId, CreateProductDto request) throws NotFoundException {
+    public ProductDto create(Long tenantId, CreateProductDto request, MultipartFile imageFile) throws NotFoundException {
 
         if (request.name() == null || request.name().isBlank()) {
             throw new IllegalArgumentException("Product name is required");
@@ -49,7 +51,13 @@ public class ProductService {
         product.setName(request.name().trim());
         product.setDescription(request.description());
         product.setCategory(category);
-        product.setImage(request.image());
+
+        // Handle image upload
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String imagePath = fileStorageService.storeFile(imageFile);
+            product.setImage(imagePath);
+        }
+
         product.setPrice(request.price());
         product.setIsActive(request.isActive() != null ? request.isActive() : 1);
         product.setTenantId(tenantId);
@@ -89,7 +97,7 @@ public class ProductService {
         return page.map(this::toDto);
     }
 
-    public ProductDto update(Long tenantId, Long id, CreateProductDto request) throws NotFoundException {
+    public ProductDto update(Long tenantId, Long id, CreateProductDto request, MultipartFile imageFile) throws NotFoundException {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + id));
 
@@ -111,8 +119,15 @@ public class ProductService {
             product.setCategory(category);
         }
 
-        if (request.image() != null) {
-            product.setImage(request.image());
+        // Handle image upload
+        if (imageFile != null && !imageFile.isEmpty()) {
+            // Delete old image if exists
+            if (product.getImage() != null && !product.getImage().isEmpty()) {
+                fileStorageService.deleteFile(product.getImage());
+            }
+            // Store new image
+            String imagePath = fileStorageService.storeFile(imageFile);
+            product.setImage(imagePath);
         }
 
         if (request.price() != null) {
@@ -145,16 +160,22 @@ public class ProductService {
             throw new IllegalStateException("Cannot delete product because it has sale items.");
         }
 
+        // Delete image file if exists
+        if (product.getImage() != null && !product.getImage().isEmpty()) {
+            fileStorageService.deleteFile(product.getImage());
+        }
+
         product.setIsActive(0);
     }
 
     public ProductDto toDto(Product p) {
+        String encryptedImage = (p.getImage());
         return new ProductDto(
                 p.getId(),
                 p.getName(),
                 p.getDescription(),
                 categoryService.toDto(p.getCategory()),
-                p.getImage(),
+                encryptedImage,
                 p.getPrice(),
                 p.getIsActive(),
                 p.getCreatedBy(),

@@ -25,11 +25,37 @@ export class ProductService {
     return this.api.get<Product>(`${this.path}/${id}`);
   }
 
-  create(product: ProductRequest): Observable<Product> {
+  create(product: ProductRequest, imageFile?: File): Observable<Product> {
+    if (imageFile) {
+      const formData = new FormData();
+      // Append all product fields
+      Object.keys(product).forEach(key => {
+        const value = (product as any)[key];
+        if (value !== null && value !== undefined) {
+          formData.append(key, value.toString());
+        }
+      });
+      // Append image file
+      formData.append('imageFile', imageFile);
+      return this.api.post<Product>(this.path, formData);
+    }
     return this.api.post<Product>(this.path, product);
   }
 
-  update(id: number, product: ProductRequest): Observable<Product> {
+  update(id: number, product: ProductRequest, imageFile?: File): Observable<Product> {
+    if (imageFile) {
+      const formData = new FormData();
+      // Append all product fields
+      Object.keys(product).forEach(key => {
+        const value = (product as any)[key];
+        if (value !== null && value !== undefined) {
+          formData.append(key, value.toString());
+        }
+      });
+      // Append image file
+      formData.append('imageFile', imageFile);
+      return this.api.put<Product>(`${this.path}/${id}`, formData);
+    }
     return this.api.put<Product>(`${this.path}/${id}`, product);
   }
 

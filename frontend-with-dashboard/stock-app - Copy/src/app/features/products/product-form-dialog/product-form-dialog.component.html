@@ -1,6 +1,13 @@
 <h2 mat-dialog-title>{{ (isEdit ? 'PRODUCTS.EDIT_PRODUCT' : 'PRODUCTS.ADD_PRODUCT') | translate }}</h2>
 <mat-dialog-content>
   <form [formGroup]="form" class="dialog-form">
+    <!-- Current Image Display (if editing and has image) -->
+    <div class="current-image-display" *ngIf="isEdit && originalImageUrl && !imagePreviewUrl">
+      <label class="image-label">{{ 'PRODUCTS.FORM.CURRENT_IMAGE' | translate }}</label>
+      <div class="current-image-container">
+        <img [src]="getImageUrl(originalImageUrl)" [alt]="form.get('name')?.value" class="current-product-image">
+      </div>
+    </div>
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>{{ 'PRODUCTS.FORM.NAME_LABEL' | translate }} *</mat-label>
       <input matInput formControlName="name" [placeholder]="'PRODUCTS.FORM.NAME_PLACEHOLDER' | translate">
@@ -38,10 +45,34 @@
         <span matSuffix>%</span>
       </mat-form-field>
     </div>
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>{{ 'PRODUCTS.FORM.IMAGE_LABEL' | translate }}</mat-label>
-      <input matInput formControlName="image" [placeholder]="'PRODUCTS.FORM.IMAGE_PLACEHOLDER' | translate">
-    </mat-form-field>
+    <div class="image-upload-section full-width">
+      <label class="image-label">{{ 'PRODUCTS.FORM.IMAGE_LABEL' | translate }}</label>
+      
+      <div class="image-preview" *ngIf="imagePreviewUrl">
+        <img [src]="imagePreviewUrl" alt="Product image">
+        <button mat-icon-button class="remove-image" (click)="removeImage()" type="button">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      
+      <div class="upload-actions">
+        <input 
+          type="file" 
+          #fileInput 
+          accept="image/*" 
+          (change)="onFileSelected($event)" 
+          style="display: none">
+        <button 
+          mat-stroked-button 
+          type="button" 
+          (click)="fileInput.click()" 
+          [disabled]="saving">
+          <mat-icon>upload</mat-icon>
+          {{ (imagePreviewUrl ? 'PRODUCTS.FORM.CHANGE_IMAGE' : 'PRODUCTS.FORM.UPLOAD_IMAGE') | translate }}
+        </button>
+        <span class="file-name" *ngIf="selectedFileName">{{ selectedFileName }}</span>
+      </div>
+    </div>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

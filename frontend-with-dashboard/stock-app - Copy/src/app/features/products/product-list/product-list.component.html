@@ -47,6 +47,15 @@
             <th mat-header-cell *matHeaderCellDef>{{ 'PRODUCTS.TABLE.ID' | translate }}</th>
             <td mat-cell *matCellDef="let row">{{ row.id }}</td>
           </ng-container>
+          <ng-container matColumnDef="image">
+            <th mat-header-cell *matHeaderCellDef>{{ 'PRODUCTS.TABLE.IMAGE' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="product-image-cell">
+                <img *ngIf="row.image" [src]="getImageUrl(row.image)" [alt]="row.name" class="product-thumbnail">
+                <mat-icon *ngIf="!row.image" class="no-image-icon">image</mat-icon>
+              </div>
+            </td>
+          </ng-container>
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>{{ 'PRODUCTS.TABLE.NAME' | translate }}</th>
             <td mat-cell *matCellDef="let row"><strong>{{ row.name }}</strong></td>
