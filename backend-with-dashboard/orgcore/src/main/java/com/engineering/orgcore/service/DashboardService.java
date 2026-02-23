@@ -62,10 +62,11 @@ public class DashboardService {
     public DashboardSummaryDto getSummary(Long tenantId, Long branchId, LocalDate startDate, LocalDate endDate) {
         DashboardSummaryDto raw = saleRepository.getSalesSummary(tenantId, branchId, startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay());
 
-        long totalSaleItems = saleItemRepository.getTotalSaleItems(tenantId, branchId, startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay());
+        Long totalSaleItems = saleItemRepository.getTotalSaleItems(tenantId, branchId, startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay());
+        totalSaleItems = totalSaleItems == null ? 0 : totalSaleItems;
 
-        long totalCategories = categoryRepository.count();
-        long activeBranches = branchRepository.countByTenantIdAndIsActive(tenantId, 1);
+        Long totalCategories = categoryRepository.count();
+        Long activeBranches = branchRepository.countByTenantIdAndIsActive(tenantId, 1);
 
         // avg sales per product (totalAmount / distinct products sold)
         double avgPerSale = (totalSaleItems > 0 && raw.finalAmount() != null)

@@ -5,5 +5,19 @@ public enum ReferenceType {
     TRANSFER,
     PURCHASE,
     MANUAL,
-    IMPORT
+    IMPORT;
+
+    public static ReferenceType fromValue(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        for (ReferenceType type : ReferenceType.values()) {
+            if (type.name().equalsIgnoreCase(value)) {
+                return type;
+            }
+        }
+
+        throw new IllegalArgumentException("Invalid ReferenceType: " + value);
+    }
 }

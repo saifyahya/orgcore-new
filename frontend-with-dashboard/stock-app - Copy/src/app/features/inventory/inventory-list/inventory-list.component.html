@@ -4,9 +4,14 @@
       <h1>{{ 'INVENTORY.TITLE' | translate }}</h1>
       <p class="page-subtitle">{{ 'INVENTORY.SUBTITLE' | translate }}</p>
     </div>
-    <button mat-flat-button color="primary" (click)="openForm()">
-      <mat-icon>add</mat-icon> {{ 'INVENTORY.ADD_ENTRY' | translate }}
-    </button>
+    <div style="display: flex; gap: 8px;">
+      <button mat-stroked-button color="primary" (click)="openImport()">
+        <mat-icon>upload_file</mat-icon> {{ 'INVENTORY.IMPORT_EXCEL' | translate }}
+      </button>
+      <button mat-flat-button color="primary" (click)="openForm()">
+        <mat-icon>add</mat-icon> {{ 'INVENTORY.ADD_ENTRY' | translate }}
+      </button>
+    </div>
   </div>
 
   <mat-card>

@@ -2,12 +2,15 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
 import { Inventory, InventoryRequest, Page, StockMovement, StockMovementRequest } from '../models';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class InventoryService {
   private path = '/inventories';
+  private baseUrl = environment.apiUrl;
 
-  constructor(private api: ApiService) { }
+  constructor(private api: ApiService, private http: HttpClient) { }
 
   getAll(branchId?: number): Observable<Page<Inventory>> {
     const params: Record<string, number> = {};
@@ -29,6 +32,12 @@ export class InventoryService {
 
   delete(id: number): Observable<void> {
     return this.api.delete<void>(`${this.path}/${id}`);
+  }
+
+  importFromExcel(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<any>(`${this.baseUrl}${this.path}/import`, formData);
   }
 }
 

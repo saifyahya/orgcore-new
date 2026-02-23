@@ -22,8 +22,10 @@ public class Tenant  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String tenantName;
 
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String Address;
 
     private String Email;

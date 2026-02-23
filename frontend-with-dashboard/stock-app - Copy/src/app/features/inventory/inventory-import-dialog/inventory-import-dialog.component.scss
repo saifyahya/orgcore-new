@@ -1,0 +1,23 @@
+@use '../../../shared/styles/dialog' as *;
+mat-dialog-content { min-width: 480px; max-width: 600px; }
+.step-content { padding: 16px 0; }
+.upload-zone { border: 2px dashed var(--border-color); border-radius: 8px; padding: 32px; text-align: center; cursor: pointer; margin: 16px 0; transition: border-color 0.2s; }
+.upload-zone:hover { border-color: var(--accent); }
+.upload-zone.has-file { border-color: #10b981; background: var(--badge-green-bg); }
+.upload-zone mat-icon { font-size: 36px; width: 36px; height: 36px; color: var(--text-muted); }
+.upload-zone.has-file mat-icon { color: #10b981; }
+.upload-zone p { margin: 8px 0 0; color: var(--text-secondary); font-size: 14px; }
+.upload-zone small { color: var(--text-muted); font-size: 12px; }
+.filename { font-weight: 500; color: #10b981 !important; }
+.template-hint { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; flex-wrap: wrap; }
+.template-hint mat-icon { font-size: 16px; width: 16px; height: 16px; color: var(--accent); }
+.template-hint code { background: var(--chip-bg); padding: 1px 4px; border-radius: 3px; }
+.step-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+.preview-info { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+.preview-table-wrap { overflow-x: auto; max-height: 280px; overflow-y: auto; }
+.preview-table { width: 100%; font-size: 13px; }
+.preview-note { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+.spinner-center { text-align: center; padding: 24px; color: var(--text-secondary); }
+.spinner-center p { margin-top: 12px; }
+.empty-msg { text-align: center; padding: 24px; color: var(--text-muted); }
+.empty-msg mat-icon { font-size: 32px; width: 32px; height: 32px; }

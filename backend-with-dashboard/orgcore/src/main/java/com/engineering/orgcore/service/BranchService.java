@@ -32,6 +32,7 @@ public class BranchService {
         branch.setBranchName(request.branchName().trim());
         branch.setAddress(request.address());
         branch.setTenantId(tenantId);
+        branch.setIsActive(1);
 
         branch.setCreatedBy(utils.getCurrentUserName());
         branch.setCreatedAt(LocalDateTime.now());

@@ -21,8 +21,10 @@ public class Branch extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String branchName;
 
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String address;
 
     @OneToMany(mappedBy = "branch")

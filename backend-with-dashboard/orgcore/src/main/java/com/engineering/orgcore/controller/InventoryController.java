@@ -2,13 +2,17 @@ package com.engineering.orgcore.controller;
 
 import com.engineering.orgcore.config.Utils;
 import com.engineering.orgcore.dto.filter.PageFilter;
+import com.engineering.orgcore.dto.inventory.CreateInventoryDto;
 import com.engineering.orgcore.dto.inventory.InventoryDto;
 import com.engineering.orgcore.exceptions.NotFoundException;
 import com.engineering.orgcore.service.InventoryService;
+import com.engineering.orgcore.util.ExcelParserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/inventories")
@@ -18,11 +22,12 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
     private final Utils utils;
+    private final ExcelParserService excelParserService;
 
     // Create
     @PostMapping
     public InventoryDto create(
-            @Valid @RequestBody InventoryDto request
+            @Valid @RequestBody CreateInventoryDto request
     ) throws NotFoundException {
         return inventoryService.create(utils.getCurrentTenant(), request);
     }
@@ -61,5 +66,33 @@ public class InventoryController {
             @PathVariable Long id
     ) throws NotFoundException {
         inventoryService.delete(utils.getCurrentTenant(), id);
+    }
+
+
+    @PostMapping("/import")
+    public ResponseEntity<?> importInventory(
+            @RequestParam("file") MultipartFile file) throws Exception{
+
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("File is empty");
+        }
+
+            var rows = excelParserService.read(
+                    file.getInputStream(),
+                    0,   // sheet index
+                    1,   // start row (skip header)
+                    CreateInventoryDto.class
+            );
+
+            rows.forEach(dto -> {
+                try {
+                    inventoryService.create(utils.getCurrentTenant(), dto);
+                } catch (NotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            return ResponseEntity.ok("Imported " + rows.size() + " rows successfully");
+
     }
 }

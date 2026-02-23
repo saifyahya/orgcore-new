@@ -14,5 +14,5 @@ public interface SaleItemRepository extends JpaRepository<SaleItem, Long> {
                     AND (si.createdAt >= :startDate AND si.createdAt < :endDate)
                     AND (:branchId IS NULL OR si.sale.branch.id = :branchId )
             """)
-    Integer getTotalSaleItems(Long tenantId, Long branchId, LocalDateTime startDate, LocalDateTime endDate);
+    Long getTotalSaleItems(Long tenantId, Long branchId, LocalDateTime startDate, LocalDateTime endDate);
 }

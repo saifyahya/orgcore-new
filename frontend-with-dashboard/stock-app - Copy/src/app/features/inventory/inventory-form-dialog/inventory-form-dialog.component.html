@@ -17,8 +17,13 @@
     </mat-form-field>
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>{{ 'INVENTORY.FORM.QUANTITY_LABEL' | translate }} *</mat-label>
-      <input matInput type="number" formControlName="quantity" placeholder="0" min="0">
+      <input matInput type="number" formControlName="quantity" placeholder="0" min="1">
       <mat-error>{{ 'INVENTORY.FORM.QTY_REQUIRED' | translate }}</mat-error>
+    </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'INVENTORY.FORM.NOTE_LABEL' | translate }} *</mat-label>
+      <input matInput type="number" formControlName="note" >
     </mat-form-field>
   </form>
 </mat-dialog-content>
