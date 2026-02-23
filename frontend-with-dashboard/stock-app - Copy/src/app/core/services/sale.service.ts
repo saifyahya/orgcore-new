@@ -36,10 +36,32 @@ export class SaleService {
     return this.api.delete<void>(`${this.path}/${id}`);
   }
 
-  importFromExcel(file: File, branchId: number): Observable<Sale[]> {
+  /**
+   * Import sales from Excel file.
+   * 
+   * Excel Format (Flattened/Denormalized):
+   * Each row represents ONE sale item. Sale header fields are repeated for items of the same sale.
+   * 
+   * Columns:
+   * - branchId, totalAmount, discountAmount, taxAmount, paymentMethod, channel, externalRef (sale fields)
+   * - productId, quantity, unitPrice, lineTotal (item fields)
+   * 
+   * Backend Implementation:
+   * 1. Read all rows from Excel
+   * 2. Group rows by 'externalRef' (or combination of sale fields)
+   * 3. For each group:
+   *    - Extract sale header from first row (branchId, totalAmount, etc.)
+   *    - Collect all items (productId, quantity, unitPrice, lineTotal)
+   *    - Create Sale with List<SaleItemDto>
+   * 
+   * Example:
+   * Row 1: branchId=1, totalAmount=327.50, externalRef='POS-001', productId=1, quantity=10...
+   * Row 2: branchId=1, totalAmount=327.50, externalRef='POS-001', productId=2, quantity=5...
+   * → Creates 1 Sale with 2 items
+   */
+  importFromExcel(file: File): Observable<Sale[]> {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('branchId', String(branchId));
     return this.http.post<Sale[]>(`${this.baseUrl}${this.path}/import`, formData);
   }
 }

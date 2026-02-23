@@ -301,3 +301,7 @@ body {
     text-align: right;
   }
 }
+
+.mdc-list-item:hover .mdc-list-item__primary-text {
+  color: var(--sidenav-text) !important;
+}

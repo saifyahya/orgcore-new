@@ -75,7 +75,7 @@ export class SaleFormComponent implements OnInit {
   save(): void {
     if (this.form.invalid || this.items.length === 0) return; this.saving = true;
     const fv = this.form.value;
-    const payload: SaleRequest = { branch: this.branches.find(br => br.id === fv.branchId) , paymentMethod: fv.paymentMethod, channel: fv.channel, externalRef: fv.externalRef || undefined, discountAmount: fv.discountAmount || 0, taxAmount: fv.taxAmount || 0, totalAmount: this.grandTotal, items: this.items.value };
+    const payload: SaleRequest = { branchId: this.branches.find(br => br.id === fv.branchId)?.id , paymentMethod: fv.paymentMethod, channel: fv.channel, externalRef: fv.externalRef || undefined, discountAmount: fv.discountAmount || 0, taxAmount: fv.taxAmount || 0, totalAmount: this.grandTotal, items: this.items.value };
     const req = this.isEdit ? this.saleService.update(this.saleId!, payload) : this.saleService.create(payload);
     req.subscribe({ next: (sale) => { this.notification.success(this.ts.t(this.isEdit ? 'SALES.UPDATED' : 'SALES.CREATED')); this.router.navigate(['/sales', sale.id]); }, error: () => { this.saving = false; } });
   }

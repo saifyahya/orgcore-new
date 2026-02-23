@@ -35,5 +35,5 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
     Page<Inventory> findAllByTenantIdAndBranch_IdAndProduct_Id(Long tenantId, Long branchId, Long productId, Pageable pageable);
 
-    Optional<Inventory> findByTenantIdAndBranch_IdAndProduct_Id(Long tenantId, Long branchId, Long productId);
+    Optional<Inventory> findByTenantIdAndBranch_IdAndProduct_Code(Long tenantId, Long branchId, String productCode);
 }

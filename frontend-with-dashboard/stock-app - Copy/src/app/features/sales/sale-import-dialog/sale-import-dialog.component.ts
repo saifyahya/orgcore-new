@@ -28,7 +28,7 @@ export class SaleImportDialogComponent {
   parsing = false; importing = false;
 
   constructor(private fb: FormBuilder, private saleService: SaleService, private excelService: ExcelService, private notification: NotificationService, private ts: TranslationService, public dialogRef: MatDialogRef<SaleImportDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogData) {
-    this.configForm = this.fb.group({ branchId: [null, Validators.required] });
+    this.configForm = this.fb.group({});
   }
 
   onFileSelected(event: Event): void { this.selectedFile = (event.target as HTMLInputElement).files?.[0] || null; }
@@ -41,8 +41,8 @@ export class SaleImportDialogComponent {
   }
 
   importFile(): void {
-    if (!this.selectedFile || !this.configForm.value.branchId) return; this.importing = true;
-    this.saleService.importFromExcel(this.selectedFile, this.configForm.value.branchId).subscribe({
+    if (!this.selectedFile) return; this.importing = true;
+    this.saleService.importFromExcel(this.selectedFile).subscribe({
       next: (result) => { this.notification.success(this.ts.t('SALES.IMPORT.IMPORT_SUCCESS', { count: result.length })); this.dialogRef.close(true); },
       error: () => { this.importing = false; }
     });

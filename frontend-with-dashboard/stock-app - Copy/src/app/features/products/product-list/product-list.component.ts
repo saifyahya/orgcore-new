@@ -19,6 +19,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { TranslationService } from '../../../core/services/translation.service';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog.component';
 import { ProductFormDialogComponent } from '../product-form-dialog/product-form-dialog.component';
+import { ProductImportDialogComponent } from '../product-import-dialog/product-import-dialog.component';
 import { Product, Category } from '../../../core/models';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 import { environment } from '../../../../environments/environment';
@@ -58,7 +59,7 @@ export class ProductListComponent implements OnInit {
   pageSize = 10;
   pageIndex = 0;
 
-  displayedColumns = ['id', 'image', 'name', 'category', 'price', 'discount', 'isActive', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy', 'actions'];
+  displayedColumns = ['code', 'image', 'name', 'category', 'price', 'discount', 'isActive', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy', 'actions'];
 
   constructor(
     private productService: ProductService,
@@ -118,6 +119,12 @@ export class ProductListComponent implements OnInit {
     this.dialog.open(ProductFormDialogComponent, {
       width: '520px',
       data: { product: product || null, categories: this.categories }
+    }).afterClosed().subscribe(result => { if (result) this.load(); });
+  }
+
+  openImport(): void {
+    this.dialog.open(ProductImportDialogComponent, {
+      width: '560px'
     }).afterClosed().subscribe(result => { if (result) this.load(); });
   }
 

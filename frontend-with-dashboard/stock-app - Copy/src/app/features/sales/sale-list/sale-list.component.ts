@@ -31,6 +31,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 })
 export class SaleListComponent implements OnInit {
   sales: Sale[] = []; filtered: Sale[] = []; branches: Branch[] = []; loading = true;
+  totalElements = 0;
   filters: { branchId: number | null; from: Date | null; to: Date | null } = { branchId: null, from: null, to: null };
   displayedColumns = ['id', 'branch', 'items', 'totalAmount', 'discountAmount', 'paymentMethod', 'channel', 'createdAt', 'createdBy', 'updatedBy', 'updatedAt', 'actions'];
 
@@ -46,7 +47,7 @@ export class SaleListComponent implements OnInit {
     if (this.filters.branchId) params['branchId'] = this.filters.branchId;
     if (this.filters.from) params['from'] = this.filters.from.toISOString().split('T')[0];
     if (this.filters.to) params['to'] = this.filters.to.toISOString().split('T')[0];
-    this.saleService.getAll(params).subscribe({ next: (data) => { this.sales = data.content; this.filtered = data.content; this.loading = false; }, error: () => { this.loading = false; } });
+    this.saleService.getAll(params).subscribe({ next: (data) => { this.sales = data.content; this.filtered = data.content; this.totalElements = data.totalElements; this.loading = false; }, error: () => { this.loading = false; } });
   }
 
   applyFilters(): void { this.loadSales(); }

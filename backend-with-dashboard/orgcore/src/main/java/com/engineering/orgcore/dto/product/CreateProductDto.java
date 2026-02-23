@@ -1,18 +1,14 @@
 package com.engineering.orgcore.dto.product;
 import com.engineering.orgcore.dto.category.CategoryDto;
+import com.engineering.orgcore.util.ExcelIndex;
 
-public record CreateProductDto(
-        Long id,
-        String name,
-        String description,
-        Long categoryId,
-        String image,
-        Double price,
-        Double discount,
-        Integer isActive,
-        Long rate,
-        String createdBy,
-        String createdAt,
-        String updatedBy,
-        String updatedAt
+public record  CreateProductDto(
+       @ExcelIndex(0) String name,
+       @ExcelIndex(1) String description,
+       @ExcelIndex(2) Long categoryId,
+       @ExcelIndex(3) Double price,
+       @ExcelIndex(4) Double discount,
+       @ExcelIndex(5) Integer isActive,
+       @ExcelIndex(6) Long rate,
+       @ExcelIndex(7) String code
 ) {}

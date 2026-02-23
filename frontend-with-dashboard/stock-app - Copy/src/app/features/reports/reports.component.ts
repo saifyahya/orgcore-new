@@ -35,6 +35,7 @@ import {
   MonthlySeries, WeeklyDaySeries,
   CategorySales, PaymentMethodSales, TopProduct, Branch, Product, Category
 } from '../../core/models';
+import { environment } from 'src/environments/environment';
 
 Chart.register(
   CategoryScale, LinearScale, BarElement, LineElement,
@@ -709,4 +710,8 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
     const max = this.maxOf(this.currentTopList, this.topMode === 'qty' ? 'totalQuantity' : 'totalRevenue');
     return Math.round(((this.topMode === 'qty' ? p.totalQuantity : p.totalRevenue) / max) * 100);
   }
+
+    getImageUrl(image: string): string {
+      return `${environment.apiUrl}/images/${image}`;
+    }
 }

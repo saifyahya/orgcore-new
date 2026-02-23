@@ -16,8 +16,8 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 })
 export class SaleDetailComponent implements OnInit {
   sale: Sale | null = null; loading = true;
-  itemColumns = ['product', 'quantity', 'unitPrice', 'lineTotal'];
-  get subtotal(): number { return (this.sale?.items || []).reduce((sum, i) => sum + (i.lineTotal || 0), 0); }
+  itemColumns = ['code', 'product', 'quantity', 'unitPrice', 'lineTotal'];
+  get subtotal(): number { return (this.sale?.items || []).reduce((sum, i) => sum + ((i.quantity || 0) * (i.unitPrice || 0)), 0); }
 
   constructor(private saleService: SaleService, private route: ActivatedRoute) {}
   ngOnInit(): void { this.saleService.getById(Number(this.route.snapshot.params['id'])).subscribe({ next: (sale) => { this.sale = sale; this.loading = false; }, error: () => { this.loading = false; } }); }

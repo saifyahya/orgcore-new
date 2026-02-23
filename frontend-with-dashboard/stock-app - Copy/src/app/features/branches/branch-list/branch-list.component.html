@@ -12,7 +12,9 @@
   <mat-card>
     <mat-card-content>
       <div class="table-toolbar">
-        <mat-form-field appearance="outline" class="search-field">
+
+
+        <div class="filters">        <mat-form-field appearance="outline" class="search-field">
           <mat-label>{{ 'BRANCHES.SEARCH_LABEL' | translate }}</mat-label>
           <input matInput [(ngModel)]="searchTerm" (keyup.enter)="onSearch()"
             [placeholder]="'BRANCHES.SEARCH_PLACEHOLDER' | translate">
@@ -28,7 +30,10 @@
             <mat-option [value]="1">{{ 'COMMON.ACTIVE' | translate }}</mat-option>
             <mat-option [value]="0">{{ 'COMMON.INACTIVE' | translate }}</mat-option>
           </mat-select>
-        </mat-form-field>
+        </mat-form-field></div>
+        <div class="total-info" *ngIf="totalElements > 0">
+          <strong>{{ 'COMMON.TOTAL' | translate }}:</strong> {{ totalElements }}
+        </div>
       </div>
 
       <div *ngIf="loading" class="spinner-wrap">

@@ -2,17 +2,19 @@ package com.engineering.orgcore.service;
 
 import com.engineering.orgcore.config.Utils;
 import com.engineering.orgcore.dto.filter.PageFilter;
-import  com.engineering.orgcore.dto.sales.*;
+import com.engineering.orgcore.dto.sales.CreateSaleDto;
+import com.engineering.orgcore.dto.sales.SaleDto;
+import com.engineering.orgcore.dto.sales.SaleItemDto;
 import com.engineering.orgcore.entity.*;
-import com.engineering.orgcore.enums.ReferenceType;
-import com.engineering.orgcore.enums.StockMovementReason;
-import com.engineering.orgcore.enums.StockMovementType;
+import com.engineering.orgcore.enums.*;
 import com.engineering.orgcore.exceptions.NotFoundException;
 import com.engineering.orgcore.repository.*;
+import com.engineering.orgcore.util.ExcelParserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -28,18 +30,20 @@ public class SaleService {
     private final InventoryRepository inventoryRepository;
     private final Utils utils;
     private final BranchService branchService;
+    private final ExcelParserService excelParserService;
 
 
-    public SaleDto create(Long tenantId, SaleDto request) throws NotFoundException {
+    public SaleDto create(Long tenantId, CreateSaleDto request) throws NotFoundException {
 
-        if (request.branch().id() == null) throw new IllegalArgumentException("branchId is required");
-        if (request.items() == null || request.items().isEmpty()) throw new IllegalArgumentException("items are required");
+        if (request.branchId() == null) throw new IllegalArgumentException("branchId is required");
+        if (request.items() == null || request.items().isEmpty())
+            throw new IllegalArgumentException("items are required");
 
-        Branch branch = branchRepository.findById(request.branch().id())
-                .orElseThrow(() -> new NotFoundException("Branch not found with id: " + request.branch().id()));
+        Branch branch = branchRepository.findById(request.branchId())
+                .orElseThrow(() -> new NotFoundException("Branch not found with id: " + request.branchId()));
 
         if (!tenantId.equals(branch.getTenantId())) {
-            throw new NotFoundException("Branch not found with id: " + request.branch().id());
+            throw new NotFoundException("Branch not found with id: " + request.branchId());
         }
 
         Sale sale = new Sale();
@@ -47,8 +51,8 @@ public class SaleService {
         sale.setBranch(branch);
         sale.setDiscountAmount(request.discountAmount() != null ? request.discountAmount() : 0.0);
         sale.setTaxAmount(request.taxAmount() != null ? request.taxAmount() : 0.0);
-        sale.setPaymentMethod(request.paymentMethod());
-        sale.setChannel(request.channel() != null ? request.channel() : sale.getChannel());
+        sale.setPaymentMethod(PaymentMethod.fromValue(request.paymentMethod()));
+        sale.setChannel(request.channel() != null ? SaleChannel.fromValue(request.channel()) : sale.getChannel());
         sale.setExternalRef(request.externalRef());
         sale.setCreatedBy(utils.getCurrentUserName());
         sale.setCreatedAt(LocalDateTime.now());
@@ -61,7 +65,8 @@ public class SaleService {
         for (SaleItemDto itemDto : request.items()) {
 
             if (itemDto.productId() == null) throw new IllegalArgumentException("productId is required");
-            if (itemDto.quantity() == null || itemDto.quantity() <= 0) throw new IllegalArgumentException("quantity must be > 0");
+            if (itemDto.quantity() == null || itemDto.quantity() <= 0)
+                throw new IllegalArgumentException("quantity must be > 0");
 
             Product product = productRepository.findById(itemDto.productId())
                     .orElseThrow(() -> new NotFoundException("Product not found with id: " + itemDto.productId()));
@@ -126,7 +131,7 @@ public class SaleService {
             sm.setQuantity(si.getQuantity());
             sm.setUnitCost(null);
             sm.setRefType(ReferenceType.SALE);
-            sm.setRefId(String.format("SaleId-%s",saved.getId()));
+            sm.setRefId(String.format("SaleId-%s", saved.getExternalRef()));
             sm.setNote(null);
 
             stockMovementRepository.save(sm);
@@ -167,9 +172,34 @@ public class SaleService {
         // Also consider deleting related stock movements (or keep them as history)
     }
 
+
+    public String importSales(MultipartFile file, Long tenantId) throws Exception {
+        if (file.isEmpty()) {
+            throw new RuntimeException("File is empty");
+        }
+        var rows = excelParserService.read(
+                file.getInputStream(),
+                0,   // sheet index
+                1,   // start row (skip header)
+                CreateSaleDto.class
+        );
+        rows.forEach(dto -> {
+            try {
+                create(tenantId, dto);
+            } catch (NotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return "Imported " + rows.size() + " sales successfully";
+    }
+
     private SaleDto toDto(Sale sale) {
         var items = sale.getItems().stream()
-                .map(i -> new SaleItemDto(i.getProduct().getId(), i.getQuantity(), i.getUnitPrice()))
+                .map(i -> new SaleItemDto(i.getProduct().getId(),
+                        i.getProduct().getCode(),
+                        i.getProduct().getName(),
+                        i.getQuantity(),
+                        i.getUnitPrice()))
                 .toList();
 
         return new SaleDto(

@@ -2,12 +2,15 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
 import { Page, Product, ProductRequest } from '../models';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
   private path = '/products';
+  private baseUrl = environment.apiUrl;
 
-  constructor(private api: ApiService) { }
+  constructor(private api: ApiService, private http: HttpClient) { }
 
   getAll(page: number = 0, size: number = 10, search?: string, isActive?: number, categoryId?: number): Observable<Page<Product>> {
     const params: any = { page, size };
@@ -65,5 +68,11 @@ export class ProductService {
 
   toggleActive(id: number, isActive: number): Observable<Product> {
     return this.api.patch<Product>(`${this.path}/${id}/active`, { isActive });
+  }
+
+  importFromExcel(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<any>(`${this.baseUrl}${this.path}/import`, formData);
   }
 }

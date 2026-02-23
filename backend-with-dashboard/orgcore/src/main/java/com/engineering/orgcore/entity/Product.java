@@ -36,6 +36,8 @@ public class Product extends BaseEntity {
 
     private Integer isActive;
 
+    private String code;
+
     @OneToMany(mappedBy = "product")
     @JsonIgnore
     private List<Inventory> inventories;

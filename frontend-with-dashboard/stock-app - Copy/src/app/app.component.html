@@ -15,7 +15,7 @@
       <a mat-list-item *ngFor="let item of navItems" [routerLink]="item.route" routerLinkActive="active-link"
         [routerLinkActiveOptions]="{ exact: item.route === '/' }" (click)="isMobile() && sidenav.close()">
         <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-        <span matListItemTitle>{{ item.labelKey | translate }}</span>
+        <span matListItemTitle class="side-menu-tab-name">{{ item.labelKey | translate }}</span>
       </a>
     </mat-nav-list>
   </mat-sidenav>

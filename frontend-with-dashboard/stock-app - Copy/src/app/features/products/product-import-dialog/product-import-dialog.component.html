@@ -1,42 +1,38 @@
-<h2 mat-dialog-title>{{ 'SALES.IMPORT.TITLE' | translate }}</h2>
+<h2 mat-dialog-title>{{ 'PRODUCTS.IMPORT.TITLE' | translate }}</h2>
 <mat-dialog-content>
   <mat-stepper #stepper [linear]="true">
-    <mat-step [label]="'SALES.IMPORT.STEP_CONFIGURE' | translate">
+    <mat-step [label]="'PRODUCTS.IMPORT.STEP_CONFIGURE' | translate">
       <div class="step-content">
         <div class="upload-zone" (click)="fileInput.click()" [class.has-file]="selectedFile">
           <input #fileInput type="file" accept=".xlsx,.xls,.csv" (change)="onFileSelected($event)" style="display:none">
           <mat-icon>{{ selectedFile ? 'check_circle' : 'upload_file' }}</mat-icon>
-          <p *ngIf="!selectedFile">{{ 'SALES.IMPORT.DROP_ZONE' | translate }}</p>
+          <p *ngIf="!selectedFile">{{ 'PRODUCTS.IMPORT.DROP_ZONE' | translate }}</p>
           <p *ngIf="selectedFile" class="filename">{{ selectedFile.name }}</p>
-          <small *ngIf="!selectedFile">{{ 'SALES.IMPORT.SUPPORTED' | translate }}</small>
+          <small *ngIf="!selectedFile">{{ 'PRODUCTS.IMPORT.SUPPORTED' | translate }}</small>
         </div>
 
         <div class="template-hint">
           <mat-icon>info</mat-icon>
-          <span>{{ 'SALES.IMPORT.TEMPLATE_HINT' | translate }}</span>
-          <div style="margin-top: 4px; font-size: 11px;">
-            <strong>{{ 'SALES.IMPORT.SALE_FIELDS' | translate }}:</strong> <code>branchId</code>, <code>totalAmount</code>, <code>discountAmount</code>, <code>taxAmount</code>, <code>paymentMethod</code>, <code>channel</code>, <code>externalRef</code><br>
-            <strong>{{ 'SALES.IMPORT.ITEM_FIELDS' | translate }}:</strong> <code>productId</code>, <code>quantity</code>, <code>unitPrice</code>, <code>lineTotal</code>
-          </div>
-          <button mat-button color="primary" type="button" (click)="downloadTemplate()">{{ 'SALES.IMPORT.DOWNLOAD_TEMPLATE' | translate }}</button>
+          <span>{{ 'PRODUCTS.IMPORT.TEMPLATE_HINT' | translate }} <code>name</code>, <code>description</code>, <code>categoryId</code>, <code>price</code>, <code>discount</code>, <code>isActive</code>, <code>rate</code>, <code>code</code></span>
+          <button mat-button color="primary" type="button" (click)="downloadTemplate()">{{ 'PRODUCTS.IMPORT.DOWNLOAD_TEMPLATE' | translate }}</button>
         </div>
 
         <div class="step-actions">
           <button mat-flat-button color="primary" [disabled]="!selectedFile" (click)="parseFile(stepper)">
-            {{ 'SALES.IMPORT.NEXT_PREVIEW' | translate }}
+            {{ 'PRODUCTS.IMPORT.NEXT_PREVIEW' | translate }}
           </button>
         </div>
       </div>
     </mat-step>
 
-    <mat-step [label]="'SALES.IMPORT.STEP_PREVIEW' | translate">
+    <mat-step [label]="'PRODUCTS.IMPORT.STEP_PREVIEW' | translate">
       <div class="step-content">
         <div *ngIf="parsing" class="spinner-center">
           <mat-spinner diameter="32"></mat-spinner>
-          <p>{{ 'SALES.IMPORT.PARSING' | translate }}</p>
+          <p>{{ 'PRODUCTS.IMPORT.PARSING' | translate }}</p>
         </div>
         <div *ngIf="!parsing && previewRows.length > 0">
-          <p class="preview-info">{{ previewRows.length }} {{ 'SALES.IMPORT.PREVIEW_INFO' | translate }}</p>
+          <p class="preview-info">{{ previewRows.length }} {{ 'PRODUCTS.IMPORT.PREVIEW_INFO' | translate }}</p>
           <div class="preview-table-wrap">
             <table mat-table [dataSource]="previewRows.slice(0, 10)" class="preview-table">
               <ng-container *ngFor="let col of previewColumns" [matColumnDef]="col">
@@ -47,16 +43,16 @@
               <tr mat-row *matRowDef="let row; columns: previewColumns;"></tr>
             </table>
           </div>
-          <p class="preview-note" *ngIf="previewRows.length > 10">{{ 'SALES.IMPORT.FIRST_10' | translate }} {{ previewRows.length }}</p>
+          <p class="preview-note" *ngIf="previewRows.length > 10">{{ 'PRODUCTS.IMPORT.FIRST_10' | translate }} {{ previewRows.length }}</p>
         </div>
         <div *ngIf="!parsing && previewRows.length === 0" class="empty-msg">
-          <mat-icon>warning</mat-icon><p>{{ 'SALES.IMPORT.NO_DATA' | translate }}</p>
+          <mat-icon>warning</mat-icon><p>{{ 'PRODUCTS.IMPORT.NO_DATA' | translate }}</p>
         </div>
         <div class="step-actions">
-          <button mat-stroked-button matStepperPrevious>{{ 'SALES.IMPORT.BACK' | translate }}</button>
+          <button mat-stroked-button matStepperPrevious>{{ 'PRODUCTS.IMPORT.BACK' | translate }}</button>
           <button mat-flat-button color="primary" [disabled]="previewRows.length === 0 || importing" (click)="importFile()">
             <mat-spinner *ngIf="importing" diameter="18" style="display:inline-block;margin-inline-end:6px"></mat-spinner>
-            {{ 'SALES.IMPORT.IMPORT_BTN' | translate }} {{ previewRows.length }} {{ 'SALES.IMPORT.RECORDS' | translate }}
+            {{ 'PRODUCTS.IMPORT.IMPORT_BTN' | translate }} {{ previewRows.length }} {{ 'PRODUCTS.IMPORT.RECORDS' | translate }}
           </button>
         </div>
       </div>
@@ -64,5 +60,5 @@
   </mat-stepper>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-stroked-button [mat-dialog-close]="false">{{ 'SALES.IMPORT.CLOSE' | translate }}</button>
+  <button mat-stroked-button [mat-dialog-close]="false">{{ 'PRODUCTS.IMPORT.CLOSE' | translate }}</button>
 </mat-dialog-actions>

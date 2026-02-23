@@ -2,12 +2,15 @@ package com.engineering.orgcore.controller;
 
 import com.engineering.orgcore.config.Utils;
 import com.engineering.orgcore.dto.filter.PageFilter;
+import com.engineering.orgcore.dto.sales.CreateSaleDto;
 import com.engineering.orgcore.dto.sales.SaleDto;
 import com.engineering.orgcore.exceptions.NotFoundException;
 import com.engineering.orgcore.service.SaleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/sales")
@@ -20,7 +23,7 @@ public class SaleController {
 
     @PostMapping
     public SaleDto create(
-            @RequestBody SaleDto request
+            @RequestBody CreateSaleDto request
     ) throws NotFoundException {
         return saleService.create(utils.getCurrentTenant(), request);
     }
@@ -44,5 +47,12 @@ public class SaleController {
             @PathVariable Long id
     ) throws NotFoundException {
         saleService.delete(utils.getCurrentTenant(), id);
+    }
+
+
+    @PostMapping("/import")
+    public ResponseEntity<String> importSale(
+            @RequestParam("file") MultipartFile file) throws Exception{
+        return ResponseEntity.ok(saleService.importSales(file, utils.getCurrentTenant()));
     }
 }

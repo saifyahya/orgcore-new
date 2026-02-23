@@ -1,5 +1,7 @@
 // Shared page structure styles — import in each feature scss
-.page-container { max-width: 1100px; }
+.page-container {
+  max-width: 1100px;
+}
 
 .page-header {
   display: flex;
@@ -7,25 +9,67 @@
   align-items: flex-start;
   margin-bottom: 24px;
 
-  h1 { margin: 0; font-size: 28px; font-weight: 700; color: var(--text-primary); }
-  .page-subtitle { margin: 4px 0 0; color: var(--text-secondary); font-size: 14px; }
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .page-subtitle {
+    margin: 4px 0 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
 }
 
-.header-actions { display: flex; gap: 8px; }
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
 
-.table-toolbar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
-.search-field { width: 280px; }
-.filter-field { width: 180px; }
+.table-toolbar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  align-items: center;
+  justify-content: space-between;
 
-.data-table { width: 100%; }
+  .filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+}
+
+.search-field {
+  width: 280px;
+}
+
+.filter-field {
+  width: 180px;
+}
+
+.data-table {
+  width: 100%;
+}
 
 .status-badge {
   padding: 3px 10px;
   border-radius: 12px;
   font-size: 12px;
   font-weight: 500;
-  &.active { background: var(--badge-green-bg); color: var(--badge-green-text); }
-  &.inactive { background: var(--badge-red-bg); color: var(--badge-red-text); }
+
+  &.active {
+    background: var(--badge-green-bg);
+    color: var(--badge-green-text);
+  }
+
+  &.inactive {
+    background: var(--badge-red-bg);
+    color: var(--badge-red-text);
+  }
 }
 
 .badge {
@@ -45,14 +89,44 @@
   font-size: 12px;
 }
 
-.spinner-wrap { display: flex; justify-content: center; padding: 40px; }
+.spinner-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.total-info {
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  background: var(--chip-bg);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  display: inline-block;
+
+  strong {
+    color: var(--text-primary);
+    margin-inline-end: 4px;
+  }
+}
 
 .empty-msg {
   text-align: center;
   padding: 40px !important;
   color: var(--text-muted);
-  mat-icon { font-size: 40px; width: 40px; height: 40px; }
-  p { margin: 6px 0 0; }
+
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+  }
+
+  p {
+    margin: 6px 0 0;
+  }
 }
 
-.amount { font-weight: 600; color: var(--text-primary); }
+.amount {
+  font-weight: 600;
+  color: var(--text-primary);
+}

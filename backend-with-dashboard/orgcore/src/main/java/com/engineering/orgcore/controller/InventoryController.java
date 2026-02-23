@@ -22,7 +22,6 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
     private final Utils utils;
-    private final ExcelParserService excelParserService;
 
     // Create
     @PostMapping
@@ -68,31 +67,9 @@ public class InventoryController {
         inventoryService.delete(utils.getCurrentTenant(), id);
     }
 
-
     @PostMapping("/import")
-    public ResponseEntity<?> importInventory(
+    public ResponseEntity<String> importInventory(
             @RequestParam("file") MultipartFile file) throws Exception{
-
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("File is empty");
-        }
-
-            var rows = excelParserService.read(
-                    file.getInputStream(),
-                    0,   // sheet index
-                    1,   // start row (skip header)
-                    CreateInventoryDto.class
-            );
-
-            rows.forEach(dto -> {
-                try {
-                    inventoryService.create(utils.getCurrentTenant(), dto);
-                } catch (NotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-
-            return ResponseEntity.ok("Imported " + rows.size() + " rows successfully");
-
+            return ResponseEntity.ok(inventoryService.importInventory(file, utils.getCurrentTenant()));
     }
 }

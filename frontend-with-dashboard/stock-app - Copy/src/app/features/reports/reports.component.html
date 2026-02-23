@@ -257,7 +257,7 @@
                 <div class="rank-row" *ngFor="let p of currentTopList; let i = index">
                   <div class="rank-pos" [class.gold]="i===0" [class.silver]="i===1" [class.bronze]="i===2">#{{ i + 1 }}</div>
                   <div class="rank-thumb">
-                    <img *ngIf="p.productImage" [src]="p.productImage" [alt]="p.productName" onerror="this.style.display='none'">
+                    <img *ngIf="p.productImage" [src]="getImageUrl(p.productImage)" [alt]="p.productName" onerror="this.style.display='none'">
                     <mat-icon *ngIf="!p.productImage">inventory_2</mat-icon>
                   </div>
                   <div class="rank-info">

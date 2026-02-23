@@ -15,10 +15,14 @@ import com.engineering.orgcore.repository.BranchRepository;
 import com.engineering.orgcore.repository.InventoryRepository;
 import com.engineering.orgcore.repository.ProductRepository;
 import com.engineering.orgcore.repository.StockMovementRepository;
+import com.engineering.orgcore.util.ExcelParserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -31,14 +35,16 @@ public class InventoryService {
     private final StockMovementRepository stockMovementRepository;
     private final ProductService productService;
     private final BranchService branchService;
+    private final ExcelParserService excelParserService;
+
 
     public InventoryDto create(Long tenantId, CreateInventoryDto request) throws NotFoundException {
 
         if (request.branchId() == null) {
             throw new IllegalArgumentException("branchId is required");
         }
-        if (request.productId() == null) {
-            throw new IllegalArgumentException("productId is required");
+        if (request.productCode() == null) {
+            throw new IllegalArgumentException("productCode is required");
         }
         if (request.quantity() == null || request.quantity() < 0) {
             throw new IllegalArgumentException("quantity must be >= 0");
@@ -49,20 +55,20 @@ public class InventoryService {
 
         Branch branch = branchRepository.findById(request.branchId())
                 .orElseThrow(() -> new NotFoundException("Branch not found with id: " + request.branchId()));
-        Product product = productRepository.findById(request.branchId())
-                .orElseThrow(() -> new NotFoundException("Product not found with id: " + request.productId()));
+        Product product = productRepository.findByCode(request.productCode())
+                .orElseThrow(() -> new NotFoundException("Product not found with code: " + request.productCode()));
 
         if (!tenantId.equals(branch.getTenantId())) {
             throw new NotFoundException("Branch not found with id: " + request.branchId());
         }
         if (!tenantId.equals(product.getTenantId())) {
-            throw new NotFoundException("Product not found with id: " + request.productId());
+            throw new NotFoundException("Product not found with code: " + request.productCode());
         }
 
-//        inventoryRepository.findByTenantIdAndBranch_IdAndProduct_Id(tenantId, request.branchId(), request.productId())
-//                .ifPresent(inv -> {
-//                    throw new IllegalArgumentException("Inventory already exists for this branch and product. Use update.");
-//                });
+        inventoryRepository.findByTenantIdAndBranch_IdAndProduct_Code(tenantId, request.branchId(), request.productCode())
+                .ifPresent(inv -> {
+                    throw new IllegalArgumentException("Inventory already exists for this branch and product. Use update.");
+                });
 
         Inventory inv = new Inventory();
         inv.setBranch(branch);
@@ -153,6 +159,27 @@ public class InventoryService {
         }
 
         inventoryRepository.delete(inv);
+    }
+
+    public String importInventory(MultipartFile file, Long tenantId) throws Exception {
+        if (file.isEmpty()) {
+           throw new RuntimeException("File is empty");
+        }
+        var rows = excelParserService.read(
+                file.getInputStream(),
+                0,   // sheet index
+                1,   // start row (skip header)
+                CreateInventoryDto.class
+        );
+        rows.forEach(dto -> {
+            try {
+               create(tenantId, dto);
+            } catch (NotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return "Imported " + rows.size() + " rows successfully";
     }
 
     private InventoryDto toDto(Inventory inv) {

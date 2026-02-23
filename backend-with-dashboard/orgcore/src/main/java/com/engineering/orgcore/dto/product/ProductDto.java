@@ -6,6 +6,7 @@ public record ProductDto(
         Long id,
         String name,
         String description,
+        String code,
         CategoryDto categoryDto,
         String image,
         Double price,

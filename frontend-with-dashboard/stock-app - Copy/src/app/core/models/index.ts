@@ -78,6 +78,7 @@ export interface BranchRequest {
 export interface Product extends BaseEntity {
   id?: number;
   name: string;
+  code?: string;
   description?: string;
   categoryDto?: Category;
   categoryId?: number;
@@ -122,6 +123,8 @@ export interface SaleItem extends BaseEntity {
   id?: number;
   product?: Product;
   productId?: number;
+  code?: string;
+  name?: string;
   quantity: number;
   unitPrice?: number;
   lineTotal?: number;
@@ -149,7 +152,7 @@ export interface Sale extends BaseEntity {
 }
 
 export interface SaleRequest {
-  branch: any;
+  branchId: any;
   totalAmount?: number;
   discountAmount?: number;
   taxAmount?: number;

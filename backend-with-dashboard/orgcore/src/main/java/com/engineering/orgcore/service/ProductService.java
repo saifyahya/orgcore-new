@@ -9,6 +9,7 @@ import com.engineering.orgcore.entity.Product;
 import com.engineering.orgcore.exceptions.NotFoundException;
 import com.engineering.orgcore.repository.CategoryRepository;
 import com.engineering.orgcore.repository.ProductRepository;
+import com.engineering.orgcore.util.ExcelParserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +31,7 @@ public class ProductService {
     private final Utils utils;
     private final CategoryService categoryService;
     private final FileStorageService fileStorageService;
+    private final ExcelParserService excelParserService;
 
 
     public ProductDto create(Long tenantId, CreateProductDto request, MultipartFile imageFile) throws NotFoundException {
@@ -61,6 +64,7 @@ public class ProductService {
         product.setPrice(request.price());
         product.setIsActive(request.isActive() != null ? request.isActive() : 1);
         product.setTenantId(tenantId);
+        product.setCreatedBy(request.code()!= null ? request.code(): UUID.randomUUID().toString());
 
         product.setCreatedBy(utils.getCurrentUserName());
         product.setCreatedAt(LocalDateTime.now());
@@ -168,12 +172,34 @@ public class ProductService {
         product.setIsActive(0);
     }
 
-    public ProductDto toDto(Product p) {
+
+    public String importInventory(MultipartFile file, Long tenantId) throws Exception {
+        if (file.isEmpty()) {
+            throw new RuntimeException("File is empty");
+        }
+        var rows = excelParserService.read(
+                file.getInputStream(),
+                0,   // sheet index
+                1,   // start row (skip header)
+                CreateProductDto.class
+        );
+        rows.forEach(dto -> {
+            try {
+                create(tenantId, dto, null);
+            } catch (NotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return "Imported " + rows.size() + " products successfully";
+    }
+
+        public ProductDto toDto(Product p) {
         String encryptedImage = (p.getImage());
         return new ProductDto(
                 p.getId(),
                 p.getName(),
                 p.getDescription(),
+                p.getCode(),
                 categoryService.toDto(p.getCategory()),
                 encryptedImage,
                 p.getPrice(),
