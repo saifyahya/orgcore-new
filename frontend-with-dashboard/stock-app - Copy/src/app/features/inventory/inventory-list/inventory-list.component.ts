@@ -17,6 +17,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { TranslationService } from '../../../core/services/translation.service';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog.component';
 import { InventoryFormDialogComponent } from '../inventory-form-dialog/inventory-form-dialog.component';
+import { InventoryImportDialogComponent } from '../inventory-import-dialog/inventory-import-dialog.component';
 import { Inventory, Branch } from '../../../core/models';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
@@ -47,6 +48,10 @@ export class InventoryListComponent implements OnInit {
 
   openForm(inventory?: Inventory): void {
     this.dialog.open(InventoryFormDialogComponent, { width: '440px', data: { inventory: inventory || null, branches: this.branches } }).afterClosed().subscribe(result => { if (result) this.load(); });
+  }
+
+  openImport(): void {
+    this.dialog.open(InventoryImportDialogComponent, { width: '560px' }).afterClosed().subscribe(result => { if (result) this.load(); });
   }
 
   delete(inv: Inventory): void {

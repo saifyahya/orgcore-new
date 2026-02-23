@@ -1,7 +1,4 @@
 import {
-  BidiModule
-} from "./chunk-KMNHUARP.js";
-import {
   BreakpointObserver,
   Platform,
   _getEventTarget,
@@ -13,6 +10,9 @@ import {
   coerceNumberProperty,
   normalizePassiveListenerOptions
 } from "./chunk-IN3WGZ7D.js";
+import {
+  BidiModule
+} from "./chunk-KMNHUARP.js";
 import {
   DOCUMENT
 } from "./chunk-RU5QBMYY.js";
@@ -4780,4 +4780,4 @@ export {
   MatRippleLoader,
   _MatInternalFormField
 };
-//# sourceMappingURL=chunk-3BBXOATK.js.map
+//# sourceMappingURL=chunk-KBI5UP6S.js.map

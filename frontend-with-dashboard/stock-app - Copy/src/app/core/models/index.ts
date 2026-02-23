@@ -107,6 +107,8 @@ export interface Inventory extends BaseEntity {
   product?: Product;
   productId?: number;
   quantity?: number;
+  note?: string,
+  referenceType?:string
 }
 
 export interface InventoryRequest {
@@ -147,7 +149,7 @@ export interface Sale extends BaseEntity {
 }
 
 export interface SaleRequest {
-  branchId: number;
+  branch: any;
   totalAmount?: number;
   discountAmount?: number;
   taxAmount?: number;

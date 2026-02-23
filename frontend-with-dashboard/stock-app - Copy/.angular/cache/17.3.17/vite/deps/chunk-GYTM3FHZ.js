@@ -3,7 +3,7 @@ import {
   MatCommonModule,
   MatRippleLoader,
   MatRippleModule
-} from "./chunk-3BBXOATK.js";
+} from "./chunk-KBI5UP6S.js";
 import {
   Platform
 } from "./chunk-IN3WGZ7D.js";
@@ -1216,4 +1216,4 @@ export {
   MatIconAnchor,
   MatButtonModule
 };
-//# sourceMappingURL=chunk-RBEAQIU2.js.map
+//# sourceMappingURL=chunk-GYTM3FHZ.js.map

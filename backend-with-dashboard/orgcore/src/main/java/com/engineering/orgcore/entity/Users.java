@@ -18,7 +18,11 @@ public class Users extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String firstName;
+
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String lastName;
     private String email;
     private String password;

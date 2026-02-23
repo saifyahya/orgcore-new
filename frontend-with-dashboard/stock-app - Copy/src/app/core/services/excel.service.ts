@@ -58,4 +58,27 @@ export class ExcelService {
     ];
     await this.exportToExcel(sampleData as Record<string, unknown>[], 'sales_import_template');
   }
+
+  /**
+   * Download a sample template Excel file for inventory import
+   */
+  async downloadInventoryTemplate(): Promise<void> {
+    const sampleData = [
+      {
+        branchId: 1,
+        productId: 1,
+        quantity: 100,
+        note: 'Initial stock',
+        referenceType: 'IMPORT'
+      },
+      {
+        branchId: 1,
+        productId: 2,
+        quantity: 50,
+        note: 'Inventory adjustment',
+        referenceType: 'IMPORT'
+      }
+    ];
+    await this.exportToExcel(sampleData as Record<string, unknown>[], 'inventory_import_template');
+  }
 }

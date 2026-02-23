@@ -27,13 +27,18 @@ export class InventoryFormDialogComponent implements OnInit {
 
   ngOnInit(): void {
     const inv = this.data.inventory; this.isEdit = !!inv?.id;
-    this.form = this.fb.group({ branchId: [inv?.branch?.id || null, Validators.required], productId: [inv?.product?.id || null, Validators.required], quantity: [inv?.quantity ?? 0, [Validators.required, Validators.min(0)]] });
+    this.form = this.fb.group({
+      branchId: [inv?.branch?.id || null, Validators.required],
+      productId: [inv?.product?.id || null, Validators.required],
+      quantity: [inv?.quantity ?? 0, [Validators.required, Validators.min(0)]],
+      note: [inv?.note || ""]
+    });
     this.productService.getAll().subscribe(p => this.products = p.content);
   }
 
   save(): void {
     if (this.form.invalid) return; this.saving = true;
-    const req = this.isEdit ? this.inventoryService.update(this.data.inventory!.id!, this.form.value) : this.inventoryService.create(this.form.value);
+    const req = this.isEdit ? this.inventoryService.update(this.data.inventory!.id!, this.form.value) : this.inventoryService.create({...this.form.value, referenceType: "manual"});
     req.subscribe({ next: () => { this.notification.success(this.ts.t(this.isEdit ? 'INVENTORY.UPDATED' : 'INVENTORY.CREATED')); this.dialogRef.close(true); }, error: () => { this.saving = false; } });
   }
 }

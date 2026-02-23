@@ -1,6 +1,7 @@
 package com.engineering.orgcore.service;
 
 import com.engineering.orgcore.dto.filter.PageFilter;
+import com.engineering.orgcore.dto.inventory.CreateInventoryDto;
 import com.engineering.orgcore.dto.inventory.InventoryDto;
 import com.engineering.orgcore.entity.Branch;
 import com.engineering.orgcore.entity.Inventory;
@@ -31,12 +32,12 @@ public class InventoryService {
     private final ProductService productService;
     private final BranchService branchService;
 
-    public InventoryDto create(Long tenantId, InventoryDto request) throws NotFoundException {
+    public InventoryDto create(Long tenantId, CreateInventoryDto request) throws NotFoundException {
 
-        if (request.branch().id() == null) {
+        if (request.branchId() == null) {
             throw new IllegalArgumentException("branchId is required");
         }
-        if (request.product().id() == null) {
+        if (request.productId() == null) {
             throw new IllegalArgumentException("productId is required");
         }
         if (request.quantity() == null || request.quantity() < 0) {
@@ -46,22 +47,22 @@ public class InventoryService {
             throw new IllegalArgumentException("quantity is too large");
         }
 
-        Branch branch = branchRepository.findById(request.branch().id())
-                .orElseThrow(() -> new NotFoundException("Branch not found with id: " + request.branch().id()));
-        Product product = productRepository.findById(request.product().id())
-                .orElseThrow(() -> new NotFoundException("Product not found with id: " + request.product().id()));
+        Branch branch = branchRepository.findById(request.branchId())
+                .orElseThrow(() -> new NotFoundException("Branch not found with id: " + request.branchId()));
+        Product product = productRepository.findById(request.branchId())
+                .orElseThrow(() -> new NotFoundException("Product not found with id: " + request.productId()));
 
         if (!tenantId.equals(branch.getTenantId())) {
-            throw new NotFoundException("Branch not found with id: " + request.branch().id());
+            throw new NotFoundException("Branch not found with id: " + request.branchId());
         }
         if (!tenantId.equals(product.getTenantId())) {
-            throw new NotFoundException("Product not found with id: " + request.product().id());
+            throw new NotFoundException("Product not found with id: " + request.productId());
         }
 
-        inventoryRepository.findByTenantIdAndBranch_IdAndProduct_Id(tenantId, request.branch().id(), request.product().id())
-                .ifPresent(inv -> {
-                    throw new IllegalArgumentException("Inventory already exists for this branch and product. Use update.");
-                });
+//        inventoryRepository.findByTenantIdAndBranch_IdAndProduct_Id(tenantId, request.branchId(), request.productId())
+//                .ifPresent(inv -> {
+//                    throw new IllegalArgumentException("Inventory already exists for this branch and product. Use update.");
+//                });
 
         Inventory inv = new Inventory();
         inv.setBranch(branch);
@@ -78,12 +79,12 @@ public class InventoryService {
             sm.setBranchId(branch.getId());
             sm.setProductId(product.getId());
             sm.setType(StockMovementType.IN);
-            sm.setReason(StockMovementReason.COUNT); // or MANUAL / PURCHASE / INITIAL
+            sm.setReason(StockMovementReason.PURCHASE); // or MANUAL / PURCHASE / INITIAL
             sm.setQuantity(request.quantity().intValue());
             sm.setUnitCost(null);
-            sm.setRefType(ReferenceType.MANUAL);     // or IMPORT if created via import
+            sm.setRefType(ReferenceType.fromValue(request.referenceType()));     // or IMPORT if created via import
             sm.setRefId(null);
-            sm.setNote("Initial inventory creation");
+            sm.setNote(request.note());
 
             stockMovementRepository.save(sm);
         }
