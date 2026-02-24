@@ -12,12 +12,12 @@ export class SaleService {
 
   constructor(private api: ApiService, private http: HttpClient) { }
 
-  getAll(params?: { branchId?: number; from?: string; to?: string }): Observable<Page<Sale>> {
-    const query: Record<string, string | number | boolean> = {};
-    if (params?.branchId) query['branchId'] = params.branchId;
-    if (params?.from) query['from'] = params.from;
-    if (params?.to) query['to'] = params.to;
-    return this.api.get<Page<Sale>>(this.path, query);
+  getAll(page: number = 0, size: number = 10, branchId?: number, startDate?: string, endDate?: string): Observable<Page<Sale>> {
+    const params: any = { page, size };
+    if (branchId) params.branchId = branchId;
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    return this.api.get<Page<Sale>>(this.path, params);
   }
 
   getById(id: number): Observable<Sale> {
@@ -63,5 +63,11 @@ export class SaleService {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post<Sale[]>(`${this.baseUrl}${this.path}/import`, formData);
+  }
+
+  exportToPdf(id: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}${this.path}/${id}/export-pdf`, {
+      responseType: 'blob'
+    });
   }
 }

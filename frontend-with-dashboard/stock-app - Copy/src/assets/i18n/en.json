@@ -260,6 +260,18 @@
       "DATE": "Date",
       "ACTIONS": "Actions"
     },
+    "CHANNELS": {
+      "MANUAL": "Manual",
+      "IMPORT": "Import",
+      "API": "API",
+      "POS": "POS"
+    },
+    "PAYMENT_METHODS": {
+      "CASH": "Cash",
+      "CARD": "Card",
+      "TRANSFER": "Transfer",
+      "OTHER": "Other"
+    },
     "FORM": {
       "TITLE_NEW": "New Sale",
       "TITLE_EDIT": "Edit Sale #",
@@ -271,8 +283,8 @@
       "CHANNEL_LABEL": "Channel",
       "EXT_REF_LABEL": "External Ref (POS ID)",
       "EXT_REF_PLACEHOLDER": "Optional",
-      "DISCOUNT_LABEL": "Discount Amount",
-      "TAX_LABEL": "Tax Amount",
+      "DISCOUNT_LABEL": "Discount Rate (%)",
+      "TAX_LABEL": "Tax Rate (%)",
       "SALE_ITEMS": "Sale Items",
       "ADD_ITEM": "Add Item",
       "PRODUCT_COL": "Product",
@@ -304,6 +316,7 @@
       "GRAND_TOTAL": "Grand Total",
       "EDIT": "Edit",
       "BACK": "Back",
+      "EXPORT_PDF": "Export PDF",
       "TABLE": {
         "PRODUCT": "Product",
         "QTY": "Qty",

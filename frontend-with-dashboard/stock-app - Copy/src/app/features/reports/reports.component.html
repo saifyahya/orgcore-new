@@ -131,10 +131,10 @@
                   <tbody>
                     <tr *ngFor="let m of monthly">
                       <td><strong>{{ ('COMMON.' + m.monthLabel) | translate }}</strong></td>
-                      <td class="amount">{{ m.totalAmount | currency }}</td>
+                      <td class="amount">{{ m.totalAmount | localizedCurrency }}</td>
                       <td>{{ m.orderCount | number }}</td>
                       <td>{{ m.individualCount | number }}</td>
-                      <td>{{ (m.orderCount > 0 ? m.totalAmount / m.orderCount : 0) | currency }}</td>
+                      <td>{{ (m.orderCount > 0 ? m.totalAmount / m.orderCount : 0) | localizedCurrency }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -173,7 +173,7 @@
             <mat-card class="day-card" *ngFor="let w of weekly; let i = index">
               <mat-card-content>
                 <div class="day-name">{{ ('COMMON.' + w.dayLabel) | translate }} - {{ w.saleDate }}</div>
-                <div class="day-amount">{{ w.totalAmount | currency:'USD':'symbol':'1.0-0' }}</div>
+                <div class="day-amount">{{ w.totalAmount | localizedCurrency:true:0 }}</div>
                 <div class="day-orders">{{ w.orderCount }} {{ 'DASHBOARD.ANALYTICS.INVOICES_COUNT' | translate }}</div>
                 <div class="day-orders">{{ w.individualCount }} {{ 'DASHBOARD.ANALYTICS.SALES_COUNT' | translate }}</div>
                 <div class="day-bar">
@@ -271,7 +271,7 @@
                   </div>
                   <div class="rank-val">
                     <span *ngIf="topMode === 'qty'">{{ p.totalQuantity | number }} {{ 'DASHBOARD.ANALYTICS.UNITS' | translate }}</span>
-                    <span *ngIf="topMode === 'rev'">{{ p.totalRevenue | currency }}</span>
+                    <span *ngIf="topMode === 'rev'">{{ p.totalRevenue | localizedCurrency }}</span>
                   </div>
                 </div>
                 <div class="empty-state" *ngIf="currentTopList.length === 0">
@@ -356,7 +356,7 @@
                       </div>
                     </div>
                     <div class="cat-stats">
-                      <span class="cat-rev">{{ c.totalRevenue | currency:'USD':'symbol':'1.0-0' }}</span>
+                      <span class="cat-rev">{{ c.totalRevenue | localizedCurrency:true:0 }}</span>
                       <span class="cat-qty">{{ c.totalQuantity | number }} units</span>
                     </div>
                   </div>
@@ -383,7 +383,7 @@
               <mat-select [(ngModel)]="selectedPaymentMethod" (ngModelChange)="onPaymentsFilterChange()">
                 <mat-option [value]="null">{{ 'DASHBOARD.ANALYTICS.ALL_PAYMENT_METHODS' | translate }}</mat-option>
                 <mat-option *ngFor="let method of paymentMethods" [value]="method">
-                  {{ ('COMMON.' + method) | translate }}
+                  {{ ('SALES.PAYMENT_METHODS.' + method) | translate }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -427,10 +427,10 @@
                       <mat-icon>{{ p.paymentMethod === 'CASH' ? 'payments' : p.paymentMethod === 'CARD' ? 'credit_card' : p.paymentMethod === 'TRANSFER' ? 'account_balance' : 'account_balance_wallet' }}</mat-icon>
                     </div>
                     <div class="pay-info">
-                      <div class="pay-method">{{ ('COMMON.' + p.paymentMethod) | translate }}</div>
+                      <div class="pay-method">{{ ('SALES.PAYMENT_METHODS.' + p.paymentMethod) | translate }}</div>
                       <div class="pay-count">{{ p.orderCount | number }} {{ 'DASHBOARD.ANALYTICS.INVOICES_COUNT' | translate }}</div>
                     </div>
-                    <div class="pay-total">{{ p.totalAmount | currency:'USD':'symbol':'1.0-0' }}</div>
+                    <div class="pay-total">{{ p.totalAmount | localizedCurrency:true:0 }}</div>
                   </div>
                   <div class="empty-state" *ngIf="payments.length === 0">
                     <mat-icon>payment</mat-icon>

@@ -26,4 +26,6 @@ public class Inventory extends BaseEntity {
 
     private Long quantity;
 
+    private Double discountRate;
+
 }

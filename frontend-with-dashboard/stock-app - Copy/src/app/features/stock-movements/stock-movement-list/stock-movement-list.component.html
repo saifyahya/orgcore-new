@@ -63,7 +63,7 @@
         </ng-container>
         <ng-container matColumnDef="unitCost">
           <th mat-header-cell *matHeaderCellDef>{{ 'STOCK_MOVEMENTS.TABLE.UNIT_COST' | translate }}</th>
-          <td mat-cell *matCellDef="let row">{{ row.unitCost ? (row.unitCost | currency) : ('COMMON.NONE' | translate) }}</td>
+          <td mat-cell *matCellDef="let row">{{ row.unitCost ? (row.unitCost | localizedCurrency) : ('COMMON.NONE' | translate) }}</td>
         </ng-container>
         <ng-container matColumnDef="note">
           <th mat-header-cell *matHeaderCellDef>{{ 'STOCK_MOVEMENTS.TABLE.NOTE' | translate }}</th>

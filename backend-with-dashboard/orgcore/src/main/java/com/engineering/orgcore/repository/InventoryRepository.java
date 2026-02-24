@@ -26,14 +26,17 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
             @Param("productId") Long productId
     );
 
-
-    Page<Inventory> findAllByTenantId(Long tenantId, Pageable pageable);
-
-    Page<Inventory> findAllByTenantIdAndBranch_Id(Long tenantId, Long branchId, Pageable pageable);
-
-    Page<Inventory> findAllByTenantIdAndProduct_Id(Long tenantId, Long productId, Pageable pageable);
-
-    Page<Inventory> findAllByTenantIdAndBranch_IdAndProduct_Id(Long tenantId, Long branchId, Long productId, Pageable pageable);
+    @Query("""
+         SELECT i FROM Inventory i
+         WHERE i.tenantId = :tenantId
+         AND ( :branchId IS NULL OR i.branch.id = :branchId)
+         AND ( :q IS NULL  OR :q = '' OR LOWER(i.product.name) LIKE LOWER(CONCAT('%', :q, '%'))
+    )
+    """)
+    Page<Inventory> findAllByTenantId( @Param("tenantId") Long tenantId,
+                                      @Param("branchId") Long branchId,
+                                       @Param("q") String search,
+                                       Pageable pageable);
 
     Optional<Inventory> findByTenantIdAndBranch_IdAndProduct_Code(Long tenantId, Long branchId, String productCode);
 }

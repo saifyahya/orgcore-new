@@ -54,6 +54,7 @@ public class ProductService {
         product.setName(request.name().trim());
         product.setDescription(request.description());
         product.setCategory(category);
+        product.setCode(request.code() != null ? request.code() : UUID.randomUUID().toString());
 
         // Handle image upload
         if (imageFile != null && !imageFile.isEmpty()) {

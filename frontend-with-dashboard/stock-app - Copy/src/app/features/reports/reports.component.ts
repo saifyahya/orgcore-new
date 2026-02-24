@@ -31,6 +31,7 @@ import { CategoryService } from '../../core/services/category.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { TranslationService } from '../../core/services/translation.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
+import { LocalizedCurrencyPipe } from '../../shared/pipes/localized-currency.pipe';
 import {
   MonthlySeries, WeeklyDaySeries,
   CategorySales, PaymentMethodSales, TopProduct, Branch, Product, Category
@@ -60,7 +61,7 @@ type ChartKey =
     MatProgressSpinnerModule, MatTabsModule,
     MatSelectModule, MatFormFieldModule, MatButtonToggleModule,
     MatDatepickerModule, MatInputModule, MatNativeDateModule,
-    TranslatePipe, DecimalPipe, CurrencyPipe
+    TranslatePipe, DecimalPipe, CurrencyPipe, LocalizedCurrencyPipe
   ]
 })
 export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {

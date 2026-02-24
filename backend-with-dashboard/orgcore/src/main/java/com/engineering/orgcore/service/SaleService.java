@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -31,6 +33,7 @@ public class SaleService {
     private final Utils utils;
     private final BranchService branchService;
     private final ExcelParserService excelParserService;
+    private final SalePdfExportService salePdfExportService;
 
 
     public SaleDto create(Long tenantId, CreateSaleDto request) throws NotFoundException {
@@ -49,8 +52,8 @@ public class SaleService {
         Sale sale = new Sale();
         sale.setTenantId(tenantId);
         sale.setBranch(branch);
-        sale.setDiscountAmount(request.discountAmount() != null ? request.discountAmount() : 0.0);
-        sale.setTaxAmount(request.taxAmount() != null ? request.taxAmount() : 0.0);
+        sale.setDiscountRate(request.discountRate() != null ? request.discountRate() : 0.0);
+        sale.setTaxRate(request.taxRate() != null ? request.taxRate() : 0.0);
         sale.setPaymentMethod(PaymentMethod.fromValue(request.paymentMethod()));
         sale.setChannel(request.channel() != null ? SaleChannel.fromValue(request.channel()) : sale.getChannel());
         sale.setExternalRef(request.externalRef());
@@ -99,7 +102,9 @@ public class SaleService {
                     ? itemDto.unitPrice()
                     : (product.getPrice() != null ? product.getPrice() : 0.0);
 
-            double lineTotal = unitPrice * required;
+            double discountRate = inv.getDiscountRate() != null ? inv.getDiscountRate()/100 : 0.0;
+
+            double lineTotal = (unitPrice - discountRate) * required;
 
             SaleItem saleItem = new SaleItem();
             saleItem.setTenantId(tenantId);
@@ -113,7 +118,7 @@ public class SaleService {
             itemsTotal += lineTotal;
         }
 
-        double total = itemsTotal - sale.getDiscountAmount() + sale.getTaxAmount();
+        double total = itemsTotal - (sale.getDiscountRate() /100 *itemsTotal) + (sale.getTaxRate()/100 * itemsTotal);
         if (total < 0) total = 0;
         sale.setTotalAmount(total);
 
@@ -153,8 +158,8 @@ public class SaleService {
     }
 
     @Transactional(readOnly = true)
-    public Page<SaleDto> getAll(Long tenantId, PageFilter pageFilter) {
-        return saleRepository.findAllByTenantId(tenantId, pageFilter.toPageable()).map(this::toDto);
+    public Page<SaleDto> getAll(Long tenantId, Long branchId, LocalDate startDate, LocalDate endDate, PageFilter pageFilter) {
+        return saleRepository.findAllByTenantId(tenantId, branchId, startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay(), pageFilter.toPageable()).map(this::toDto);
     }
 
     public void delete(Long tenantId, Long id) throws NotFoundException {
@@ -193,6 +198,18 @@ public class SaleService {
         return "Imported " + rows.size() + " sales successfully";
     }
 
+    @Transactional(readOnly = true)
+    public byte[] exportSalePdf(Long tenantId, Long id) throws NotFoundException, IOException {
+        Sale sale = saleRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Sale not found with id: " + id));
+
+        if (!tenantId.equals(sale.getTenantId())) {
+            throw new NotFoundException("Sale not found with id: " + id);
+        }
+
+        return salePdfExportService.exportSaleToPdf(sale);
+    }
+
     private SaleDto toDto(Sale sale) {
         var items = sale.getItems().stream()
                 .map(i -> new SaleItemDto(i.getProduct().getId(),
@@ -204,10 +221,12 @@ public class SaleService {
 
         return new SaleDto(
                 sale.getId(),
-                branchService.toResponse(sale.getBranch()),
+                branchService.toResponse(
+                sale.getBranch()),
                 sale.getTotalAmount(),
-                sale.getDiscountAmount(),
-                sale.getTaxAmount(),
+                sale.getDiscountRate(),
+                sale.getTaxRate(),
+                sale.getTotalAmount(),
                 sale.getPaymentMethod(),
                 sale.getChannel(),
                 sale.getExternalRef(),

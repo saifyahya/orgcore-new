@@ -8,9 +8,14 @@ import com.engineering.orgcore.exceptions.NotFoundException;
 import com.engineering.orgcore.service.SaleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/sales")
@@ -37,9 +42,12 @@ public class SaleController {
 
     @GetMapping
     public Page<SaleDto> getAll(
-            @ModelAttribute PageFilter pageFilter
-    ) {
-        return saleService.getAll(utils.getCurrentTenant(), pageFilter);
+            @ModelAttribute PageFilter pageFilter,
+            @RequestParam(required = false) Long branchId,
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate
+            ) {
+        return saleService.getAll(utils.getCurrentTenant(), branchId, startDate, endDate, pageFilter);
     }
 
     @DeleteMapping("/{id}")
@@ -54,5 +62,15 @@ public class SaleController {
     public ResponseEntity<String> importSale(
             @RequestParam("file") MultipartFile file) throws Exception{
         return ResponseEntity.ok(saleService.importSales(file, utils.getCurrentTenant()));
+    }
+
+    @GetMapping("/{id}/export-pdf")
+    public ResponseEntity<byte[]> exportSalePdf(
+            @PathVariable Long id) throws NotFoundException, IOException {
+        byte[] pdf = saleService.exportSalePdf(utils.getCurrentTenant(), id);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"sale-" + id + ".pdf\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 }

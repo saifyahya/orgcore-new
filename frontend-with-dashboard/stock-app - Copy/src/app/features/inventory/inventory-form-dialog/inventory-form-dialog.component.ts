@@ -38,7 +38,7 @@ export class InventoryFormDialogComponent implements OnInit {
 
   save(): void {
     if (this.form.invalid) return; this.saving = true;
-    const req = this.isEdit ? this.inventoryService.update(this.data.inventory!.id!, this.form.value) : this.inventoryService.create({...this.form.value, referenceType: "manual"});
+    const req = this.isEdit ? this.inventoryService.update(this.data.inventory!.id!, {...this.form.value, referenceType: "manual", productCode: this.products.find(p => p.id === this.form.value.productId)?.code || '' }) : this.inventoryService.create({...this.form.value, referenceType: "manual", productCode: this.products.find(p => p.id === this.form.value.productId)?.code || '' });
     req.subscribe({ next: () => { this.notification.success(this.ts.t(this.isEdit ? 'INVENTORY.UPDATED' : 'INVENTORY.CREATED')); this.dialogRef.close(true); }, error: () => { this.saving = false; } });
   }
 }

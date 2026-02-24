@@ -18,10 +18,11 @@ import { NotificationService } from '../../../core/services/notification.service
 import { TranslationService } from '../../../core/services/translation.service';
 import { Branch, Product, PaymentMethod, SaleChannel, SaleRequest } from '../../../core/models';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
+import { LocalizedCurrencyPipe } from '../../../shared/pipes/localized-currency.pipe';
 
 @Component({
   selector: 'app-sale-form', standalone: true, templateUrl: './sale-form.component.html', styleUrls: ['./sale-form.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, MatCardModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatSelectModule, MatProgressSpinnerModule, MatDividerModule, TranslatePipe]
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, MatCardModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatSelectModule, MatProgressSpinnerModule, MatDividerModule, TranslatePipe, LocalizedCurrencyPipe]
 })
 export class SaleFormComponent implements OnInit {
   form!: FormGroup; saving = false; loading = true; isEdit = false; saleId: number | null = null;
@@ -30,14 +31,14 @@ export class SaleFormComponent implements OnInit {
 
   get items(): FormArray { return this.form.get('items') as FormArray; }
   get subtotal(): number { return this.items.controls.reduce((sum, c) => sum + (c.get('lineTotal')?.value || 0), 0); }
-  get grandTotal(): number { return this.subtotal - (this.form.get('discountAmount')?.value || 0) + (this.form.get('taxAmount')?.value || 0); }
+  get grandTotal(): number { return this.subtotal - (this.form.get('discountRate')?.value || 0)/100 * this.subtotal + (this.form.get('taxRate')?.value || 0)/100 * this.subtotal; }
 
   constructor(private fb: FormBuilder, private saleService: SaleService, private branchService: BranchService, private productService: ProductService, private notification: NotificationService, private ts: TranslationService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
     this.saleId = this.route.snapshot.params['id'] ? Number(this.route.snapshot.params['id']) : null;
     this.isEdit = !!this.saleId && this.router.url.includes('/edit');
-    this.form = this.fb.group({ branchId: [null, Validators.required], paymentMethod: [PaymentMethod.CASH], channel: [SaleChannel.MANUAL], externalRef: [''], discountAmount: [0], taxAmount: [0], items: this.fb.array([]) });
+    this.form = this.fb.group({ branchId: [null, Validators.required], paymentMethod: [PaymentMethod.CASH], channel: [SaleChannel.MANUAL], externalRef: [''], discountRate: [0], taxRate: [0], items: this.fb.array([]) });
     forkJoin({ branches: this.branchService.getAll(), products: this.productService.getAll() }).subscribe({
       next: ({ branches, products }) => { this.branches = branches.content; this.products = products.content; if (this.isEdit && this.saleId) { this.loadSale(); } else { this.addItem(); this.loading = false; } },
       error: () => { this.loading = false; }
@@ -47,7 +48,7 @@ export class SaleFormComponent implements OnInit {
   loadSale(): void {
     this.saleService.getById(this.saleId!).subscribe({
       next: (sale) => {
-        this.form.patchValue({ branchId: sale.branch?.id, paymentMethod: sale.paymentMethod, channel: sale.channel, externalRef: sale.externalRef || '', discountAmount: sale.discountAmount || 0, taxAmount: sale.taxAmount || 0 });
+        this.form.patchValue({ branchId: sale.branch?.id, paymentMethod: sale.paymentMethod, channel: sale.channel, externalRef: sale.externalRef || '', discountRate: sale.discountRate || 0, taxRate: sale.taxRate || 0 });
         sale.items?.forEach(item => this.items.push(this.buildItem(item.product?.id, item.quantity, item.unitPrice, item.lineTotal)));
         this.loading = false;
       }, error: () => { this.loading = false; }
@@ -75,7 +76,7 @@ export class SaleFormComponent implements OnInit {
   save(): void {
     if (this.form.invalid || this.items.length === 0) return; this.saving = true;
     const fv = this.form.value;
-    const payload: SaleRequest = { branchId: this.branches.find(br => br.id === fv.branchId)?.id , paymentMethod: fv.paymentMethod, channel: fv.channel, externalRef: fv.externalRef || undefined, discountAmount: fv.discountAmount || 0, taxAmount: fv.taxAmount || 0, totalAmount: this.grandTotal, items: this.items.value };
+    const payload: SaleRequest = { branchId: this.branches.find(br => br.id === fv.branchId)?.id , paymentMethod: fv.paymentMethod, channel: fv.channel, externalRef: fv.externalRef || undefined, discountRate: fv.discountRate || 0, taxRate: fv.taxRate || 0, totalAmount: this.grandTotal, items: this.items.value };
     const req = this.isEdit ? this.saleService.update(this.saleId!, payload) : this.saleService.create(payload);
     req.subscribe({ next: (sale) => { this.notification.success(this.ts.t(this.isEdit ? 'SALES.UPDATED' : 'SALES.CREATED')); this.router.navigate(['/sales', sale.id]); }, error: () => { this.saving = false; } });
   }

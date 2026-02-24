@@ -44,10 +44,8 @@ public class InventoryController {
     @GetMapping
     public Page<InventoryDto> getAll(
             @ModelAttribute PageFilter pageFilter,
-            @RequestParam(required = false) Long branchId,
-            @RequestParam(required = false) Long productId
-    ) {
-        return inventoryService.getAll(utils.getCurrentTenant(), pageFilter, branchId, productId);
+            @RequestParam(required = false) Long branchId) {
+        return inventoryService.getAll(utils.getCurrentTenant(), branchId, pageFilter);
     }
 
     // Update (quantity)

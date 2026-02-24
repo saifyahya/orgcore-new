@@ -28,13 +28,13 @@
           <mat-form-field appearance="outline">
             <mat-label>{{ 'SALES.FORM.PAYMENT_LABEL' | translate }}</mat-label>
             <mat-select formControlName="paymentMethod">
-              <mat-option *ngFor="let pm of paymentMethods" [value]="pm">{{ pm }}</mat-option>
+              <mat-option *ngFor="let pm of paymentMethods" [value]="pm">{{ ('SALES.PAYMENT_METHODS.' + pm) | translate }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>{{ 'SALES.FORM.CHANNEL_LABEL' | translate }}</mat-label>
             <mat-select formControlName="channel">
-              <mat-option *ngFor="let ch of channels" [value]="ch">{{ ch }}</mat-option>
+              <mat-option *ngFor="let ch of channels" [value]="ch">{{ ('SALES.CHANNELS.' + ch) | translate }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline">
@@ -43,13 +43,11 @@
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>{{ 'SALES.FORM.DISCOUNT_LABEL' | translate }}</mat-label>
-            <input matInput type="number" formControlName="discountAmount" placeholder="0.00">
-            <span matPrefix>$&nbsp;</span>
+            <input matInput type="number" formControlName="discountRate" placeholder="0.00">
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>{{ 'SALES.FORM.TAX_LABEL' | translate }}</mat-label>
-            <input matInput type="number" formControlName="taxAmount" placeholder="0.00">
-            <span matPrefix>$&nbsp;</span>
+            <input matInput type="number" formControlName="taxRate" placeholder="0.00">
           </mat-form-field>
         </div>
       </mat-card-content>
@@ -84,11 +82,9 @@
             </mat-form-field>
             <mat-form-field appearance="outline">
               <input matInput type="number" formControlName="unitPrice" placeholder="0.00" (input)="calculateLineTotal(i)">
-              <span matPrefix>$&nbsp;</span>
             </mat-form-field>
             <mat-form-field appearance="outline">
               <input matInput type="number" formControlName="lineTotal" placeholder="0.00" readonly>
-              <span matPrefix>$&nbsp;</span>
             </mat-form-field>
             <button type="button" mat-icon-button color="warn" (click)="removeItem(i)">
               <mat-icon>delete</mat-icon>
@@ -104,20 +100,20 @@
         <div class="total-summary">
           <div class="total-row">
             <span>{{ 'SALES.FORM.SUBTOTAL' | translate }}</span>
-            <strong>{{ subtotal | currency }}</strong>
+            <strong>{{ subtotal | localizedCurrency }}</strong>
           </div>
           <div class="total-row">
             <span>{{ 'SALES.FORM.DISCOUNT_ROW' | translate }}</span>
-            <strong>-{{ (form.get('discountAmount')?.value || 0) | currency }}</strong>
+            <strong>-{{ (form.get('discountRate')?.value || 0)/100 * subtotal | localizedCurrency }}</strong>
           </div>
           <div class="total-row">
             <span>{{ 'SALES.FORM.TAX_ROW' | translate }}</span>
-            <strong>+{{ (form.get('taxAmount')?.value || 0) | currency }}</strong>
+            <strong>+{{ (form.get('taxRate')?.value || 0)/100 * subtotal | localizedCurrency }}</strong>
           </div>
           <mat-divider class="mini-divider"></mat-divider>
           <div class="total-row grand">
             <span>{{ 'SALES.FORM.GRAND_TOTAL' | translate }}</span>
-            <strong>{{ grandTotal | currency }}</strong>
+            <strong>{{ grandTotal | localizedCurrency }}</strong>
           </div>
         </div>
       </mat-card-content>

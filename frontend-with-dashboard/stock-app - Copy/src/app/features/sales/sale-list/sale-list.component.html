@@ -48,7 +48,7 @@
 
       <div class="summary-row" *ngIf="filtered.length > 0">
         <div class="summary-chip primary">
-          {{ 'SALES.TOTAL_REVENUE' | translate }} <strong>{{ totalRevenue | currency }}</strong>
+          {{ 'SALES.TOTAL_REVENUE' | translate }} <strong>{{ totalRevenue | localizedCurrency }}</strong>
         </div>
       </div>
 
@@ -69,44 +69,38 @@
         </ng-container>
         <ng-container matColumnDef="totalAmount">
           <th mat-header-cell *matHeaderCellDef>{{ 'SALES.TABLE.TOTAL' | translate }}</th>
-          <td mat-cell *matCellDef="let row" class="amount">{{ row.totalAmount | currency }}</td>
-        </ng-container>
-        <ng-container matColumnDef="discountAmount">
-          <th mat-header-cell *matHeaderCellDef>{{ 'SALES.TABLE.DISCOUNT' | translate }}</th>
-          <td mat-cell *matCellDef="let row">{{ row.discountAmount ? (row.discountAmount | currency) : ('COMMON.NONE' |
-            translate) }}</td>
+          <td mat-cell *matCellDef="let row" class="amount">{{ row.finalAmount | localizedCurrency }}</td>
         </ng-container>
         <ng-container matColumnDef="paymentMethod">
           <th mat-header-cell *matHeaderCellDef>{{ 'SALES.TABLE.PAYMENT' | translate }}</th>
-          <td mat-cell *matCellDef="let row"><span class="badge">{{ row.paymentMethod || ('COMMON.NA' | translate)
+          <td mat-cell *matCellDef="let row"><span class="badge">{{ row.paymentMethod ? ('SALES.PAYMENT_METHODS.' + row.paymentMethod | translate) : ('COMMON.NA' | translate)
               }}</span></td>
         </ng-container>
         <ng-container matColumnDef="channel">
           <th mat-header-cell *matHeaderCellDef>{{ 'SALES.TABLE.CHANNEL' | translate }}</th>
           <td mat-cell *matCellDef="let row">
-            <span class="badge" [class]="'channel-' + (row.channel || 'manual').toLowerCase()">{{ row.channel ||
-              'MANUAL' }}</span>
+            <span class="badge" [class]="'channel-' + (row.channel || 'manual').toLowerCase()">{{ row.channel ? ('SALES.CHANNELS.' + row.channel | translate) : ('SALES.CHANNELS.MANUAL' | translate) }}</span>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="createdAt">
           <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.CREATED_AT' | translate }}</th>
-          <td mat-cell *matCellDef="let row">{{ row.createdAt | date:'mediumDate' }}</td>
+          <td mat-cell *matCellDef="let row">{{ row.createdAt | date:'M/d/yyyy, h:mm a' }}</td>
         </ng-container>
 
         <ng-container matColumnDef="createdBy">
           <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.CREATED_BY' | translate }}</th>
           <td mat-cell *matCellDef="let row">{{ row.createdBy || ('COMMON.NONE' | translate) }}</td>
         </ng-container>
+            <ng-container matColumnDef="updatedAt">
+          <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.UPDATED_AT' | translate }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.updatedAt | date:'M/d/yyyy, h:mm a' }}</td>
+        </ng-container>
         <ng-container matColumnDef="updatedBy">
           <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.UPDATED_BY' | translate }}</th>
           <td mat-cell *matCellDef="let row">{{ row.updatedBy || ('COMMON.NONE' | translate) }}</td>
         </ng-container>
-        <ng-container matColumnDef="updatedAt">
-          <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.UPDATED_AT' | translate }}</th>
-          <td mat-cell *matCellDef="let row">{{ row.updatedAt | date:'mediumDate' }}</td>
-        </ng-container>
-
+  
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>{{ 'SALES.TABLE.ACTIONS' | translate }}</th>
           <td mat-cell *matCellDef="let row">
@@ -127,6 +121,10 @@
           </td>
         </tr>
       </table>
+      
+      <mat-paginator [length]="totalElements" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 100]"
+        (page)="onPageChange($event)" *ngIf="!loading && totalElements > 0">
+      </mat-paginator>
     </mat-card-content>
   </mat-card>
 </div>

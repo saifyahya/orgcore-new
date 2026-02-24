@@ -2,7 +2,7 @@
 export enum PaymentMethod {
   CASH = 'CASH',
   CARD = 'CARD',
-  ONLINE = 'ONLINE',
+  TRANSFER = 'TRANSFER',
   OTHER = 'OTHER'
 }
 
@@ -143,8 +143,9 @@ export interface Sale extends BaseEntity {
   branch?: Branch;
   branchId?: number;
   totalAmount?: number;
-  discountAmount?: number;
-  taxAmount?: number;
+  finalAmount?: number;
+  discountRate?: number;
+  taxRate?: number;
   paymentMethod?: PaymentMethod;
   channel?: SaleChannel;
   externalRef?: string;
@@ -154,8 +155,8 @@ export interface Sale extends BaseEntity {
 export interface SaleRequest {
   branchId: any;
   totalAmount?: number;
-  discountAmount?: number;
-  taxAmount?: number;
+  discountRate?: number;
+  taxRate?: number;
   paymentMethod?: PaymentMethod;
   channel?: SaleChannel;
   externalRef?: string;

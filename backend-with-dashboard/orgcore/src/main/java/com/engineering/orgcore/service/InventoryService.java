@@ -18,10 +18,8 @@ import com.engineering.orgcore.repository.StockMovementRepository;
 import com.engineering.orgcore.util.ExcelParserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -111,21 +109,8 @@ public class InventoryService {
     }
 
     @Transactional(readOnly = true)
-    public Page<InventoryDto> getAll(Long tenantId, PageFilter pageFilter, Long branchId, Long productId) {
-
-        var pageable = pageFilter.toPageable();
-        Page<Inventory> page;
-
-        if (branchId != null && productId != null) {
-            page = inventoryRepository.findAllByTenantIdAndBranch_IdAndProduct_Id(tenantId, branchId, productId, pageable);
-        } else if (branchId != null) {
-            page = inventoryRepository.findAllByTenantIdAndBranch_Id(tenantId, branchId, pageable);
-        } else if (productId != null) {
-            page = inventoryRepository.findAllByTenantIdAndProduct_Id(tenantId, productId, pageable);
-        } else {
-            page = inventoryRepository.findAllByTenantId(tenantId, pageable);
-        }
-
+    public Page<InventoryDto> getAll(Long tenantId, Long branchId, PageFilter pageFilter) {
+        Page<Inventory> page = inventoryRepository.findAllByTenantId(tenantId, branchId, pageFilter.getSearch(), pageFilter.toPageable());
         return page.map(this::toDto);
     }
 
@@ -163,7 +148,7 @@ public class InventoryService {
 
     public String importInventory(MultipartFile file, Long tenantId) throws Exception {
         if (file.isEmpty()) {
-           throw new RuntimeException("File is empty");
+            throw new RuntimeException("File is empty");
         }
         var rows = excelParserService.read(
                 file.getInputStream(),
@@ -173,7 +158,7 @@ public class InventoryService {
         );
         rows.forEach(dto -> {
             try {
-               create(tenantId, dto);
+                create(tenantId, dto);
             } catch (NotFoundException e) {
                 throw new RuntimeException(e);
             }

@@ -27,9 +27,9 @@ public class Sale extends BaseEntity {
 
     private Double totalAmount;
 
-    private Double discountAmount;
+    private Double discountRate;
 
-    private Double taxAmount;
+    private Double taxRate;
 
     private Double finalAmount;
 

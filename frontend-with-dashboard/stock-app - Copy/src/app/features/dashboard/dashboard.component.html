@@ -74,9 +74,9 @@
               <tr *ngFor="let s of recentSales" [routerLink]="['/sales', s.id]" class="row-link">
                 <td>#{{ s.id }}</td>
                 <td>{{ s.branch?.branchName || '—' }}</td>
-                <td class="amount">{{ s.totalAmount | currency }}</td>
-                <td><span class="badge">{{ s.paymentMethod ? (('COMMON.' + s.paymentMethod) | translate) : '—' }}</span></td>
-                <td><span class="badge badge--channel">{{ s.channel || '—' }}</span></td>
+                <td class="amount">{{ s.totalAmount | localizedCurrency }}</td>
+                <td><span class="badge">{{ s.paymentMethod ? (('SALES.PAYMENT_METHODS.' + s.paymentMethod) | translate) : '—' }}</span></td>
+                <td><span class="badge badge--channel">{{ s.channel ? (('SALES.CHANNELS.' + s.channel) | translate) : '—' }}</span></td>
                 <td>{{ s.createdAt | date:'short' }}</td>
               </tr>
             </tbody>

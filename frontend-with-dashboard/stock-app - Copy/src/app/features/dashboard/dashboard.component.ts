@@ -14,6 +14,7 @@ import { DashboardService } from '../../core/services/dashboard.service';
 import { SaleService } from '../../core/services/sale.service';
 import { BranchService } from '../../core/services/branch.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
+import { LocalizedCurrencyPipe } from '../../shared/pipes/localized-currency.pipe';
 import { DashboardSummary, Branch } from '../../core/models';
 
 interface KpiCard {
@@ -33,7 +34,7 @@ interface KpiCard {
     CommonModule, RouterLink, FormsModule,
     MatCardModule, MatIconModule, MatButtonModule,
     MatProgressSpinnerModule, MatSelectModule, MatFormFieldModule,
-    TranslatePipe, DecimalPipe, CurrencyPipe
+    TranslatePipe, DecimalPipe, CurrencyPipe, LocalizedCurrencyPipe
   ]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
@@ -89,7 +90,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.subs.add(forkJoin({
       summary: this.dashSvc.getSummary(this.selectedBranch, startDate, endDate),
-      sales: this.saleSvc.getAll()
+      sales: this.saleSvc.getAll(0, 1000000,this.selectedBranch ? this.selectedBranch : undefined, startDate, endDate)
     }).subscribe({
       next: d => {
         this.summary = d.summary;

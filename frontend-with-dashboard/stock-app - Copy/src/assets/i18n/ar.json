@@ -258,6 +258,18 @@
       "DATE": "التاريخ",
       "ACTIONS": "الإجراءات"
     },
+    "CHANNELS": {
+      "MANUAL": "يدوي",
+      "IMPORT": "استيراد",
+      "API": "واجهة برمجية",
+      "POS": "نقطة البيع"
+    },
+    "PAYMENT_METHODS": {
+      "CASH": "نقدي",
+      "CARD": "بطاقة",
+      "TRANSFER": "تحويل",
+      "OTHER": "أخرى"
+    },
     "FORM": {
       "TITLE_NEW": "عملية بيع جديدة",
       "TITLE_EDIT": "تعديل البيع رقم ",
@@ -269,8 +281,8 @@
       "CHANNEL_LABEL": "القناة",
       "EXT_REF_LABEL": "المرجع الخارجي (POS)",
       "EXT_REF_PLACEHOLDER": "اختياري",
-      "DISCOUNT_LABEL": "مبلغ الخصم",
-      "TAX_LABEL": "مبلغ الضريبة",
+      "DISCOUNT_LABEL": "نسبة الخصم (%)",
+      "TAX_LABEL": "نسبة الضريبة (%)",
       "SALE_ITEMS": "عناصر البيع",
       "ADD_ITEM": "إضافة عنصر",
       "PRODUCT_COL": "المنتج",
@@ -302,6 +314,7 @@
       "GRAND_TOTAL": "الإجمالي الكلي",
       "EDIT": "تعديل",
       "BACK": "رجوع",
+      "EXPORT_PDF": "تصدير PDF",
       "TABLE": {
         "PRODUCT": "المنتج",
         "QTY": "الكمية",

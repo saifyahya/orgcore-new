@@ -32,6 +32,10 @@
         </mat-form-field>
       </div>
 
+      <div class="total-info" *ngIf="totalElements > 0" style="margin-bottom: 16px;">
+        <strong>{{ 'COMMON.TOTAL' | translate }}:</strong> {{ totalElements }}
+      </div>
+
       <div *ngIf="loading" class="spinner-wrap"><mat-spinner diameter="40"></mat-spinner></div>
 
       <table mat-table [dataSource]="filtered" class="data-table" *ngIf="!loading">
@@ -80,6 +84,10 @@
           </td>
         </tr>
       </table>
+      
+      <mat-paginator [length]="totalElements" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 100]"
+        (page)="onPageChange($event)" *ngIf="!loading && totalElements > 0">
+      </mat-paginator>
     </mat-card-content>
   </mat-card>
 </div>

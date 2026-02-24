@@ -21,10 +21,11 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
 import { StockMovementFormDialogComponent } from '../stock-movement-form-dialog/stock-movement-form-dialog.component';
 import { StockMovement, Branch, Product, StockMovementType } from '../../../core/models';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
+import { LocalizedCurrencyPipe } from '../../../shared/pipes/localized-currency.pipe';
 
 @Component({
   selector: 'app-stock-movement-list', standalone: true, templateUrl: './stock-movement-list.component.html', styleUrls: ['./stock-movement-list.component.scss'],
-  imports: [CommonModule, FormsModule, MatCardModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatDialogModule, MatProgressSpinnerModule, MatTooltipModule, MatSelectModule, TranslatePipe]
+  imports: [CommonModule, FormsModule, MatCardModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatDialogModule, MatProgressSpinnerModule, MatTooltipModule, MatSelectModule, TranslatePipe, LocalizedCurrencyPipe]
 })
 export class StockMovementListComponent implements OnInit {
   movements: StockMovement[] = []; branches: Branch[] = []; products: Product[] = []; loading = true;

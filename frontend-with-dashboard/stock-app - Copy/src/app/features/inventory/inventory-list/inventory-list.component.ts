@@ -11,6 +11,7 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { InventoryService } from '../../../core/services/inventory.service';
 import { BranchService } from '../../../core/services/branch.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -23,11 +24,14 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-inventory-list', standalone: true, templateUrl: './inventory-list.component.html', styleUrls: ['./inventory-list.component.scss'],
-  imports: [CommonModule, FormsModule, MatCardModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatDialogModule, MatProgressSpinnerModule, MatTooltipModule, MatSelectModule, TranslatePipe]
+  imports: [CommonModule, FormsModule, MatCardModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatDialogModule, MatProgressSpinnerModule, MatTooltipModule, MatSelectModule, MatPaginatorModule, TranslatePipe]
 })
 export class InventoryListComponent implements OnInit {
   inventory: Inventory[] = []; filtered: Inventory[] = []; branches: Branch[] = [];
   loading = true; searchTerm = ''; selectedBranch: number | null = null;
+  totalElements = 0;
+  pageSize = 10;
+  pageIndex = 0;
   displayedColumns = ['id', 'branch', 'product', 'category', 'quantity', 'actions'];
 
   constructor(private inventoryService: InventoryService, private branchService: BranchService, private notification: NotificationService, private ts: TranslationService, private dialog: MatDialog) { }
@@ -36,14 +40,31 @@ export class InventoryListComponent implements OnInit {
 
   load(): void {
     this.loading = true;
-    this.inventoryService.getAll(this.selectedBranch || undefined).subscribe({ next: (data) => { this.inventory = data.content; this.filtered = data.content; this.loading = false; }, error: () => { this.loading = false; } });
+    const branchId = this.selectedBranch ? this.selectedBranch : undefined;
+    const search = this.searchTerm.trim() || undefined;
+    
+    this.inventoryService.getAll(this.pageIndex, this.pageSize, branchId, search).subscribe({ 
+      next: (data) => { 
+        this.inventory = data.content; 
+        this.filtered = data.content; 
+        this.totalElements = data.totalElements;
+        this.loading = false; 
+      }, 
+      error: () => { 
+        this.loading = false; 
+      } 
+    });
   }
 
   filterData(): void {
-    let result = this.inventory;
-    if (this.selectedBranch) result = result.filter(i => i.branch?.id === this.selectedBranch);
-    if (this.searchTerm) { const t = this.searchTerm.toLowerCase(); result = result.filter(i => (i.product?.name || '').toLowerCase().includes(t)); }
-    this.filtered = result;
+    this.pageIndex = 0; // Reset to first page when filtering
+    this.load();
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.load();
   }
 
   openForm(inventory?: Inventory): void {

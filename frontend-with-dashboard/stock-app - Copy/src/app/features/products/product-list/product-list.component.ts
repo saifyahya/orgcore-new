@@ -22,6 +22,7 @@ import { ProductFormDialogComponent } from '../product-form-dialog/product-form-
 import { ProductImportDialogComponent } from '../product-import-dialog/product-import-dialog.component';
 import { Product, Category } from '../../../core/models';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
+import { LocalizedCurrencyPipe } from '../../../shared/pipes/localized-currency.pipe';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -43,7 +44,8 @@ import { environment } from '../../../../environments/environment';
     MatTooltipModule,
     MatSelectModule,
     MatPaginatorModule,
-    TranslatePipe
+    TranslatePipe,
+    LocalizedCurrencyPipe
   ]
 })
 export class ProductListComponent implements OnInit {

@@ -71,7 +71,7 @@ export class ProductFormDialogComponent implements OnInit {
     const fileToSend = this.selectedFile ? this.selectedFile : undefined;
     
     const req = this.isEdit 
-      ? this.productService.update(this.data.product!.id!, this.form.value, fileToSend) 
+      ? this.productService.update(this.data.product!.id!, {...this.form.value,}, fileToSend) 
       : this.productService.create(this.form.value, fileToSend);
     
     req.subscribe({ 

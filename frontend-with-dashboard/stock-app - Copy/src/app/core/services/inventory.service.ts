@@ -12,9 +12,10 @@ export class InventoryService {
 
   constructor(private api: ApiService, private http: HttpClient) { }
 
-  getAll(branchId?: number): Observable<Page<Inventory>> {
-    const params: Record<string, number> = {};
+  getAll(page: number = 0, size: number = 10, branchId?: number, search?: string): Observable<Page<Inventory>> {
+    const params: any = { page, size };
     if (branchId) params['branchId'] = branchId;
+    if (search) params['search'] = search;
     return this.api.get<Page<Inventory>>(this.path, params);
   }
 

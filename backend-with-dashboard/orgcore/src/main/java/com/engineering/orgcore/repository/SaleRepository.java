@@ -15,8 +15,13 @@ import java.util.Optional;
 
 public interface SaleRepository extends JpaRepository<Sale, Long> {
 
-    // ─── Existing ─────────────────────────────────────────────────────────────
-    Page<Sale> findAllByTenantId(Long tenantId, Pageable pageable);
+@Query("""
+        SELECT s FROM Sale s
+        WHERE s.tenantId = :tenantId
+          AND (s.createdAt >= :startDate AND s.createdAt < :endDate)
+          AND (s.branch.id = :branchId OR :branchId IS NULL)
+        """)
+    Page<Sale> findAllByTenantId(Long tenantId, @Param("branchId") Long branchId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
 
     Optional<Sale> findByTenantIdAndExternalRef(Long tenantId, String externalRef);
 
@@ -24,8 +29,8 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
     @Query("""
                 SELECT new com.engineering.orgcore.dto.dashboard.DashboardSummaryDto(
                     COALESCE(SUM(s.totalAmount), 0.0),
-                    COALESCE(SUM(s.discountAmount), 0.0),
-                    COALESCE(SUM(s.taxAmount), 0.0),
+                    COALESCE(SUM(s.discountRate * s.totalAmount), 0.0),
+                    COALESCE(SUM(s.taxRate * s.totalAmount), 0.0),
                     COALESCE(SUM(s.finalAmount), 0.0),
                     COUNT(s.id),
                     CASE WHEN COUNT(s.id) > 0 THEN COALESCE(SUM(s.finalAmount), 0.0) / COUNT(s.id) ELSE 0.0 END,

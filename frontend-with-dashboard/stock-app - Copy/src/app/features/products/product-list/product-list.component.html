@@ -78,7 +78,7 @@
           </ng-container>
           <ng-container matColumnDef="price">
             <th mat-header-cell *matHeaderCellDef>{{ 'PRODUCTS.TABLE.PRICE' | translate }}</th>
-            <td mat-cell *matCellDef="let row">{{ row.price | currency }}</td>
+            <td mat-cell *matCellDef="let row">{{ row.price | localizedCurrency }}</td>
           </ng-container>
           <ng-container matColumnDef="discount">
             <th mat-header-cell *matHeaderCellDef>{{ 'PRODUCTS.TABLE.DISCOUNT' | translate }}</th>
@@ -96,7 +96,7 @@
 
           <ng-container matColumnDef="createdAt">
             <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.CREATED_AT' | translate }}</th>
-            <td mat-cell *matCellDef="let row">{{ row.createdAt | date:'mediumDate' }}</td>
+            <td mat-cell *matCellDef="let row">{{ row.createdAt | date:'M/d/yyyy, h:mm a' }}</td>
           </ng-container>
           <ng-container matColumnDef="createdBy">
             <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.CREATED_BY' | translate }}</th>
@@ -108,7 +108,7 @@
           </ng-container>
           <ng-container matColumnDef="updatedAt">
             <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.UPDATED_AT' | translate }}</th>
-            <td mat-cell *matCellDef="let row">{{ row.updatedAt | date:'mediumDate' }}</td>
+            <td mat-cell *matCellDef="let row">{{ row.updatedAt | date:'M/d/yyyy, h:mm a' }}</td>
           </ng-container>
 
           <ng-container matColumnDef="actions">
