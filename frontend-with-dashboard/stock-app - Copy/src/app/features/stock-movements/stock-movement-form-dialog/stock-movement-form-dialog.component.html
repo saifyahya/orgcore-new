@@ -21,14 +21,14 @@
       <mat-form-field appearance="outline">
         <mat-label>{{ 'STOCK_MOVEMENTS.FORM.TYPE_LABEL' | translate }} *</mat-label>
         <mat-select formControlName="type">
-          <mat-option *ngFor="let t of movementTypes" [value]="t">{{ t }}</mat-option>
+          <mat-option *ngFor="let t of movementTypes" [value]="t">{{ 'STOCK_MOVEMENTS.TYPES.' + t | translate }}</mat-option>
         </mat-select>
         <mat-error>{{ 'STOCK_MOVEMENTS.FORM.REQUIRED' | translate }}</mat-error>
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>{{ 'STOCK_MOVEMENTS.FORM.REASON_LABEL' | translate }} *</mat-label>
         <mat-select formControlName="reason">
-          <mat-option *ngFor="let r of movementReasons" [value]="r">{{ r }}</mat-option>
+          <mat-option *ngFor="let r of movementReasons" [value]="r">{{ 'STOCK_MOVEMENTS.REASONS.' + r | translate }}</mat-option>
         </mat-select>
         <mat-error>{{ 'STOCK_MOVEMENTS.FORM.REQUIRED' | translate }}</mat-error>
       </mat-form-field>
@@ -50,7 +50,7 @@
         <mat-label>{{ 'STOCK_MOVEMENTS.FORM.REF_TYPE_LABEL' | translate }}</mat-label>
         <mat-select formControlName="refType">
           <mat-option [value]="null">{{ 'STOCK_MOVEMENTS.FORM.NONE' | translate }}</mat-option>
-          <mat-option *ngFor="let r of refTypes" [value]="r">{{ r }}</mat-option>
+          <mat-option *ngFor="let r of refTypes" [value]="r">{{ 'STOCK_MOVEMENTS.REF_TYPES.' + r | translate }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline">

@@ -42,7 +42,7 @@
             <mat-icon [style.color]="k.color">{{ k.icon }}</mat-icon>
           </div>
           <div class="kpi-text">
-            <div class="kpi-value">{{ k.value }}</div>
+            <div class="kpi-value" [innerHTML]="k.value"></div>
             <div class="kpi-label">{{ k.key | translate }}</div>
           </div>
         </mat-card-content>

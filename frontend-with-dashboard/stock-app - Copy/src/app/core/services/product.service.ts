@@ -75,4 +75,15 @@ export class ProductService {
     formData.append('file', file);
     return this.http.post<any>(`${this.baseUrl}${this.path}/import`, formData);
   }
+
+  exportToExcel(page: number = 0, size: number = 10, search?: string, isActive?: number, categoryId?: number): Observable<Blob> {
+    const params: any = { page, size };
+    if (search) params.search = search;
+    if (isActive !== undefined && isActive !== null) params.isActive = isActive;
+    if (categoryId !== undefined && categoryId !== null) params.categoryId = categoryId;
+    return this.http.get(`${this.baseUrl}${this.path}/export/excel`, {
+      params,
+      responseType: 'blob'
+    });
+  }
 }

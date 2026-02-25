@@ -50,13 +50,11 @@ export interface BaseEntity {
 export interface Category extends BaseEntity {
   id?: number;
   name: string;
-  description?: string;
   isActive?: number;
 }
 
 export interface CategoryRequest {
   name: string;
-  description?: string;
   isActive?: number;
 }
 
@@ -84,7 +82,6 @@ export interface Product extends BaseEntity {
   categoryId?: number;
   image?: string;
   price?: number;
-  discount?: number;
   isActive?: number;
   rate?: number;
 }
@@ -95,7 +92,6 @@ export interface ProductRequest {
   categoryId?: number;
   image?: string;
   price?: number;
-  discount?: number;
   isActive?: number;
   rate?: number;
 }
@@ -238,6 +234,13 @@ export interface WeeklyDaySeries {
   totalAmount: number;
   orderCount: number;             // عدد الفواتير - number of invoices
   individualCount: number;        // عدد المبيعات - number of sales
+}
+
+export interface DailyHourlySales {
+  hour: number;                   // 0-23
+  hourLabel: string;              // "1 AM", "2 PM", etc.
+  totalAmount: number;
+  orderCount: number;             // عدد الفواتير - number of invoices
 }
 
 export interface CategorySales {

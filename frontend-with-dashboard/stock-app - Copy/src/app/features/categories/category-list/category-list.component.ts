@@ -12,6 +12,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { CategoryService } from '../../../core/services/category.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { TranslationService } from '../../../core/services/translation.service';
@@ -39,6 +40,7 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
     MatDialogModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
+    MatSlideToggleModule,
     TranslatePipe
   ]
 })
@@ -47,13 +49,17 @@ export class CategoryListComponent implements OnInit {
   loading = true;
   searchTerm = '';
   statusFilter: number | null = null;
+  showAuditColumns = false;
 
   // Pagination
   totalElements = 0;
   pageSize = 10;
   pageIndex = 0;
 
-  displayedColumns = ['id', 'name', 'description', 'isActive', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy', 'actions'];
+  displayedColumns: string[] = [];
+  private baseColumns = ['id', 'name', 'isActive'];
+  private auditColumns = ['createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
+  private actionColumns = ['actions'];
 
   constructor(
     private categoryService: CategoryService,
@@ -62,7 +68,22 @@ export class CategoryListComponent implements OnInit {
     private dialog: MatDialog
   ) { }
 
-  ngOnInit(): void { this.load(); }
+  ngOnInit(): void { 
+    this.updateDisplayedColumns();
+    this.load(); 
+  }
+
+  updateDisplayedColumns(): void {
+    this.displayedColumns = [
+      ...this.baseColumns,
+      ...(this.showAuditColumns ? this.auditColumns : []),
+      ...this.actionColumns
+    ];
+  }
+
+  onAuditColumnsToggle(): void {
+    this.updateDisplayedColumns();
+  }
 
   load(): void {
     this.loading = true;

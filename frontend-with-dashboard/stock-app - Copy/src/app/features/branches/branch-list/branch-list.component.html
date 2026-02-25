@@ -31,8 +31,13 @@
             <mat-option [value]="0">{{ 'COMMON.INACTIVE' | translate }}</mat-option>
           </mat-select>
         </mat-form-field></div>
-        <div class="total-info" *ngIf="totalElements > 0">
-          <strong>{{ 'COMMON.TOTAL' | translate }}:</strong> {{ totalElements }}
+        <div class="toolbar-actions">
+          <mat-slide-toggle [(ngModel)]="showAuditColumns" (ngModelChange)="onAuditColumnsToggle()" color="primary" class="hollow-toggle">
+            <span style="font-size: 13px;">{{ 'COMMON.SHOW_AUDIT_COLUMNS' | translate }}</span>
+          </mat-slide-toggle>
+          <div class="total-info" *ngIf="totalElements > 0">
+            <strong>{{ 'COMMON.TOTAL' | translate }}:</strong> {{ totalElements }}
+          </div>
         </div>
       </div>
 

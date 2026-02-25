@@ -15,6 +15,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SaleService } from '../../../core/services/sale.service';
 import { BranchService } from '../../../core/services/branch.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -29,21 +30,27 @@ import { LocalizedCurrencyPipe } from '../../../shared/pipes/localized-currency.
 
 @Component({
   selector: 'app-sale-list', standalone: true, templateUrl: './sale-list.component.html', styleUrls: ['./sale-list.component.scss'],
-  imports: [CommonModule, FormsModule, RouterLink, MatCardModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatDialogModule, MatProgressSpinnerModule, MatTooltipModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule, MatPaginatorModule, TranslatePipe, LocalizedCurrencyPipe]
+  imports: [CommonModule, FormsModule, RouterLink, MatCardModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatDialogModule, MatProgressSpinnerModule, MatTooltipModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule, MatPaginatorModule, MatSlideToggleModule, TranslatePipe, LocalizedCurrencyPipe]
 })
 export class SaleListComponent implements OnInit {
   sales: Sale[] = []; filtered: Sale[] = []; branches: Branch[] = []; loading = true;
+  exporting = false;
+  showAuditColumns = false;
   totalElements = 0;
   pageSize = 10;
   pageIndex = 0;
   filters: { branchId: number | null; from: Date | null; to: Date | null } = { branchId: null, from: null, to: null };
-  displayedColumns = ['id', 'branch', 'items', 'totalAmount', 'paymentMethod', 'channel', 'createdAt', 'createdBy', 'updatedBy', 'updatedAt', 'actions'];
+  displayedColumns: string[] = [];
+  private baseColumns = ['id', 'branch', 'items', 'totalAmount', 'paymentMethod', 'channel'];
+  private auditColumns = ['createdAt', 'createdBy', 'updatedBy', 'updatedAt'];
+  private actionColumns = ['actions'];
 
   get totalRevenue(): number { return this.filtered.reduce((sum, s) => sum + (s.finalAmount || 0), 0); }
 
   constructor(private saleService: SaleService, private branchService: BranchService, private notification: NotificationService, private ts: TranslationService, private excelService: ExcelService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
+    this.updateDisplayedColumns();
     // Set default date range to current month
     const now = new Date();
     const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -55,6 +62,18 @@ export class SaleListComponent implements OnInit {
       this.branches = branches.content; 
       this.loadSales(); 
     });
+  }
+
+  updateDisplayedColumns(): void {
+    this.displayedColumns = [
+      ...this.baseColumns,
+      ...(this.showAuditColumns ? this.auditColumns : []),
+      ...this.actionColumns
+    ];
+  }
+
+  onAuditColumnsToggle(): void {
+    this.updateDisplayedColumns();
   }
 
   loadSales(): void {
@@ -105,5 +124,40 @@ export class SaleListComponent implements OnInit {
       .afterClosed().subscribe(confirmed => {
         if (confirmed) { this.saleService.delete(sale.id!).subscribe({ next: () => { this.notification.success(this.ts.t('SALES.DELETED')); this.loadSales(); } }); }
       });
+  }
+
+  exportToExcel(): void {
+    if (!this.filters.from || !this.filters.to) {
+      this.notification.error(this.ts.t('SALES.EXPORT_DATE_REQUIRED'));
+      return;
+    }
+    
+    this.exporting = true;
+    const branchId = this.filters.branchId ? this.filters.branchId : undefined;
+    const startDate = this.filters.from.toISOString().split('T')[0];
+    const endDate = this.filters.to.toISOString().split('T')[0];
+    
+    this.saleService.exportToExcel(
+      this.pageIndex,
+      this.pageSize,
+      branchId,
+      startDate,
+      endDate
+    ).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `sales-${startDate}-to-${endDate}-${new Date().getTime()}.xlsx`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        this.notification.success(this.ts.t('SALES.EXPORT_SUCCESS'));
+        this.exporting = false;
+      },
+      error: () => {
+        this.notification.error(this.ts.t('SALES.EXPORT_ERROR'));
+        this.exporting = false;
+      }
+    });
   }
 }

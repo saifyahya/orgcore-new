@@ -10,6 +10,8 @@ import com.engineering.orgcore.util.ExcelParserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -69,5 +71,16 @@ public class InventoryController {
     public ResponseEntity<String> importInventory(
             @RequestParam("file") MultipartFile file) throws Exception{
             return ResponseEntity.ok(inventoryService.importInventory(file, utils.getCurrentTenant()));
+    }
+
+    @GetMapping("/export/excel")
+    public ResponseEntity<byte[]> exportToExcel(
+            @ModelAttribute PageFilter pageFilter,
+            @RequestParam(required = false) Long branchId) {
+        byte[] excelBytes = inventoryService.exportToExcel(utils.getCurrentTenant(), branchId, pageFilter);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"inventory.xlsx\"")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(excelBytes);
     }
 }

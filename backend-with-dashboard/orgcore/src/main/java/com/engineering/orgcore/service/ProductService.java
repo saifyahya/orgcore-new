@@ -11,13 +11,19 @@ import com.engineering.orgcore.repository.CategoryRepository;
 import com.engineering.orgcore.repository.ProductRepository;
 import com.engineering.orgcore.util.ExcelParserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.*;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -174,7 +180,7 @@ public class ProductService {
     }
 
 
-    public String importInventory(MultipartFile file, Long tenantId) throws Exception {
+    public String importProduct(MultipartFile file, Long tenantId) throws Exception {
         if (file.isEmpty()) {
             throw new RuntimeException("File is empty");
         }
@@ -210,5 +216,139 @@ public class ProductService {
                 p.getUpdatedBy(),
                 p.getUpdatedAt().toString()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] exportToExcel(Long tenantId, PageFilter pageFilter) {
+        // Collect all matching products across pages (max 200 per page)
+        List<ProductDto> products;
+        {
+            pageFilter.setSize(200);
+            pageFilter.setPage(0);
+            pageFilter.setSortBy("id");
+            pageFilter.setSortDir("asc");
+            Page<ProductDto> firstPage = getAll(tenantId, pageFilter);
+            products = new java.util.ArrayList<>(firstPage.getContent());
+            int totalPages = firstPage.getTotalPages();
+            for (int p = 1; p < totalPages; p++) {
+                pageFilter.setPage(p);
+                products.addAll(getAll(tenantId, pageFilter).getContent());
+            }
+        }
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook();
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+            XSSFSheet sheet = workbook.createSheet("Products");
+
+            // ---- Styles ----
+            // Header style
+            XSSFCellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFillForegroundColor(new XSSFColor(new byte[]{(byte) 33, (byte) 150, (byte) 243}, null)); // blue
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            headerStyle.setBorderBottom(BorderStyle.THIN);
+            headerStyle.setBorderTop(BorderStyle.THIN);
+            headerStyle.setBorderLeft(BorderStyle.THIN);
+            headerStyle.setBorderRight(BorderStyle.THIN);
+            XSSFFont headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerFont.setColor(new XSSFColor(new byte[]{(byte) 255, (byte) 255, (byte) 255}, null));
+            headerFont.setFontHeightInPoints((short) 11);
+            headerStyle.setFont(headerFont);
+
+            // Title style
+            XSSFCellStyle titleStyle = workbook.createCellStyle();
+            titleStyle.setFillForegroundColor(new XSSFColor(new byte[]{(byte) 13, (byte) 71, (byte) 161}, null)); // dark blue
+            titleStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            titleStyle.setAlignment(HorizontalAlignment.CENTER);
+            titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            XSSFFont titleFont = workbook.createFont();
+            titleFont.setBold(true);
+            titleFont.setColor(new XSSFColor(new byte[]{(byte) 255, (byte) 255, (byte) 255}, null));
+            titleFont.setFontHeightInPoints((short) 14);
+            titleStyle.setFont(titleFont);
+
+            // Even row style
+            XSSFCellStyle evenStyle = workbook.createCellStyle();
+            evenStyle.setFillForegroundColor(new XSSFColor(new byte[]{(byte) 227, (byte) 242, (byte) 253}, null));
+            evenStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            evenStyle.setBorderBottom(BorderStyle.THIN);
+            evenStyle.setBorderTop(BorderStyle.THIN);
+            evenStyle.setBorderLeft(BorderStyle.THIN);
+            evenStyle.setBorderRight(BorderStyle.THIN);
+
+            // Odd row style
+            XSSFCellStyle oddStyle = workbook.createCellStyle();
+            oddStyle.setFillForegroundColor(new XSSFColor(new byte[]{(byte) 255, (byte) 255, (byte) 255}, null));
+            oddStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            oddStyle.setBorderBottom(BorderStyle.THIN);
+            oddStyle.setBorderTop(BorderStyle.THIN);
+            oddStyle.setBorderLeft(BorderStyle.THIN);
+            oddStyle.setBorderRight(BorderStyle.THIN);
+
+            // Column definitions (excluding image)
+            String[] headers = {"#", "ID", "Name", "Description", "Code", "Category", "Price", "Active", "Created By", "Created At", "Updated By", "Updated At"};
+            int[] colWidths  = {  8,   8,   25,     35,            15,     20,         12,       10,       20,            22,           20,           22};
+
+            // Title row
+            Row titleRow = sheet.createRow(0);
+            titleRow.setHeightInPoints(30);
+            Cell titleCell = titleRow.createCell(0);
+            titleCell.setCellValue("Products Report");
+            titleCell.setCellStyle(titleStyle);
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, headers.length - 1));
+
+            // Header row
+            Row headerRow = sheet.createRow(1);
+            headerRow.setHeightInPoints(20);
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+                sheet.setColumnWidth(i, colWidths[i] * 256);
+            }
+
+            // Data rows
+            int rowNum = 2;
+            int seq = 1;
+            for (ProductDto p : products) {
+                Row row = sheet.createRow(rowNum);
+                row.setHeightInPoints(18);
+                XSSFCellStyle rowStyle = (rowNum % 2 == 0) ? evenStyle : oddStyle;
+
+                createCell(row, 0, String.valueOf(seq++), rowStyle);
+                createCell(row, 1, p.id() != null ? String.valueOf(p.id()) : "", rowStyle);
+                createCell(row, 2, nvl(p.name()), rowStyle);
+                createCell(row, 3, nvl(p.description()), rowStyle);
+                createCell(row, 4, nvl(p.code()), rowStyle);
+                createCell(row, 5, p.categoryDto() != null ? nvl(p.categoryDto().name()) : "", rowStyle);
+                createCell(row, 6, p.price() != null ? String.valueOf(p.price()) : "", rowStyle);
+                createCell(row, 7, p.isActive() != null ? (p.isActive() == 1 ? "Active" : "Inactive") : "", rowStyle);
+                createCell(row, 8, nvl(p.createdBy()), rowStyle);
+                createCell(row, 9, nvl(p.createdAt()), rowStyle);
+                createCell(row, 10, nvl(p.updatedBy()), rowStyle);
+                createCell(row, 11, nvl(p.updatedAt()), rowStyle);
+
+                rowNum++;
+            }
+
+            workbook.write(out);
+            return out.toByteArray();
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to generate Excel file", e);
+        }
+    }
+
+    private void createCell(Row row, int col, String value, CellStyle style) {
+        Cell cell = row.createCell(col);
+        cell.setCellValue(value != null ? value : "");
+        cell.setCellStyle(style);
+    }
+
+    private String nvl(String s) {
+        return s != null ? s : "";
     }
 }

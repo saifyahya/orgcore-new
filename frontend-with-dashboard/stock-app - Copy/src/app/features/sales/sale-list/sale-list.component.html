@@ -8,6 +8,10 @@
       <button mat-stroked-button (click)="openImport()">
         <mat-icon>upload_file</mat-icon> {{ 'SALES.IMPORT_EXCEL' | translate }}
       </button>
+      <button mat-stroked-button color="primary" (click)="exportToExcel()" [disabled]="exporting">
+        <mat-spinner *ngIf="exporting" diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+        <mat-icon *ngIf="!exporting">download</mat-icon> {{ 'SALES.EXPORT_EXCEL' | translate }}
+      </button>
       <button mat-flat-button color="primary" routerLink="/sales/new">
         <mat-icon>add</mat-icon> {{ 'SALES.NEW_SALE' | translate }}
       </button>
@@ -41,8 +45,13 @@
           </button>
         </div>
 
-        <div class="total-info" *ngIf="totalElements > 0">
-          <strong>{{ 'COMMON.TOTAL' | translate }}:</strong> {{ totalElements }}
+        <div class="toolbar-actions">
+          <mat-slide-toggle [(ngModel)]="showAuditColumns" (ngModelChange)="onAuditColumnsToggle()" color="primary" class="hollow-toggle">
+            <span style="font-size: 13px;">{{ 'COMMON.SHOW_AUDIT_COLUMNS' | translate }}</span>
+          </mat-slide-toggle>
+          <div class="total-info" *ngIf="totalElements > 0">
+            <strong>{{ 'COMMON.TOTAL' | translate }}:</strong> {{ totalElements }}
+          </div>
         </div>
       </div>
 

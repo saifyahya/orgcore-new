@@ -28,11 +28,11 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 })
 export class InventoryListComponent implements OnInit {
   inventory: Inventory[] = []; filtered: Inventory[] = []; branches: Branch[] = [];
-  loading = true; searchTerm = ''; selectedBranch: number | null = null;
+  loading = true; exporting = false; searchTerm = ''; selectedBranch: number | null = null;
   totalElements = 0;
   pageSize = 10;
   pageIndex = 0;
-  displayedColumns = ['id', 'branch', 'product', 'category', 'quantity', 'actions'];
+  displayedColumns = ['id', 'branch', 'product', 'category', 'quantity', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy','actions'];
 
   constructor(private inventoryService: InventoryService, private branchService: BranchService, private notification: NotificationService, private ts: TranslationService, private dialog: MatDialog) { }
 
@@ -78,5 +78,33 @@ export class InventoryListComponent implements OnInit {
   delete(inv: Inventory): void {
     this.dialog.open(ConfirmDialogComponent, { data: { title: this.ts.t('INVENTORY.DELETE_TITLE'), message: this.ts.t('INVENTORY.DELETE_MESSAGE') } })
       .afterClosed().subscribe(confirmed => { if (confirmed) { this.inventoryService.delete(inv.id!).subscribe({ next: () => { this.notification.success(this.ts.t('INVENTORY.DELETED')); this.load(); } }); } });
+  }
+
+  exportToExcel(): void {
+    this.exporting = true;
+    const branchId = this.selectedBranch ? this.selectedBranch : undefined;
+    const search = this.searchTerm.trim() || undefined;
+    
+    this.inventoryService.exportToExcel(
+      this.pageIndex,
+      this.pageSize,
+      branchId,
+      search
+    ).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `inventory-${new Date().getTime()}.xlsx`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        this.notification.success(this.ts.t('INVENTORY.EXPORT_SUCCESS'));
+        this.exporting = false;
+      },
+      error: () => {
+        this.notification.error(this.ts.t('INVENTORY.EXPORT_ERROR'));
+        this.exporting = false;
+      }
+    });
   }
 }

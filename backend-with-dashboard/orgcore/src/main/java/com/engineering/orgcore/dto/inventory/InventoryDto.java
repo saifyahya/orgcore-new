@@ -7,5 +7,8 @@ public record InventoryDto(
         Long id,
         BranchDto branch,
         ProductDto product,
-        Long quantity
-) {}
+        Long quantity,
+        String createdAt,
+        String createdBy,
+        String updatedAt,
+        String updatedBy) {}

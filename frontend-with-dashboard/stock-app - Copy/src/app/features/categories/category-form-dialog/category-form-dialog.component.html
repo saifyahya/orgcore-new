@@ -6,10 +6,7 @@
       <input matInput formControlName="name" [placeholder]="'CATEGORIES.FORM.NAME_PLACEHOLDER' | translate">
       <mat-error *ngIf="form.get('name')?.hasError('required')">{{ 'CATEGORIES.FORM.NAME_REQUIRED' | translate }}</mat-error>
     </mat-form-field>
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>{{ 'CATEGORIES.FORM.DESCRIPTION_LABEL' | translate }}</mat-label>
-      <textarea matInput formControlName="description" [placeholder]="'CATEGORIES.FORM.DESCRIPTION_PLACEHOLDER' | translate" rows="2"></textarea>
-    </mat-form-field>
+
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>{{ 'CATEGORIES.FORM.STATUS_LABEL' | translate }}</mat-label>
       <mat-select formControlName="isActive">

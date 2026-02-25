@@ -73,4 +73,17 @@ public class SaleController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf);
     }
+
+    @GetMapping("/export/excel")
+    public ResponseEntity<byte[]> exportToExcel(
+            @ModelAttribute PageFilter pageFilter,
+            @RequestParam(required = false) Long branchId,
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate) {
+        byte[] excelBytes = saleService.exportToExcel(utils.getCurrentTenant(), branchId, startDate, endDate, pageFilter);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"sales.xlsx\"")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(excelBytes);
+    }
 }

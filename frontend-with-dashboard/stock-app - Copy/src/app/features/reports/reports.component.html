@@ -189,7 +189,63 @@
         </div>
       </mat-tab>
 
-      <!-- ─── TAB 4: Top Products ──────────────────────────────────────────── -->
+      <!-- ─── TAB 4: Daily ─────────────────────────────────────────────────── -->
+      <mat-tab [label]="'DASHBOARD.ANALYTICS.TAB_DAILY' | translate">
+        <div class="tab-pane">
+
+          <!-- Date picker and toggle for daily tab -->
+          <div class="tab-toolbar" style="margin-bottom: 20px;">
+            <mat-form-field appearance="outline" style="min-width: 200px;">
+              <mat-label>{{ 'DASHBOARD.ANALYTICS.DATE_LABEL' | translate }}</mat-label>
+              <input matInput [matDatepicker]="dailyPicker" [(ngModel)]="dailyDate" (ngModelChange)="onDailyDateChange()">
+              <mat-datepicker-toggle matIconSuffix [for]="dailyPicker"></mat-datepicker-toggle>
+              <mat-datepicker #dailyPicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-button-toggle-group [(ngModel)]="dailyMode" (ngModelChange)="onDailyModeChange()" style="margin-left: 16px;">
+              <mat-button-toggle value="amount">{{ 'DASHBOARD.ANALYTICS.BY_AMOUNT' | translate }}</mat-button-toggle>
+              <mat-button-toggle value="count">{{ 'DASHBOARD.ANALYTICS.BY_COUNT' | translate }}</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+
+          <mat-card class="chart-card chart-card--full">
+            <mat-card-header>
+              <mat-card-title>{{ 'DASHBOARD.ANALYTICS.CHART_DAILY' | translate }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="canvas-box canvas-box--tall">
+              <canvas id="canvas-daily" #chartCanvas></canvas>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Hourly breakdown table -->
+          <mat-card class="table-card">
+            <mat-card-header>
+              <mat-card-title>{{ 'DASHBOARD.ANALYTICS.HOURLY_BREAKDOWN' | translate }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="tbl-wrap">
+                <table class="data-table">
+                  <thead><tr>
+                    <th>{{ 'DASHBOARD.ANALYTICS.HOUR' | translate }}</th>
+                    <th>{{ 'DASHBOARD.ANALYTICS.AMOUNT' | translate }}</th>
+                    <th>{{ 'DASHBOARD.ANALYTICS.INVOICES_COUNT' | translate }}</th>
+                  </tr></thead>
+                  <tbody>
+                    <tr *ngFor="let d of daily">
+                      <td><strong>{{ ('COMMON.HOURS.' + d.hour) | translate }}</strong></td>
+                      <td class="amount">{{ d.totalAmount | localizedCurrency }}</td>
+                      <td>{{ d.orderCount | number }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+        </div>
+      </mat-tab>
+
+      <!-- ─── TAB 5: Top Products ──────────────────────────────────────────── -->
       <mat-tab [label]="'DASHBOARD.ANALYTICS.TAB_PRODUCTS' | translate">
         <div class="tab-pane">
 
@@ -285,7 +341,7 @@
         </div>
       </mat-tab>
 
-      <!-- ─── TAB 5: By Category ───────────────────────────────────────────── -->
+      <!-- ─── TAB 6: By Category ───────────────────────────────────────────── -->
       <mat-tab [label]="'DASHBOARD.ANALYTICS.TAB_CATEGORIES' | translate">
         <div class="tab-pane">
 
@@ -372,7 +428,7 @@
         </div>
       </mat-tab>
 
-      <!-- ─── TAB 6: By Payment ────────────────────────────────────────────── -->
+      <!-- ─── TAB 7: By Payment ────────────────────────────────────────────── -->
       <mat-tab [label]="'DASHBOARD.ANALYTICS.TAB_PAYMENT' | translate">
         <div class="tab-pane">
 

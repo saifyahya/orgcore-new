@@ -18,5 +18,9 @@ public record StockMovementDto(
         Double unitCost,
         ReferenceType refType,
         String refId,
-        String note
+        String note,
+        String createdAt,
+        String createdBy,
+        String updatedAt,
+        String updatedBy
 ) {}

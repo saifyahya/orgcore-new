@@ -70,4 +70,15 @@ export class SaleService {
       responseType: 'blob'
     });
   }
+
+  exportToExcel(page: number = 0, size: number = 10, branchId?: number, startDate?: string, endDate?: string): Observable<Blob> {
+    const params: any = { page, size };
+    if (branchId) params.branchId = branchId;
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    return this.http.get(`${this.baseUrl}${this.path}/export/excel`, {
+      params,
+      responseType: 'blob'
+    });
+  }
 }

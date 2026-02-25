@@ -40,6 +40,16 @@ export class InventoryService {
     formData.append('file', file);
     return this.http.post<any>(`${this.baseUrl}${this.path}/import`, formData);
   }
+
+  exportToExcel(page: number = 0, size: number = 10, branchId?: number, search?: string): Observable<Blob> {
+    const params: any = { page, size };
+    if (branchId) params['branchId'] = branchId;
+    if (search) params['search'] = search;
+    return this.http.get(`${this.baseUrl}${this.path}/export/excel`, {
+      params,
+      responseType: 'blob'
+    });
+  }
 }
 
 @Injectable({ providedIn: 'root' })

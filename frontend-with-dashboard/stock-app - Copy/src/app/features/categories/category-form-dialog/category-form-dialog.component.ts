@@ -23,7 +23,7 @@ export class CategoryFormDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.isEdit = !!this.data?.id;
-    this.form = this.fb.group({ name: [this.data?.name || '', [Validators.required]], description: [this.data?.description || ''], isActive: [this.data?.isActive ?? 1] });
+    this.form = this.fb.group({ name: [this.data?.name || '', [Validators.required]], isActive: [this.data?.isActive ?? 1] });
   }
 
   save(): void {

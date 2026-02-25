@@ -11,6 +11,7 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { forkJoin } from 'rxjs';
 import { StockMovementService } from '../../../core/services/inventory.service';
 import { BranchService } from '../../../core/services/branch.service';
@@ -25,18 +26,35 @@ import { LocalizedCurrencyPipe } from '../../../shared/pipes/localized-currency.
 
 @Component({
   selector: 'app-stock-movement-list', standalone: true, templateUrl: './stock-movement-list.component.html', styleUrls: ['./stock-movement-list.component.scss'],
-  imports: [CommonModule, FormsModule, MatCardModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatDialogModule, MatProgressSpinnerModule, MatTooltipModule, MatSelectModule, TranslatePipe, LocalizedCurrencyPipe]
+  imports: [CommonModule, FormsModule, MatCardModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatDialogModule, MatProgressSpinnerModule, MatTooltipModule, MatSelectModule, MatSlideToggleModule, TranslatePipe, LocalizedCurrencyPipe]
 })
 export class StockMovementListComponent implements OnInit {
   movements: StockMovement[] = []; branches: Branch[] = []; products: Product[] = []; loading = true;
+  showAuditColumns = false;
   filters: { branchId: number | null; type: string | null } = { branchId: null, type: null };
   movementTypes = Object.values(StockMovementType);
-  displayedColumns = ['id', 'branchId', 'productId', 'type', 'reason', 'quantity', 'unitCost', 'note', 'createdAt', 'actions'];
+  displayedColumns: string[] = [];
+  private baseColumns = ['id', 'branchId', 'productId', 'type', 'reason', 'quantity', 'unitCost', 'note'];
+  private auditColumns = ['createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
+  private actionColumns = ['actions'];
 
   constructor(private stockService: StockMovementService, private branchService: BranchService, private productService: ProductService, private notification: NotificationService, private ts: TranslationService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
+    this.updateDisplayedColumns();
     forkJoin({ branches: this.branchService.getAll(), products: this.productService.getAll() }).subscribe({ next: ({ branches, products }) => { this.branches = branches.content; this.products = products.content; this.loadData(); } });
+  }
+
+  updateDisplayedColumns(): void {
+    this.displayedColumns = [
+      ...this.baseColumns,
+      ...(this.showAuditColumns ? this.auditColumns : []),
+      ...this.actionColumns
+    ];
+  }
+
+  onAuditColumnsToggle(): void {
+    this.updateDisplayedColumns();
   }
 
   loadData(): void {
@@ -46,9 +64,6 @@ export class StockMovementListComponent implements OnInit {
     if (this.filters.type) params.type = this.filters.type;
     this.stockService.getAll(params).subscribe({ next: (data) => { this.movements = data.content; this.loading = false; }, error: () => { this.loading = false; } });
   }
-
-  getBranchName(id?: number): string { return this.branches.find(b => b.id === id)?.branchName || `#${id}`; }
-  getProductName(id?: number): string { return this.products.find(p => p.id === id)?.name || `#${id}`; }
 
   openForm(): void {
     this.dialog.open(StockMovementFormDialogComponent, { width: '520px', data: { branches: this.branches, products: this.products } }).afterClosed().subscribe(result => { if (result) this.loadData(); });

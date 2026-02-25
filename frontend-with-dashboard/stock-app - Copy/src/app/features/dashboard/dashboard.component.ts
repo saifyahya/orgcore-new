@@ -121,9 +121,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   fmtAmt(v: number): string {
-    if (!v) return '0';
-    if (v >= 1_000_000) return (v / 1_000_000).toFixed(1) + 'M';
-    if (v >= 1_000) return (v / 1_000).toFixed(1) + 'K';
-    return v.toFixed(2);
+    if (!v) return '0 <span class="currency">JOD</span>';
+    // Format with up to 4 decimal places, with thousands separators
+    return v.toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 4
+    }) + ' <span class="currency">JOD</span>';
   }
 }

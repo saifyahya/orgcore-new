@@ -8,6 +8,10 @@
       <button mat-stroked-button color="primary" (click)="openImport()">
         <mat-icon>upload_file</mat-icon> {{ 'PRODUCTS.IMPORT_EXCEL' | translate }}
       </button>
+      <button mat-stroked-button color="primary" (click)="exportToExcel()" [disabled]="exporting">
+        <mat-spinner *ngIf="exporting" diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+        <mat-icon *ngIf="!exporting">download</mat-icon> {{ 'PRODUCTS.EXPORT_EXCEL' | translate }}
+      </button>
       <button mat-flat-button color="primary" (click)="openForm()">
         <mat-icon>add</mat-icon> {{ 'PRODUCTS.ADD_PRODUCT' | translate }}
       </button>
@@ -43,8 +47,13 @@
             <mat-option [value]="0">{{ 'COMMON.INACTIVE' | translate }}</mat-option>
           </mat-select>
         </mat-form-field></div>
-        <div class="total-info" *ngIf="totalElements > 0">
+        <div class="toolbar-actions">
+          <mat-slide-toggle [(ngModel)]="showAuditColumns" (ngModelChange)="onAuditColumnsToggle()" color="primary" class="hollow-toggle">
+            <span style="font-size: 13px;">{{ 'COMMON.SHOW_AUDIT_COLUMNS' | translate }}</span>
+          </mat-slide-toggle>
+          <div class="total-info" *ngIf="totalElements > 0">
           <strong>{{ 'COMMON.TOTAL' | translate }}:</strong> {{ totalElements }}
+          </div>
         </div>
       </div>
 
@@ -61,7 +70,7 @@
             <td mat-cell *matCellDef="let row">
               <div class="product-image-cell">
                 <img *ngIf="row.image" [src]="getImageUrl(row.image)" [alt]="row.name" class="product-thumbnail">
-                <mat-icon *ngIf="!row.image" class="no-image-icon">image</mat-icon>
+                <span *ngIf="!row.image">—</span>
               </div>
             </td>
           </ng-container>
@@ -79,11 +88,6 @@
           <ng-container matColumnDef="price">
             <th mat-header-cell *matHeaderCellDef>{{ 'PRODUCTS.TABLE.PRICE' | translate }}</th>
             <td mat-cell *matCellDef="let row">{{ row.price | localizedCurrency }}</td>
-          </ng-container>
-          <ng-container matColumnDef="discount">
-            <th mat-header-cell *matHeaderCellDef>{{ 'PRODUCTS.TABLE.DISCOUNT' | translate }}</th>
-            <td mat-cell *matCellDef="let row">{{ row.discount ? (row.discount + '%') : ('COMMON.NONE' | translate) }}
-            </td>
           </ng-container>
           <ng-container matColumnDef="isActive">
             <th mat-header-cell *matHeaderCellDef>{{ 'PRODUCTS.TABLE.STATUS' | translate }}</th>

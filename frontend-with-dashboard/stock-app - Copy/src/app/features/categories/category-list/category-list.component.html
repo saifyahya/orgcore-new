@@ -31,8 +31,13 @@
           </mat-select>
         </mat-form-field></div>
 
-        <div class="total-info" *ngIf="totalElements > 0">
-          <strong>{{ 'COMMON.TOTAL' | translate }}:</strong> {{ totalElements }}
+        <div class="toolbar-actions">
+          <mat-slide-toggle [(ngModel)]="showAuditColumns" (ngModelChange)="onAuditColumnsToggle()" color="primary" class="hollow-toggle">
+            <span style="font-size: 13px;">{{ 'COMMON.SHOW_AUDIT_COLUMNS' | translate }}</span>
+          </mat-slide-toggle>
+          <div class="total-info" *ngIf="totalElements > 0">
+            <strong>{{ 'COMMON.TOTAL' | translate }}:</strong> {{ totalElements }}
+          </div>
         </div>
       </div>
 
@@ -48,10 +53,7 @@
             <th mat-header-cell *matHeaderCellDef>{{ 'CATEGORIES.TABLE.NAME' | translate }}</th>
             <td mat-cell *matCellDef="let row"><strong>{{ row.name }}</strong></td>
           </ng-container>
-          <ng-container matColumnDef="description">
-            <th mat-header-cell *matHeaderCellDef>{{ 'CATEGORIES.TABLE.DESCRIPTION' | translate }}</th>
-            <td mat-cell *matCellDef="let row">{{ row.description || ('COMMON.NONE' | translate) }}</td>
-          </ng-container>
+
           <ng-container matColumnDef="isActive">
             <th mat-header-cell *matHeaderCellDef>{{ 'CATEGORIES.TABLE.STATUS' | translate }}</th>
             <td mat-cell *matCellDef="let row">

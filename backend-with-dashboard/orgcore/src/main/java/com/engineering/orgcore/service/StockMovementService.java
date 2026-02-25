@@ -104,7 +104,11 @@ public class StockMovementService {
                     sm.getUnitCost(),
                     sm.getRefType(),
                     sm.getRefId(),
-                    sm.getNote()
+                    sm.getNote(),
+                    sm.getCreatedAt().toString(),
+                    sm.getCreatedBy(),
+                    sm.getUpdatedAt().toString(),
+                    sm.getUpdatedBy()
             );
         } catch (Exception e) {
             throw new RuntimeException(e);

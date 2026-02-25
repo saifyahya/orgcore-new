@@ -9,6 +9,7 @@ import com.engineering.orgcore.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -73,6 +74,15 @@ public class ProductController {
     @PostMapping("/import")
     public ResponseEntity<String> importInventory(
             @RequestParam("file") MultipartFile file) throws Exception{
-        return ResponseEntity.ok(productService.importInventory(file, utils.getCurrentTenant()));
+        return ResponseEntity.ok(productService.importProduct(file, utils.getCurrentTenant()));
+    }
+
+    @GetMapping("/export/excel")
+    public ResponseEntity<byte[]> exportToExcel(@ModelAttribute PageFilter pageFilter) {
+        byte[] excelBytes = productService.exportToExcel(utils.getCurrentTenant(), pageFilter);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"products.xlsx\"")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(excelBytes);
     }
 }

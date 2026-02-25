@@ -12,6 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { forkJoin } from 'rxjs';
 import { ProductService } from '../../../core/services/product.service';
 import { CategoryService } from '../../../core/services/category.service';
@@ -44,6 +45,7 @@ import { environment } from '../../../../environments/environment';
     MatTooltipModule,
     MatSelectModule,
     MatPaginatorModule,
+    MatSlideToggleModule,
     TranslatePipe,
     LocalizedCurrencyPipe
   ]
@@ -52,16 +54,21 @@ export class ProductListComponent implements OnInit {
   products: Product[] = [];
   categories: Category[] = [];
   loading = true;
+  exporting = false;
   searchTerm = '';
   selectedCategory: number | undefined = undefined; // Fix: undefined for params
   statusFilter: number | null = null;
+  showAuditColumns = false;
 
   // Pagination
   totalElements = 0;
   pageSize = 10;
   pageIndex = 0;
 
-  displayedColumns = ['code', 'image', 'name', 'category', 'price', 'discount', 'isActive', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy', 'actions'];
+  displayedColumns: string[] = [];
+  private baseColumns = ['code', 'image', 'name', 'category', 'price', 'isActive'];
+  private auditColumns = ['createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
+  private actionColumns = ['actions'];
 
   constructor(
     private productService: ProductService,
@@ -72,8 +79,21 @@ export class ProductListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.updateDisplayedColumns();
     this.loadCategories();
     this.load();
+  }
+
+  updateDisplayedColumns(): void {
+    this.displayedColumns = [
+      ...this.baseColumns,
+      ...(this.showAuditColumns ? this.auditColumns : []),
+      ...this.actionColumns
+    ];
+  }
+
+  onAuditColumnsToggle(): void {
+    this.updateDisplayedColumns();
   }
 
   loadCategories(): void {
@@ -150,5 +170,31 @@ export class ProductListComponent implements OnInit {
 
   getImageUrl(image: string): string {
     return `${environment.apiUrl}/images/${image}`;
+  }
+
+  exportToExcel(): void {
+    this.exporting = true;
+    this.productService.exportToExcel(
+      this.pageIndex,
+      this.pageSize,
+      this.searchTerm,
+      this.statusFilter !== null ? this.statusFilter : undefined,
+      this.selectedCategory
+    ).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `products-${new Date().getTime()}.xlsx`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        this.notification.success(this.ts.t('PRODUCTS.EXPORT_SUCCESS'));
+        this.exporting = false;
+      },
+      error: () => {
+        this.notification.error(this.ts.t('PRODUCTS.EXPORT_ERROR'));
+        this.exporting = false;
+      }
+    });
   }
 }

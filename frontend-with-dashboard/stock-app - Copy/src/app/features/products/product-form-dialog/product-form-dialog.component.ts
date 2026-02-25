@@ -32,7 +32,7 @@ export class ProductFormDialogComponent implements OnInit {
 
   ngOnInit(): void {
     const p = this.data.product; this.isEdit = !!p?.id;
-    this.form = this.fb.group({ name: [p?.name || '', [Validators.required]], description: [p?.description || ''], categoryId: [p?.categoryDto?.id || null], price: [p?.price || null], discount: [p?.discount || null], isActive: [p?.isActive ?? 1] });
+    this.form = this.fb.group({ name: [p?.name || '', [Validators.required]], description: [p?.description || ''], categoryId: [p?.categoryDto?.id || null], price: [p?.price || null], isActive: [p?.isActive ?? 1] });
     
     // Set existing image if editing
     if (p?.image) {

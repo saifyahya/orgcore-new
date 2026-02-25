@@ -33,7 +33,7 @@ import { TranslationService } from '../../core/services/translation.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
 import { LocalizedCurrencyPipe } from '../../shared/pipes/localized-currency.pipe';
 import {
-  MonthlySeries, WeeklyDaySeries,
+  MonthlySeries, WeeklyDaySeries, DailyHourlySales,
   CategorySales, PaymentMethodSales, TopProduct, Branch, Product, Category
 } from '../../core/models';
 import { environment } from 'src/environments/environment';
@@ -103,6 +103,11 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedPaymentMethod: string | null = null;
   paymentsStartDate: Date = new Date(new Date().getFullYear(), 0, 1); // Jan 1 of current year
   paymentsEndDate: Date = new Date(); // Today
+  
+  // Daily tab filters
+  dailyDate: Date = new Date();
+  dailyMode: 'amount' | 'count' = 'amount';
+  daily: DailyHourlySales[] = [];
 
   monthly: MonthlySeries[] = [];
   weekly: WeeklyDaySeries[] = [];
@@ -117,7 +122,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
   private subs = new Subscription();
   private viewReady = false;
   private dataReady = false;
-  private tabDataLoaded = [false, false, false, false, false, false]; // Track which tabs have loaded data
+  private tabDataLoaded = [false, false, false, false, false, false, false]; // Track which tabs have loaded data
 
   readonly PALETTE = [
     '#0ea5e9', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444',
@@ -283,7 +288,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.topQty = d.topQty;
         this.topRev = d.topRev;
         this.loading = false;
-        this.tabDataLoaded[3] = true;
+        this.tabDataLoaded[4] = true;
         this.cdr.detectChanges();
         if (this.viewReady) this.scheduleRenderTopProducts();
       },
@@ -300,7 +305,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
       next: data => {
         this.categories = data;
         this.loading = false;
-        this.tabDataLoaded[4] = true;
+        this.tabDataLoaded[5] = true;
         this.cdr.detectChanges();
         if (this.viewReady) this.scheduleRenderCategories();
       },
@@ -317,12 +322,57 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
       next: data => {
         this.payments = data;
         this.loading = false;
-        this.tabDataLoaded[5] = true;
+        this.tabDataLoaded[6] = true;
         this.cdr.detectChanges();
         if (this.viewReady) this.scheduleRenderPayments();
       },
       error: () => { this.loading = false; }
     }));
+  }
+  
+  loadDailyData(): void {
+    this.loading = true;
+    // Generate dummy data for now
+    this.daily = this.generateDummyDailyData();
+    this.loading = false;
+    this.tabDataLoaded[3] = true;
+    this.cdr.detectChanges();
+    if (this.viewReady) this.scheduleRenderDaily();
+  }
+  
+  generateDummyDailyData(): DailyHourlySales[] {
+    const data: DailyHourlySales[] = [];
+    const hours = ['12 AM', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM', '8 AM', '9 AM', '10 AM', '11 AM',
+                   '12 PM', '1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM', '8 PM', '9 PM', '10 PM', '11 PM'];
+    
+    for (let hour = 0; hour < 24; hour++) {
+      // Generate random sales with peak during business hours (9 AM - 9 PM)
+      let baseAmount = 0;
+      let baseCount = 0;
+      
+      if (hour >= 9 && hour <= 21) {
+        // Business hours: higher sales
+        baseAmount = Math.random() * 2000 + 500;
+        baseCount = Math.floor(Math.random() * 15 + 5);
+      } else if (hour >= 6 && hour <= 23) {
+        // Early morning/late evening: moderate sales
+        baseAmount = Math.random() * 800 + 200;
+        baseCount = Math.floor(Math.random() * 8 + 2);
+      } else {
+        // Night hours: minimal/no sales
+        baseAmount = Math.random() * 100;
+        baseCount = Math.floor(Math.random() * 2);
+      }
+      
+      data.push({
+        hour,
+        hourLabel: hours[hour],
+        totalAmount: Math.round(baseAmount * 100) / 100,
+        orderCount: baseCount
+      });
+    }
+    
+    return data;
   }
 
   formatDate(date: Date): string {
@@ -334,15 +384,16 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onBranchChange(): void { 
     // Mark all tabs as needing reload when branch changes
-    this.tabDataLoaded = [false, false, false, false, false, false];
+    this.tabDataLoaded = [false, false, false, false, false, false, false];
     // Reload current tab's data
     switch (this.activeTab) {
       case 0: this.loadOverviewData(); break;
       case 1: this.loadMonthlyData(); break;
       case 2: this.loadWeeklyData(); break;
-      case 3: this.loadTopProductsData(); break;
-      case 4: this.loadCategoriesData(); break;
-      case 5: this.loadPaymentsData(); break;
+      case 3: this.loadDailyData(); break;
+      case 4: this.loadTopProductsData(); break;
+      case 5: this.loadCategoriesData(); break;
+      case 6: this.loadPaymentsData(); break;
     }
   }
   
@@ -365,6 +416,14 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
   onPaymentsFilterChange(): void {
     this.loadPaymentsData();
   }
+  
+  onDailyDateChange(): void {
+    this.loadDailyData();
+  }
+  
+  onDailyModeChange(): void {
+    if (this.dataReady) setTimeout(() => this.renderDaily(), 60);
+  }
 
   onTabChange(i: number): void {
     // Ensure activeTab is set (redundant with two-way binding but ensures correct order)
@@ -381,9 +440,10 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
           case 0: setTimeout(() => { this.renderMonthlyAmount(); this.renderMonthlyOrders(); this.renderCategory(); this.renderPayment(); }, 80); break;
           case 1: this.scheduleRenderMonthly(); break;
           case 2: this.scheduleRenderWeekly(); break;
-          case 3: this.scheduleRenderTopProducts(); break;
-          case 4: this.scheduleRenderCategories(); break;
-          case 5: this.scheduleRenderPayments(); break;
+          case 3: this.scheduleRenderDaily(); break;
+          case 4: this.scheduleRenderTopProducts(); break;
+          case 5: this.scheduleRenderCategories(); break;
+          case 6: this.scheduleRenderPayments(); break;
         }
       }
       return;
@@ -399,13 +459,16 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
       case 2: // Weekly
         this.loadWeeklyData();
         break;
-      case 3: // Top Products
+      case 3: // Daily
+        this.loadDailyData();
+        break;
+      case 4: // Top Products
         this.loadTopProductsData();
         break;
-      case 4: // Categories
+      case 5: // Categories
         this.loadCategoriesData();
         break;
-      case 5: // Payments
+      case 6: // Payments
         this.loadPaymentsData();
         break;
     }
@@ -455,6 +518,12 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
   private scheduleRenderPayments(): void {
     setTimeout(() => {
       this.renderPaymentFull();
+    }, 80);
+  }
+  
+  private scheduleRenderDaily(): void {
+    setTimeout(() => {
+      this.renderDaily();
     }, 80);
   }
 
@@ -693,6 +762,42 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         plugins: { legend: { display: false } },
         scales: {
           x: { ...this.axisOpts(), ticks: { ...this.axisOpts().ticks, font: { size: 11 }, maxRotation: 45, minRotation: 0 } },
+          y: this.axisOpts()
+        }
+      }
+    });
+  }
+  
+  renderDaily(): void {
+    const labels = this.daily.map(d => this.translateSvc.t('COMMON.HOURS.' + d.hour));
+    const data = this.dailyMode === 'amount' 
+      ? this.daily.map(d => d.totalAmount) 
+      : this.daily.map(d => d.orderCount);
+    
+    this.build('daily', 'canvas-daily', {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: this.dailyMode === 'amount' 
+            ? this.translateSvc.t('DASHBOARD.ANALYTICS.SALES_AMOUNT') + ' (JOD)'
+            : this.translateSvc.t('DASHBOARD.ANALYTICS.INVOICES_COUNT'),
+          data,
+          borderColor: this.dailyMode === 'amount' ? '#0ea5e9' : '#8b5cf6',
+          backgroundColor: this.dailyMode === 'amount' ? 'rgba(14,165,233,0.12)' : 'rgba(139,92,246,0.12)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: this.dailyMode === 'amount' ? '#0ea5e9' : '#8b5cf6',
+          pointRadius: 3,
+          pointHoverRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ...this.axisOpts(), ticks: { ...this.axisOpts().ticks, font: { size: 10 }, maxRotation: 45, minRotation: 45 } },
           y: this.axisOpts()
         }
       }

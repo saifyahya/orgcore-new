@@ -11,14 +11,21 @@ import com.engineering.orgcore.exceptions.NotFoundException;
 import com.engineering.orgcore.repository.*;
 import com.engineering.orgcore.util.ExcelParserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.*;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -208,6 +215,147 @@ public class SaleService {
         }
 
         return salePdfExportService.exportSaleToPdf(sale);
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] exportToExcel(Long tenantId, Long branchId, LocalDate startDate, LocalDate endDate, PageFilter pageFilter) {
+
+        // Collect all matching sales across pages
+        List<SaleDto> sales;
+        {
+            pageFilter.setSize(200);
+            pageFilter.setPage(0);
+            pageFilter.setSortBy("id");
+            pageFilter.setSortDir("asc");
+            Page<SaleDto> firstPage = getAll(tenantId, branchId, startDate, endDate, pageFilter);
+            sales = new ArrayList<>(firstPage.getContent());
+            int totalPages = firstPage.getTotalPages();
+            for (int p = 1; p < totalPages; p++) {
+                pageFilter.setPage(p);
+                sales.addAll(getAll(tenantId, branchId, startDate, endDate, pageFilter).getContent());
+            }
+        }
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook();
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+            XSSFSheet sheet = workbook.createSheet("Sales");
+
+            // ---- Styles ----
+            XSSFCellStyle titleStyle = workbook.createCellStyle();
+            titleStyle.setFillForegroundColor(new XSSFColor(new byte[]{(byte) 13, (byte) 71, (byte) 161}, null));
+            titleStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            titleStyle.setAlignment(HorizontalAlignment.CENTER);
+            titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            XSSFFont titleFont = workbook.createFont();
+            titleFont.setBold(true);
+            titleFont.setColor(new XSSFColor(new byte[]{(byte) 255, (byte) 255, (byte) 255}, null));
+            titleFont.setFontHeightInPoints((short) 14);
+            titleStyle.setFont(titleFont);
+
+            XSSFCellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFillForegroundColor(new XSSFColor(new byte[]{(byte) 33, (byte) 150, (byte) 243}, null));
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            headerStyle.setBorderBottom(BorderStyle.THIN);
+            headerStyle.setBorderTop(BorderStyle.THIN);
+            headerStyle.setBorderLeft(BorderStyle.THIN);
+            headerStyle.setBorderRight(BorderStyle.THIN);
+            XSSFFont headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerFont.setColor(new XSSFColor(new byte[]{(byte) 255, (byte) 255, (byte) 255}, null));
+            headerFont.setFontHeightInPoints((short) 11);
+            headerStyle.setFont(headerFont);
+
+            XSSFCellStyle evenStyle = workbook.createCellStyle();
+            evenStyle.setFillForegroundColor(new XSSFColor(new byte[]{(byte) 227, (byte) 242, (byte) 253}, null));
+            evenStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            evenStyle.setBorderBottom(BorderStyle.THIN);
+            evenStyle.setBorderTop(BorderStyle.THIN);
+            evenStyle.setBorderLeft(BorderStyle.THIN);
+            evenStyle.setBorderRight(BorderStyle.THIN);
+
+            XSSFCellStyle oddStyle = workbook.createCellStyle();
+            oddStyle.setFillForegroundColor(new XSSFColor(new byte[]{(byte) 255, (byte) 255, (byte) 255}, null));
+            oddStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            oddStyle.setBorderBottom(BorderStyle.THIN);
+            oddStyle.setBorderTop(BorderStyle.THIN);
+            oddStyle.setBorderLeft(BorderStyle.THIN);
+            oddStyle.setBorderRight(BorderStyle.THIN);
+
+            // Columns: #, ID, Branch, Total Amount, Discount Rate, Tax Rate, Final Amount, Payment Method, Channel, External Ref, Items, Created At, Created By, Updated At, Updated By
+            String[] headers   = {"#", "ID", "Branch", "Total Amount", "Discount %", "Tax %", "Final Amount", "Payment Method", "Channel", "External Ref", "Items", "Created At", "Created By", "Updated At", "Updated By"};
+            int[]    colWidths = { 6,   8,    20,       15,             12,            8,        14,             17,              15,        18,             45,       22,           20,            22,            20};
+
+            // Title row
+            Row titleRow = sheet.createRow(0);
+            titleRow.setHeightInPoints(30);
+            Cell titleCell = titleRow.createCell(0);
+            titleCell.setCellValue("Sales Report");
+            titleCell.setCellStyle(titleStyle);
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, headers.length - 1));
+
+            // Header row
+            Row headerRow = sheet.createRow(1);
+            headerRow.setHeightInPoints(20);
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+                sheet.setColumnWidth(i, colWidths[i] * 256);
+            }
+
+            // Data rows
+            int rowNum = 2;
+            int seq = 1;
+            for (SaleDto s : sales) {
+                Row row = sheet.createRow(rowNum);
+                row.setHeightInPoints(18);
+                XSSFCellStyle rowStyle = (rowNum % 2 == 0) ? evenStyle : oddStyle;
+
+                // Summarise items as "Qty x Name" joined by " | "
+                String itemsSummary = s.items() != null
+                        ? s.items().stream()
+                            .map(i -> i.quantity() + "x " + nvl(i.name()) + " (" + nvl(i.code()) + ")")
+                            .collect(Collectors.joining(" | "))
+                        : "";
+
+                createSaleCell(row, 0,  String.valueOf(seq++), rowStyle);
+                createSaleCell(row, 1,  s.id() != null ? String.valueOf(s.id()) : "", rowStyle);
+                createSaleCell(row, 2,  s.branch() != null ? nvl(s.branch().branchName()) : "", rowStyle);
+                createSaleCell(row, 3,  s.totalAmount() != null ? String.valueOf(s.totalAmount()) : "", rowStyle);
+                createSaleCell(row, 4,  s.discountRate() != null ? s.discountRate() + "%" : "", rowStyle);
+                createSaleCell(row, 5,  s.taxRate() != null ? s.taxRate() + "%" : "", rowStyle);
+                createSaleCell(row, 6,  s.finalAmount() != null ? String.valueOf(s.finalAmount()) : "", rowStyle);
+                createSaleCell(row, 7,  s.paymentMethod() != null ? s.paymentMethod().name() : "", rowStyle);
+                createSaleCell(row, 8,  s.channel() != null ? s.channel().name() : "", rowStyle);
+                createSaleCell(row, 9,  nvl(s.externalRef()), rowStyle);
+                createSaleCell(row, 10, itemsSummary, rowStyle);
+                createSaleCell(row, 11, nvl(s.createdAt()), rowStyle);
+                createSaleCell(row, 12, nvl(s.createdBy()), rowStyle);
+                createSaleCell(row, 13, nvl(s.updatedAt()), rowStyle);
+                createSaleCell(row, 14, nvl(s.updatedBy()), rowStyle);
+
+                rowNum++;
+            }
+
+            workbook.write(out);
+            return out.toByteArray();
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to generate Excel file", e);
+        }
+    }
+
+    private void createSaleCell(Row row, int col, String value, CellStyle style) {
+        Cell cell = row.createCell(col);
+        cell.setCellValue(value != null ? value : "");
+        cell.setCellStyle(style);
+    }
+
+    private String nvl(String s) {
+        return s != null ? s : "";
     }
 
     private SaleDto toDto(Sale sale) {
