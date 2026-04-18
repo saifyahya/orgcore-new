@@ -31,4 +31,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             @Param("active") Integer active,
             Pageable pageable
     );
+
+    Long countByTenantId(Long tenantId);
 }

@@ -1,0 +1,35 @@
+.app-toolbar {
+  background: var(--toolbar-bg) !important;
+  color: #fff !important;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  button {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.toolbar-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-inline-start: 8px;
+}
+
+.toolbar-spacer {
+  flex: 1;
+}
+
+.toolbar-date {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-inline-end: 8px;
+}
+
+.lang-btn {
+  .lang-label {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: inherit;
+  }
+}

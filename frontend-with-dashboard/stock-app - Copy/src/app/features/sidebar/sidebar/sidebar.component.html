@@ -1,0 +1,24 @@
+<div class="sidenav-header">
+  <mat-icon class="brand-icon">inventory_2</mat-icon>
+  <div class="brand-text">
+    <span class="brand-name">{{ 'APP.NAME' | translate }}</span>
+    <span class="brand-sub">{{ 'APP.SUBTITLE' | translate }}</span>
+  </div>
+</div>
+
+<mat-divider></mat-divider>
+
+<mat-nav-list class="nav-list">
+  <a
+    mat-list-item
+    *ngFor="let item of navItems"
+    [routerLink]="item.route"
+    routerLinkActive="active-link"
+    [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+    (click)="isMobile && itemClicked.emit()">
+    <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+    <span matListItemTitle class="side-menu-tab-name">
+      {{ item.labelKey | translate }}
+    </span>
+  </a>
+</mat-nav-list>

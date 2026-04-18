@@ -104,6 +104,10 @@ public class InventoryService {
             sm.setRefType(ReferenceType.fromValue(request.referenceType()));     // or IMPORT if created via import
             sm.setRefId(null);
             sm.setNote(request.note());
+            sm.setCreatedBy(utils.getCurrentUserName());
+            sm.setCreatedAt(LocalDateTime.now());
+            sm.setUpdatedBy(utils.getCurrentUserName());
+            sm.setUpdatedAt(LocalDateTime.now());
 
             stockMovementRepository.save(sm);
         }

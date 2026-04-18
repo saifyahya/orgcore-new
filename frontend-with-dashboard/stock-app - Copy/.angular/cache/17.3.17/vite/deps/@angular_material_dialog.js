@@ -4,8 +4,8 @@ import {
   OverlayContainer,
   OverlayModule,
   OverlayRef
-} from "./chunk-7ABJP4UC.js";
-import "./chunk-2DTW6LIR.js";
+} from "./chunk-ES5E4D6N.js";
+import "./chunk-56L7H7QU.js";
 import {
   BasePortalOutlet,
   CdkPortalOutlet,
@@ -31,16 +31,14 @@ import {
   FocusTrapFactory,
   InteractivityChecker,
   MatCommonModule,
+  Platform,
+  _getFocusedElementPierceShadowDom,
+  coerceNumberProperty,
   hasModifierKey
-} from "./chunk-75376X4Y.js";
+} from "./chunk-U63SDP5L.js";
 import {
   Directionality
 } from "./chunk-KMNHUARP.js";
-import {
-  Platform,
-  _getFocusedElementPierceShadowDom,
-  coerceNumberProperty
-} from "./chunk-3ZCFCXDP.js";
 import {
   DOCUMENT,
   Location
@@ -90,11 +88,11 @@ import {
   ɵɵtemplate,
   ɵɵviewQuery
 } from "./chunk-2DXLVW4Q.js";
+import "./chunk-LFVCTHGI.js";
 import {
   defer,
   merge
 } from "./chunk-4RMHXXWK.js";
-import "./chunk-LFVCTHGI.js";
 import {
   Subject,
   filter,

@@ -1,0 +1,132 @@
+.auth-layout {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  background-color: var(--page-bg);
+}
+
+:host-context([dir="rtl"]) .auth-layout,
+[dir="rtl"] .auth-layout {
+  flex-direction: row-reverse;
+}
+
+.auth-form-side {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.auth-image-side {
+  flex: 1;
+  background-image: url('/assets/images/org-core-bg.png');
+  /* Added leading slash */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .auth-image-side {
+    display: block;
+  }
+}
+
+.auth-card {
+  height: 100%;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  background-color: var(--page-bg);
+}
+
+.header-content {
+  text-align: center;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+mat-card-title {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.step-form {
+  display: flex;
+  flex-direction: column;
+  padding-top: 16px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+
+  button {
+    border-radius: 12px;
+    min-height: 44px;
+    font-weight: 600;
+  }
+}
+
+.auth-footer {
+  margin-top: 32px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-secondary);
+
+  a {
+    color: #3f51b5;
+    text-decoration: none;
+    font-weight: 600;
+    margin-inline: 10px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.lang-toggle-btn {
+  width: max-content;
+  padding: 6px 14px;
+  font-size: 14px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  background: #ffffff;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.lang-toggle-btn:hover {
+  background: #f5f5f5;
+  border-color: #999;
+}
+
+.lang-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+.mat-mdc-card-header{
+  padding: 0;
+}
+:host ::ng-deep .mat-horizontal-content-container{
+  padding: 0 !important;
+}

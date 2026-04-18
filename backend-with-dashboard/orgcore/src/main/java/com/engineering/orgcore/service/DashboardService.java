@@ -65,7 +65,7 @@ public class DashboardService {
         Long totalSaleItems = saleItemRepository.getTotalSaleItems(tenantId, branchId, startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay());
         totalSaleItems = totalSaleItems == null ? 0 : totalSaleItems;
 
-        Long totalCategories = categoryRepository.count();
+        Long totalCategories = categoryRepository.countByTenantId(tenantId);
         Long activeBranches = branchRepository.countByTenantIdAndIsActive(tenantId, 1);
 
         // avg sales per product (totalAmount / distinct products sold)

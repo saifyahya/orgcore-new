@@ -1,53 +1,86 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, ViewChild, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatDividerModule } from '@angular/material/divider';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { BidiModule } from '@angular/cdk/bidi';
-import { TranslationService } from './core/services/translation.service';
-import { ThemeService } from './core/services/theme.service';
-import { TranslatePipe } from './shared/pipes/translate.pipe';
-
-interface NavItem { labelKey: string; icon: string; route: string; }
+import { RouterOutlet } from '@angular/router';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
+import { NavItem, SidebarComponent } from './features/sidebar/sidebar/sidebar.component';
+import { HeaderComponent } from './features/header/header/header.component';
+import { LocalizedCurrencyPipe } from './shared/pipes/localized-currency.pipe';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    MatSidenavModule,
+    SidebarComponent,
+    HeaderComponent
+  ],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive, MatSidenavModule, MatToolbarModule, MatListModule, MatIconModule, MatButtonModule, MatTooltipModule, MatDividerModule, TranslatePipe, BidiModule]
+  styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
-  isMobile = signal(false);
+export class AppComponent {
+  @ViewChild('sidenav') sidenav!: MatSidenav;
+
   today = new Date();
-  currentLang = this.ts.lang;
-  isRtl = this.ts.isRtl;
-  isDark = this.themeService.isDark;
 
   navItems: NavItem[] = [
-    { labelKey: 'NAV.DASHBOARD', icon: 'dashboard', route: '/dashboard' },
-    { labelKey: 'NAV.REPORTS', icon: 'bar_chart', route: '/reports' },
-    { labelKey: 'NAV.BRANCHES', icon: 'store', route: '/branches' },
-    { labelKey: 'NAV.CATEGORIES', icon: 'category', route: '/categories' },
-    { labelKey: 'NAV.PRODUCTS', icon: 'inventory', route: '/products' },
-    { labelKey: 'NAV.SALES', icon: 'point_of_sale', route: '/sales' },
-    { labelKey: 'NAV.INVENTORY', icon: 'warehouse', route: '/inventory' },
-    { labelKey: 'NAV.STOCK_MOVEMENTS', icon: 'swap_vert', route: '/stock-movements' }
+    { icon: 'dashboard', route: '/dashboard', labelKey: 'NAV.DASHBOARD' },
+    { icon: 'bar_chart', route: '/reports', labelKey: 'NAV.REPORTS' },
+    { icon: 'store', route: '/branches', labelKey: 'NAV.BRANCHES' },
+    { icon: 'category', route: '/categories', labelKey: 'NAV.CATEGORIES' },
+    { icon: 'inventory', route: '/products', labelKey: 'NAV.PRODUCTS' },
+    { icon: 'receipt_long', route: '/sales', labelKey: 'NAV.SALES' },
+    { icon: 'warehouse', route: '/inventory', labelKey: 'NAV.INVENTORY' },
+    { icon: 'swap_horiz', route: '/stock-movements', labelKey: 'NAV.STOCK_MOVEMENTS' }
   ];
 
-  constructor(private breakpointObserver: BreakpointObserver, private ts: TranslationService, private themeService: ThemeService) { }
+  private authService = inject(AuthService);
 
-  ngOnInit() {
-    this.breakpointObserver.observe([Breakpoints.Handset, Breakpoints.TabletPortrait])
-      .subscribe(result => this.isMobile.set(result.matches));
+  isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
   }
 
-  toggleLang(): void { this.ts.setLang(this.ts.lang() === 'en' ? 'ar' : 'en'); }
-  toggleTheme(): void { this.themeService.toggle(); }
+  isMobile(): boolean {
+    return window.innerWidth < 768;
+  }
+
+  isRtl(): boolean {
+    return this.currentLang() === 'ar';
+  }
+
+  currentLang(): string {
+    return localStorage.getItem('lang') || 'en';
+  }
+
+  isDark(): boolean {
+    return document.body.classList.contains('dark-theme');
+  }
+
+  toggleLang(): void {
+    const newLang = this.currentLang() === 'en' ? 'ar' : 'en';
+    localStorage.setItem('lang', newLang);
+    window.location.reload();
+  }
+
+  toggleTheme(): void {
+    document.body.classList.toggle('dark-theme');
+  }
+
+  toggleSidenav(): void {
+    if (this.sidenav) {
+      this.sidenav.toggle();
+    }
+  }
+
+  closeSidenavOnMobile(): void {
+    if (this.isMobile() && this.sidenav) {
+      this.sidenav.close();
+    }
+  }
+
+  onLogout(): void {
+    this.authService.logout();
+  }
 }

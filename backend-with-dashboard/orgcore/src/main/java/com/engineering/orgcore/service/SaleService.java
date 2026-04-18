@@ -145,7 +145,10 @@ public class SaleService {
             sm.setRefType(ReferenceType.SALE);
             sm.setRefId(String.format("SaleId-%s", saved.getExternalRef()));
             sm.setNote(null);
-
+            sm.setCreatedBy(utils.getCurrentUserName());
+            sm.setCreatedAt(LocalDateTime.now());
+            sm.setUpdatedBy(utils.getCurrentUserName());
+            sm.setUpdatedAt(LocalDateTime.now());
             stockMovementRepository.save(sm);
         }
 

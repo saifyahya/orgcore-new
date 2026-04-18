@@ -1,0 +1,75 @@
+:host {
+  display: block;
+  width: 240px;
+  height: 100%;
+  background: var(--sidenav-bg);
+  color: var(--sidenav-text);
+}
+
+.sidenav-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 16px;
+  background: var(--sidenav-header-bg);
+}
+
+.brand-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: var(--accent);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--sidenav-text);
+  letter-spacing: 0.5px;
+}
+
+.side-menu-tab-name {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--sidenav-text);
+  letter-spacing: 0.5px;
+}
+
+.brand-sub {
+  font-size: 11px;
+  color: var(--sidenav-subtext);
+  letter-spacing: 0.5px;
+}
+
+.nav-list {
+  padding: 8px 0;
+}
+
+.nav-list a {
+  color: var(--sidenav-subtext);
+  border-radius: 8px;
+  margin: 2px 8px;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  &.active-link {
+    background: var(--accent);
+    color: #fff;
+
+    mat-icon {
+      color: #fff;
+    }
+  }
+
+  mat-icon {
+    color: var(--sidenav-subtext);
+  }
+}

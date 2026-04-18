@@ -1,0 +1,48 @@
+<div class="auth-layout">
+
+    <div class="auth-form-side">
+        <mat-card class="auth-card">
+            <button class="lang-toggle-btn" (click)="toggleLang()">
+                {{ currentLang === 'en' ? 'العربية' : 'english' }}
+            </button>
+            <mat-card-header>
+                <mat-card-title>{{ 'AUTH.LOGIN.TITLE' | translate }}</mat-card-title>
+                <mat-card-subtitle>{{ 'AUTH.LOGIN.SUBTITLE' | translate }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>{{ 'AUTH.LOGIN.EMAIL_LABEL' | translate }}</mat-label>
+                        <input matInput formControlName="email" type="email"
+                            [placeholder]="'AUTH.LOGIN.EMAIL_PLACEHOLDER' | translate">
+                        <mat-error *ngIf="form.get('email')?.hasError('required')">{{ 'AUTH.LOGIN.EMAIL_REQUIRED' |
+                            translate }}</mat-error>
+                        <mat-error *ngIf="form.get('email')?.hasError('email')">{{ 'AUTH.LOGIN.EMAIL_INVALID' |
+                            translate }}</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>{{ 'AUTH.LOGIN.PASSWORD_LABEL' | translate }}</mat-label>
+                        <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'">
+                        <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+                            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                        </button>
+                        <mat-error *ngIf="form.get('password')?.hasError('required')">{{ 'AUTH.LOGIN.PASSWORD_REQUIRED'
+                            | translate }}</mat-error>
+                    </mat-form-field>
+
+                    <button mat-flat-button color="primary" class="full-width btn-submit"
+                        [disabled]="form.invalid || loading">
+                        {{ loading ? ('AUTH.LOGIN.SIGNING_IN' | translate) : ('AUTH.LOGIN.SIGN_IN' | translate) }}
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <span>{{ 'AUTH.LOGIN.NO_ACCOUNT' | translate }}</span>
+                    <a routerLink="/signup">{{ 'AUTH.LOGIN.SIGN_UP' | translate }}</a>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <!-- <div class="auth-image-side"></div> -->
+</div>

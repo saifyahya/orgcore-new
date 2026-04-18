@@ -25,7 +25,7 @@ public class ProductController {
     private final Utils utils;
 
     // Create
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping
     public ProductDto create(
             @Valid @ModelAttribute CreateProductDto request,
             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile
