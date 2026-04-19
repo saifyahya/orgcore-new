@@ -21,7 +21,8 @@ import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 export class LoginComponent {
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required]
+    password: ['', Validators.required],
+    customerName: ['', Validators.required]
   });
 
   hidePassword = true;
@@ -44,9 +45,9 @@ export class LoginComponent {
     if (this.form.invalid) return;
 
     this.loading = true;
-    const { email, password } = this.form.value;
+    const { email, password, customerName } = this.form.value;
 
-    this.authService.login({ email: email!, password: password! }).subscribe({
+    this.authService.login({ email: email!, password: password!, customerName: customerName! }).subscribe({
       next: () => {
         // Redirection handled by service
       },

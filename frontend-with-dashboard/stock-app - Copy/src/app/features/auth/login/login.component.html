@@ -31,6 +31,14 @@
                             | translate }}</mat-error>
                     </mat-form-field>
 
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>{{ 'AUTH.LOGIN.CUSTOMERNAME_LABEL' | translate }}</mat-label>
+                        <input matInput formControlName="customerName" type="text"
+                            [placeholder]="'AUTH.LOGIN.CUSTOMERNAME_PLACEHOLDER' | translate">
+                        <mat-error *ngIf="form.get('customerName')?.hasError('required')">{{ 'AUTH.LOGIN.CUSTOMERNAME_REQUIRED' |
+                            translate }}</mat-error>
+                    </mat-form-field>
+
                     <button mat-flat-button color="primary" class="full-width btn-submit"
                         [disabled]="form.invalid || loading">
                         {{ loading ? ('AUTH.LOGIN.SIGNING_IN' | translate) : ('AUTH.LOGIN.SIGN_IN' | translate) }}

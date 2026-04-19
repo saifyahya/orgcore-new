@@ -31,7 +31,7 @@ export class AuthService {
 
     constructor(private http: HttpClient, private router: Router) { }
 
-    login(credentials: { email: string; password: string }): Observable<AuthResponse> {
+    login(credentials: { email: string; password: string , customerName: string }): Observable<AuthResponse> {
         return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
             tap(response => this.setSession(response))
         );

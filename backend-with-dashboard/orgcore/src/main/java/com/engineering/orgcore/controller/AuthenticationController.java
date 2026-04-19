@@ -2,6 +2,9 @@ package com.engineering.orgcore.controller;
 
 import com.engineering.orgcore.dto.auth.AuthRequest;
 import com.engineering.orgcore.dto.auth.AuthResponse;
+import com.engineering.orgcore.dto.auth.LoginRequest;
+import com.engineering.orgcore.exceptions.MissingDataException;
+import com.engineering.orgcore.exceptions.NotFoundException;
 import com.engineering.orgcore.repository.TenantRepository;
 import com.engineering.orgcore.repository.UsersRepository;
 import com.engineering.orgcore.service.AuthenticationService;
@@ -27,12 +30,12 @@ public class AuthenticationController {
 
 
     @PostMapping("/signup")
-    public AuthResponse signup(@RequestBody AuthRequest request) {
+    public AuthResponse signup(@RequestBody AuthRequest request) throws Exception {
         return authenticationService.signup(request);
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody Map<String, String> body) {
+    public AuthResponse login(@RequestBody LoginRequest body) throws Exception {
         return authenticationService.login(body);
     }
 
