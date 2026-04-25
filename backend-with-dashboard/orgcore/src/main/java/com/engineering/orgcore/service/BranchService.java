@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -24,7 +23,7 @@ public class BranchService {
     private final Utils utils;
 
     public BranchDto create(BranchDto request, Long tenantId) {
-         if (branchRepository.existsByBranchNameIgnoreCase(request.branchName())) {
+         if (branchRepository.existsByBranchNameIgnoreCaseAndTenantId(request.branchName(), tenantId)) {
              throw new IllegalArgumentException("Branch name already exists");
          }
 
@@ -34,9 +33,9 @@ public class BranchService {
         branch.setTenantId(tenantId);
         branch.setIsActive(1);
 
-        branch.setCreatedBy(utils.getCurrentUserName());
+        branch.setCreatedBy(utils.getCurrentUserEmail());
         branch.setCreatedAt(LocalDateTime.now());
-        branch.setUpdatedBy(utils.getCurrentUserName());
+        branch.setUpdatedBy(utils.getCurrentUserEmail());
         branch.setUpdatedAt(LocalDateTime.now());
 
         Branch saved = branchRepository.save(branch);
@@ -75,7 +74,7 @@ public class BranchService {
             branch.setIsActive(request.isActive());
         }
 
-        branch.setUpdatedBy(utils.getCurrentUserName());
+        branch.setUpdatedBy(utils.getCurrentUserEmail());
         branch.setUpdatedAt(LocalDateTime.now());
 
         branchRepository.save(branch);

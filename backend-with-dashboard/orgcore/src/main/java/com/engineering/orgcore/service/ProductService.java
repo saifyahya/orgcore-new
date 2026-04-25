@@ -68,14 +68,12 @@ public class ProductService {
             product.setImage(imagePath);
         }
 
-        product.setPrice(request.price());
+        product.setPrice(request.price() !=null ? request.price() : 0.0);
         product.setIsActive(request.isActive() != null ? request.isActive() : 1);
         product.setTenantId(tenantId);
-        product.setCreatedBy(request.code()!= null ? request.code(): UUID.randomUUID().toString());
-
-        product.setCreatedBy(utils.getCurrentUserName());
+        product.setCreatedBy(utils.getCurrentUserEmail());
         product.setCreatedAt(LocalDateTime.now());
-        product.setUpdatedBy(utils.getCurrentUserName());
+        product.setUpdatedBy(utils.getCurrentUserEmail());
         product.setUpdatedAt(LocalDateTime.now());
         Product saved = productRepository.save(product);
 
@@ -151,7 +149,7 @@ public class ProductService {
         }
 
 
-        product.setUpdatedBy(utils.getCurrentUserName());
+        product.setUpdatedBy(utils.getCurrentUserEmail());
         product.setUpdatedAt(LocalDateTime.now());
         return toDto(product);
     }

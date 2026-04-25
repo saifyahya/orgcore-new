@@ -29,7 +29,6 @@ export class ProductService {
   }
 
   create(product: ProductRequest, imageFile?: File): Observable<Product> {
-    if (imageFile) {
       const formData = new FormData();
       // Append all product fields
       Object.keys(product).forEach(key => {
@@ -38,11 +37,11 @@ export class ProductService {
           formData.append(key, value.toString());
         }
       });
-      // Append image file
+      if (imageFile) {  // Append image file
       formData.append('imageFile', imageFile);
+       }
       return this.api.post<Product>(this.path, formData);
-    }
-    return this.api.post<Product>(this.path, product);
+   
   }
 
   update(id: number, product: ProductRequest, imageFile?: File): Observable<Product> {

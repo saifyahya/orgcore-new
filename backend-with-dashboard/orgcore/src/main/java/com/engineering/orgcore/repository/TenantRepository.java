@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface TenantRepository extends JpaRepository<Tenant, Long> {
     boolean existsByTenantNameAndIsActive(String tenantName, Integer isActive);
-    boolean existsByEmailAndIsActive(String email, Integer isActive);
+    boolean existsByEmailIgnoreCaseAndIsActive(String email, Integer isActive);
     boolean existsByPhoneAndIsActive(String phone, Integer isActive);
     Optional<Tenant> findByTenantName(String name);
 }

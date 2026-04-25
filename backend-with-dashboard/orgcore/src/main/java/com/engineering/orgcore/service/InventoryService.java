@@ -17,7 +17,6 @@ import com.engineering.orgcore.repository.InventoryRepository;
 import com.engineering.orgcore.repository.ProductRepository;
 import com.engineering.orgcore.repository.StockMovementRepository;
 import com.engineering.orgcore.util.ExcelParserService;
-import jdk.jshell.execution.Util;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -85,9 +84,9 @@ public class InventoryService {
         inv.setProduct(product);
         inv.setQuantity(request.quantity());
         inv.setTenantId(tenantId);
-        inv.setCreatedBy(utils.getCurrentUserName());
+        inv.setCreatedBy(utils.getCurrentUserEmail());
         inv.setCreatedAt(LocalDateTime.now());
-        inv.setUpdatedBy(utils.getCurrentUserName());
+        inv.setUpdatedBy(utils.getCurrentUserEmail());
         inv.setUpdatedAt(LocalDateTime.now());
         Inventory saved = inventoryRepository.save(inv);
 
@@ -104,9 +103,9 @@ public class InventoryService {
             sm.setRefType(ReferenceType.fromValue(request.referenceType()));     // or IMPORT if created via import
             sm.setRefId(null);
             sm.setNote(request.note());
-            sm.setCreatedBy(utils.getCurrentUserName());
+            sm.setCreatedBy(utils.getCurrentUserEmail());
             sm.setCreatedAt(LocalDateTime.now());
-            sm.setUpdatedBy(utils.getCurrentUserName());
+            sm.setUpdatedBy(utils.getCurrentUserEmail());
             sm.setUpdatedAt(LocalDateTime.now());
 
             stockMovementRepository.save(sm);

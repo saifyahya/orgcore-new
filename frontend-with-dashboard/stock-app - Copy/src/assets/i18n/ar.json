@@ -308,7 +308,8 @@
       "GRAND_TOTAL": "الإجمالي الكلي:",
       "CANCEL": "إلغاء",
       "CREATE_BTN": "إنشاء عملية البيع",
-      "UPDATE_BTN": "تحديث عملية البيع"
+      "UPDATE_BTN": "تحديث عملية البيع",
+      "NONE":"— بدون —"
     },
     "DETAIL": {
       "TITLE": "عملية البيع رقم ",
@@ -395,7 +396,8 @@
       "QTY_REQUIRED": "مطلوب، يجب أن يكون ≥ 0",
       "CANCEL": "إلغاء",
       "CREATE_BTN": "إنشاء",
-      "UPDATE_BTN": "تحديث"
+      "UPDATE_BTN": "تحديث",
+      "NONE": "— بدون —"
     },
     "IMPORT": {
       "TITLE": "استيراد المخزون من Excel",

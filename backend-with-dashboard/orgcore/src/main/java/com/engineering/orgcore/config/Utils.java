@@ -7,12 +7,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class Utils {
 
-    public String getCurrentUserName() {
+    public String getCurrentUserEmail() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) return null;
 
         Object principal = auth.getPrincipal();
-        if (principal instanceof AuthPrincipal p) return p.username();
+        if (principal instanceof AuthPrincipal p) return p.email();
 
         return auth.getName(); // fallback
     }

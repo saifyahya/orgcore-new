@@ -127,7 +127,13 @@ public class JwtUtil {
          Object sub = claims.get("username");
          if (sub == null) return null;
          return sub.toString();
+    }
 
+    public String extractEmail(String token) {
+        Map<String, Object> claims = parseClaims(token);
+        Object sub = claims.get("email");
+        if (sub == null) return null;
+        return sub.toString();
     }
 
 

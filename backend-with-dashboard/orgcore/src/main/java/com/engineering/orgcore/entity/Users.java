@@ -24,6 +24,13 @@ public class Users extends BaseEntity {
 
     @Column(columnDefinition = "NVARCHAR(255)")
     private String lastName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Branch branch;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Roles role;
+
     private String email;
     private String password;
     private Integer isActive;

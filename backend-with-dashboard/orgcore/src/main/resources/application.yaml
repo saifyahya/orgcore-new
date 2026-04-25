@@ -33,10 +33,10 @@ spring:
     serialization:
       fail-on-empty-beans: false
 
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.hibernate.orm.jdbc.bind: trace
+#logging:
+#  level:
+#    org.hibernate.SQL: debug
+#    org.hibernate.orm.jdbc.bind: trace
 
 # File Upload Configuration
 file:

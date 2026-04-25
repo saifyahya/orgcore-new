@@ -312,7 +312,8 @@
       "GRAND_TOTAL": "Grand Total:",
       "CANCEL": "Cancel",
       "CREATE_BTN": "Create Sale",
-      "UPDATE_BTN": "Update Sale"
+      "UPDATE_BTN": "Update Sale",
+      "NONE": "— None —"
     },
     "DETAIL": {
       "TITLE": "Sale #",
@@ -386,7 +387,8 @@
       "PRODUCT": "Product",
       "CATEGORY": "Category",
       "QUANTITY": "Quantity",
-      "ACTIONS": "Actions"
+      "ACTIONS": "Actions",
+      "NONE": "— None —"
     },
     "FORM": {
       "TITLE_NEW": "Add Inventory Entry",

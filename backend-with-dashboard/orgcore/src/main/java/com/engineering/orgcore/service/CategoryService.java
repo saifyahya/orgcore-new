@@ -37,9 +37,9 @@ public class CategoryService {
         category.setImage(request.image());
         category.setIsActive(request.isActive() != null ? request.isActive() : 1);
         category.setTenantId(tenantId);
-        category.setCreatedBy(utils.getCurrentUserName());
+        category.setCreatedBy(utils.getCurrentUserEmail());
         category.setCreatedAt(LocalDateTime.now());
-        category.setUpdatedBy(utils.getCurrentUserName());
+        category.setUpdatedBy(utils.getCurrentUserEmail());
         category.setUpdatedAt(LocalDateTime.now());
 
         Category saved = categoryRepository.save(category);
@@ -90,7 +90,7 @@ public class CategoryService {
             category.setIsActive(request.isActive());
         }
 
-        category.setUpdatedBy(utils.getCurrentUserName());
+        category.setUpdatedBy(utils.getCurrentUserEmail());
         category.setUpdatedAt(LocalDateTime.now());
 
         return toDto(category);

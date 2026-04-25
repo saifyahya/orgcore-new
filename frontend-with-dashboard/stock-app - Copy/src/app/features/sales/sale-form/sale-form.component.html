@@ -21,6 +21,7 @@
           <mat-form-field appearance="outline">
             <mat-label>{{ 'SALES.FORM.BRANCH_LABEL' | translate }} *</mat-label>
             <mat-select formControlName="branchId">
+              <mat-option *ngIf="branches.length === 0" [value]="null">{{'SALES.FORM.NONE' | translate}}</mat-option>
               <mat-option *ngFor="let b of branches" [value]="b.id">{{ b.branchName }}</mat-option>
             </mat-select>
             <mat-error>{{ 'SALES.FORM.BRANCH_REQUIRED' | translate }}</mat-error>

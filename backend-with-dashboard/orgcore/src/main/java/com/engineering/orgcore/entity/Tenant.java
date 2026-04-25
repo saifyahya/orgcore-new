@@ -26,11 +26,11 @@ public class Tenant  {
     private String tenantName;
 
     @Column(columnDefinition = "NVARCHAR(255)")
-    private String Address;
+    private String address;
 
-    private String Email;
+    private String email;
 
-    private String Phone;
+    private String phone;
 
     private Integer isActive;
 

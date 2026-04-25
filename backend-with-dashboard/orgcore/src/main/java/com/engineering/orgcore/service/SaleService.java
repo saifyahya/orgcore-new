@@ -64,9 +64,9 @@ public class SaleService {
         sale.setPaymentMethod(PaymentMethod.fromValue(request.paymentMethod()));
         sale.setChannel(request.channel() != null ? SaleChannel.fromValue(request.channel()) : sale.getChannel());
         sale.setExternalRef(request.externalRef());
-        sale.setCreatedBy(utils.getCurrentUserName());
+        sale.setCreatedBy(utils.getCurrentUserEmail());
         sale.setCreatedAt(LocalDateTime.now());
-        sale.setUpdatedBy(utils.getCurrentUserName());
+        sale.setUpdatedBy(utils.getCurrentUserEmail());
         sale.setUpdatedAt(LocalDateTime.now());
 
         double itemsTotal = 0.0;
@@ -111,7 +111,7 @@ public class SaleService {
 
             double discountRate = inv.getDiscountRate() != null ? inv.getDiscountRate()/100 : 0.0;
 
-            double lineTotal = (unitPrice - discountRate) * required;
+            double lineTotal = (unitPrice* required) -(unitPrice * required * discountRate) ;
 
             SaleItem saleItem = new SaleItem();
             saleItem.setTenantId(tenantId);
@@ -119,6 +119,10 @@ public class SaleService {
             saleItem.setQuantity(required);
             saleItem.setUnitPrice(unitPrice);
             saleItem.setLineTotal(lineTotal);
+            sale.setCreatedBy(utils.getCurrentUserEmail());
+            sale.setCreatedAt(LocalDateTime.now());
+            sale.setUpdatedBy(utils.getCurrentUserEmail());
+            sale.setUpdatedAt(LocalDateTime.now());
 
             sale.addItem(saleItem);
 
@@ -127,7 +131,9 @@ public class SaleService {
 
         double total = itemsTotal - (sale.getDiscountRate() /100 *itemsTotal) + (sale.getTaxRate()/100 * itemsTotal);
         if (total < 0) total = 0;
-        sale.setTotalAmount(total);
+        sale.setTotalAmount(itemsTotal);
+        sale.setFinalAmount(total);
+
 
         // 2) Save sale + items
         Sale saved = saleRepository.save(sale);
@@ -145,9 +151,9 @@ public class SaleService {
             sm.setRefType(ReferenceType.SALE);
             sm.setRefId(String.format("SaleId-%s", saved.getExternalRef()));
             sm.setNote(null);
-            sm.setCreatedBy(utils.getCurrentUserName());
+            sm.setCreatedBy(utils.getCurrentUserEmail());
             sm.setCreatedAt(LocalDateTime.now());
-            sm.setUpdatedBy(utils.getCurrentUserName());
+            sm.setUpdatedBy(utils.getCurrentUserEmail());
             sm.setUpdatedAt(LocalDateTime.now());
             stockMovementRepository.save(sm);
         }

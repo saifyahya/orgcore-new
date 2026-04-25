@@ -1,6 +1,6 @@
 package com.engineering.orgcore.entity;
 
-
+import com.engineering.orgcore.enums.RoleEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,32 +10,22 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
-@Table
-@Getter
-@Setter
+@Table(name = "roles")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Branch extends BaseEntity {
+@Getter
+@Setter
+public class Roles extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "NVARCHAR(255)")
-    private String branchName;
+    @Enumerated(EnumType.STRING)
+    private RoleEnum roleName;
 
-    @Column(columnDefinition = "NVARCHAR(255)")
-    private String address;
-
-    @OneToMany(mappedBy = "branch")
-    private List<Inventory> inventories;
-
-    @OneToMany(mappedBy = "branch")
-    private List<Sale> sales;
-
-    @OneToMany(mappedBy = "branch")
+@OneToMany(mappedBy = "role")
     private List<Users> users;
 
     private Integer isActive;
-
 }

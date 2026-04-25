@@ -78,9 +78,9 @@ public class StockMovementService {
         sm.setRefType(request.refType() != null ? request.refType() : ReferenceType.MANUAL);
         sm.setRefId(request.refId());
         sm.setNote(request.note());
-        sm.setCreatedBy(utils.getCurrentUserName());
+        sm.setCreatedBy(utils.getCurrentUserEmail());
         sm.setCreatedAt(LocalDateTime.now());
-        sm.setUpdatedBy(utils.getCurrentUserName());
+        sm.setUpdatedBy(utils.getCurrentUserEmail());
         sm.setUpdatedAt(LocalDateTime.now());
 
         StockMovement saved = stockMovementRepository.save(sm);

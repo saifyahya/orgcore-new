@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface BranchRepository extends JpaRepository<Branch, Long> {
-    boolean existsByBranchNameIgnoreCase(String branchName);
+    boolean existsByBranchNameIgnoreCaseAndTenantId(String branchName, Long tenantId);
     @Query("""
 SELECT b FROM Branch b
 WHERE b.tenantId = :tenantId

@@ -4,6 +4,7 @@
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>{{ 'INVENTORY.FORM.BRANCH_LABEL' | translate }} *</mat-label>
       <mat-select formControlName="branchId">
+        <mat-option *ngIf="data.branches.length === 0" [value]="null">{{'INVENTORY.FORM.NONE' | translate}}</mat-option>
         <mat-option *ngFor="let b of data.branches" [value]="b.id">{{ b.branchName }}</mat-option>
       </mat-select>
       <mat-error>{{ 'INVENTORY.FORM.REQUIRED' | translate }}</mat-error>
