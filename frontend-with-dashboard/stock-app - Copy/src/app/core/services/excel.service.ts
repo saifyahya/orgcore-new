@@ -121,9 +121,7 @@ export class ExcelService {
         description: 'Product description',
         categoryId: 1,
         price: 25.00,
-        discount: 10,
         isActive: 1,
-        rate: 5,
         code: 'PROD001'
       },
       {
@@ -131,9 +129,7 @@ export class ExcelService {
         description: 'Another product',
         categoryId: 2,
         price: 50.00,
-        discount: 0,
         isActive: 1,
-        rate: 4,
         code: 'PROD002'
       }
     ];

@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     boolean existsByTenantIdAndNameIgnoreCase(Long tenantId, String name);
@@ -33,4 +35,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     );
 
     Long countByTenantId(Long tenantId);
+
+    Optional<Category> findByIdAndTenantId(Long id, Long tenantId);
 }

@@ -77,11 +77,13 @@ export class ProductImportDialogComponent {
     this.importing = true;
     this.productService.importFromExcel(this.selectedFile).subscribe({
       next: (result: any) => {
-        const count = result.message ? result.message.match(/\d+/)?.[0] || this.previewRows.length : this.previewRows.length;
+        console.log('Import result:', result);
+        const count = this.previewRows.length;
         this.notification.success(this.ts.t('PRODUCTS.IMPORT.IMPORT_SUCCESS', { count }));
         this.dialogRef.close(true);
       },
-      error: () => {
+      error: (error: any) => {
+        console.log('Import error:', error);
         this.importing = false;
       }
     });

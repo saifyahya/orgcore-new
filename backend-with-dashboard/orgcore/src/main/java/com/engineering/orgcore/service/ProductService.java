@@ -40,6 +40,7 @@ public class ProductService {
     private final ExcelParserService excelParserService;
 
 
+    @Transactional(rollbackFor = Exception.class)
     public ProductDto create(Long tenantId, CreateProductDto request, MultipartFile imageFile) throws NotFoundException {
 
         if (request.name() == null || request.name().isBlank()) {
@@ -50,10 +51,10 @@ public class ProductService {
         }
 
         if (productRepository.existsByTenantIdAndNameIgnoreCase(tenantId, request.name().trim())) {
-            throw new IllegalArgumentException("Product name already exists");
+            throw new IllegalArgumentException("Product name already exists"+ request.name().trim());
         }
 
-        Category category = categoryRepository.findById(request.categoryId())
+        Category category = categoryRepository.findByIdAndTenantId(request.categoryId(), tenantId)
                 .orElseThrow(() -> new NotFoundException("Category not found with id: " + request.categoryId()));
 
         Product product = new Product();

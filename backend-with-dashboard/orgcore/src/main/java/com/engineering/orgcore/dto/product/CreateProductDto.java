@@ -8,6 +8,5 @@ public record  CreateProductDto(
        @ExcelIndex(2) Long categoryId,
        @ExcelIndex(3) Double price,
        @ExcelIndex(4) Integer isActive,
-       @ExcelIndex(5) Long rate,
-       @ExcelIndex(6) String code
+       @ExcelIndex(5) String code
 ) {}

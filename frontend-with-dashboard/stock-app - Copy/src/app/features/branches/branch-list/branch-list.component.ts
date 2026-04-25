@@ -48,7 +48,7 @@ export class BranchListComponent implements OnInit {
   branches: Branch[] = [];
   loading = true;
   searchTerm = '';
-  statusFilter: number | null = null;
+  statusFilter: number | null = 1;
   showAuditColumns = false;
 
   // Pagination

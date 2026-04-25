@@ -48,7 +48,7 @@ export class CategoryListComponent implements OnInit {
   categories: Category[] = [];
   loading = true;
   searchTerm = '';
-  statusFilter: number | null = null;
+  statusFilter: number | null = 1;
   showAuditColumns = false;
 
   // Pagination

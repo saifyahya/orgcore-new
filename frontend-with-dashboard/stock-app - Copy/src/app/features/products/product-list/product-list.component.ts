@@ -57,7 +57,7 @@ export class ProductListComponent implements OnInit {
   exporting = false;
   searchTerm = '';
   selectedCategory: number | undefined = undefined; // Fix: undefined for params
-  statusFilter: number | null = null;
+  statusFilter: number | null = 1;
   showAuditColumns = false;
 
   // Pagination

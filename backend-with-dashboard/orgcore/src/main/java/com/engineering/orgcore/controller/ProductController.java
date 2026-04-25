@@ -4,12 +4,14 @@ import com.engineering.orgcore.config.Utils;
 import com.engineering.orgcore.dto.filter.PageFilter;
 import com.engineering.orgcore.dto.product.CreateProductDto;
 import com.engineering.orgcore.dto.product.ProductDto;
+import com.engineering.orgcore.dto.response.ResponseDto;
 import com.engineering.orgcore.exceptions.NotFoundException;
 import com.engineering.orgcore.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,7 +54,7 @@ public class ProductController {
     }
 
     // Update
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{id}")
     public ProductDto update(
             @PathVariable Long id,
             @Valid @ModelAttribute CreateProductDto request,
@@ -72,9 +74,10 @@ public class ProductController {
 
 
     @PostMapping("/import")
-    public ResponseEntity<String> importInventory(
+    public ResponseEntity<ResponseDto> importInventory(
             @RequestParam("file") MultipartFile file) throws Exception{
-        return ResponseEntity.ok(productService.importProduct(file, utils.getCurrentTenant()));
+        return ResponseEntity.ok(
+                new ResponseDto(HttpStatus.OK.toString(), productService.importProduct(file, utils.getCurrentTenant())));
     }
 
     @GetMapping("/export/excel")
