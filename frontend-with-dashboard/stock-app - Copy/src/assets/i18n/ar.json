@@ -16,10 +16,28 @@
     "TITLE": "إدارة المخزون والمبيعات",
     "TOGGLE_MENU": "قائمة التنقل",
     "TOGGLE_DARK": "الوضع الليلي",
-    "TOGGLE_LANG": "English"
+    "TOGGLE_LANG": "English",
+    "PROFILE": "عرض الملف الشخصي",
+    "LOGOUT": "تسجيل الخروج"
   },
   "REPORTS": {
     "SUBTITLE": "التحليلات والرؤى"
+  },
+  "PROFILE": {
+    "TITLE": "ملفي الشخصي",
+    "USER_PROFILE": "معلومات المستخدم",
+    "TENANT_PROFILE": "معلومات العمل",
+    "FIRST_NAME": "الاسم الأول",
+    "LAST_NAME": "اسم العائلة",
+    "NAME": "الاسم الكامل",
+    "EMAIL": "بريد المستخدم الإلكتروني",
+    "TENANT_EMAIL": "البريد الإلكتروني للعمل",
+    "PHONE": "رقم الهاتف",
+    "ADDRESS": "العنوان",
+    "TENANT_NAME": "اسم العمل",
+    "EDIT": "تعديل",
+    "CANCEL": "إلغاء",
+    "SAVE": "حفظ التغييرات"
   },
   "DASHBOARD": {
     "TITLE": "لوحة التحكم",
@@ -494,6 +512,7 @@
     "NONE": "—",
     "TOTAL": "الكلي",
     "SAVE": "حفظ",
+    "SAVING": "جاري الحفظ...",
     "CANCEL": "إلغاء",
     "DELETE": "حذف",
     "EDIT": "تعديل",

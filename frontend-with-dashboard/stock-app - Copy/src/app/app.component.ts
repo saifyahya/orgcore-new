@@ -1,6 +1,6 @@
 import { Component, ViewChild, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router } from '@angular/router';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { NavItem, SidebarComponent } from './features/sidebar/sidebar/sidebar.component';
 import { HeaderComponent } from './features/header/header/header.component';
@@ -37,6 +37,7 @@ export class AppComponent {
   ];
 
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
@@ -82,5 +83,9 @@ export class AppComponent {
 
   onLogout(): void {
     this.authService.logout();
+  }
+
+  onProfileClick(): void {
+    this.router.navigate(['/profile']);
   }
 }

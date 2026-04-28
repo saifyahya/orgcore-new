@@ -1,0 +1,89 @@
+<div class="profile-container">
+  <mat-progress-spinner
+    *ngIf="loading"
+    mode="indeterminate"
+    class="loading-spinner"></mat-progress-spinner>
+
+  <mat-card class="profile-card" *ngIf="!loading">
+    <mat-card-header>
+      <button mat-icon-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <mat-card-title>{{ 'PROFILE.TITLE' | translate }}</mat-card-title>
+    </mat-card-header>
+
+    <mat-divider></mat-divider>
+
+    <form [formGroup]="profileForm" class="profile-form">
+      <!-- User Profile Section -->
+      <div class="section">
+        <h3 class="section-title">{{ 'PROFILE.USER_PROFILE' | translate }}</h3>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'PROFILE.FIRST_NAME' | translate }}</mat-label>
+          <input matInput formControlName="firstName" />
+          <mat-icon matPrefix>person</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'PROFILE.LAST_NAME' | translate }}</mat-label>
+          <input matInput formControlName="lastName" />
+          <mat-icon matPrefix>person</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'PROFILE.EMAIL' | translate }}</mat-label>
+          <input matInput formControlName="userEmail" />
+          <mat-icon matPrefix>email</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Tenant Profile Section -->
+      <div class="section">
+        <h3 class="section-title">{{ 'PROFILE.TENANT_PROFILE' | translate }}</h3>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'PROFILE.TENANT_NAME' | translate }}</mat-label>
+          <input matInput formControlName="tenantName" />
+          <mat-icon matPrefix>business</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'PROFILE.ADDRESS' | translate }}</mat-label>
+          <textarea
+            matInput
+            formControlName="address"
+            rows="3"></textarea>
+          <mat-icon matPrefix>location_on</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'PROFILE.PHONE' | translate }}</mat-label>
+          <input matInput formControlName="phone" />
+          <mat-icon matPrefix>phone</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'PROFILE.TENANT_EMAIL' | translate }}</mat-label>
+          <input matInput formControlName="tenantEmail" />
+          <mat-icon matPrefix>email</mat-icon>
+        </mat-form-field>
+      </div>
+    </form>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-actions>
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="saveProfile()"
+        [disabled]="!profileForm.valid || saving">
+        <mat-icon *ngIf="!saving">save</mat-icon>
+        {{ saving ? ('COMMON.SAVING' | translate) : ('PROFILE.SAVE' | translate) }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

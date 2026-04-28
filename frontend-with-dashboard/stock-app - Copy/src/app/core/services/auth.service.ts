@@ -59,6 +59,8 @@ export class AuthService {
         return !!token;
     }
 
+    getCurrentUser(): any {}
+
     private setSession(authResult: AuthResponse): void {
         localStorage.setItem(this.tokenKey, authResult.token);
         this.isAuthenticatedStr.set(true);

@@ -18,10 +18,28 @@
     "TITLE": "Stock & Sales Management",
     "TOGGLE_MENU": "Toggle menu",
     "TOGGLE_DARK": "Toggle dark mode",
-    "TOGGLE_LANG": "العربية"
+    "TOGGLE_LANG": "العربية",
+    "PROFILE": "View Profile",
+    "LOGOUT": "Logout"
   },
   "REPORTS": {
     "SUBTITLE": "Analytics and insights"
+  },
+  "PROFILE": {
+    "TITLE": "My Profile",
+    "USER_PROFILE": "User Information",
+    "TENANT_PROFILE": "Business Information",
+    "FIRST_NAME": "First Name",
+    "LAST_NAME": "Last Name",
+    "NAME": "Full Name",
+    "EMAIL": "User Email",
+    "TENANT_EMAIL": "Business Email",
+    "PHONE": "Phone Number",
+    "ADDRESS": "Address",
+    "TENANT_NAME": "Business Name",
+    "EDIT": "Edit",
+    "CANCEL": "Cancel",
+    "SAVE": "Save Changes"
   },
   "DASHBOARD": {
     "TITLE": "Dashboard",
@@ -498,6 +516,7 @@
     "NONE": "—",
     "TOTAL": "Total",
     "SAVE": "Save",
+    "SAVING": "Saving...",
     "CANCEL": "Cancel",
     "DELETE": "Delete",
     "EDIT": "Edit",

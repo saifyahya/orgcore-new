@@ -8,7 +8,7 @@
 
     <mat-sidenav-content class="sidenav-content">
       <app-header [today]="today" [isRtl]="isRtl()" [isDark]="isDark()" [currentLang]="currentLang()"
-        (menuToggle)="toggleSidenav()" (langToggle)="toggleLang()" (themeToggle)="toggleTheme()" (logout)="onLogout()">
+        (menuToggle)="toggleSidenav()" (langToggle)="toggleLang()" (themeToggle)="toggleTheme()" (profileClick)="onProfileClick()" (logout)="onLogout()">
       </app-header>
 
       <main class="main-content">

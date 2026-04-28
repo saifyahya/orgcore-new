@@ -88,6 +88,12 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/stock-movements/stock-movement-list/stock-movement-list.component').then(m => m.StockMovementListComponent)
   },
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/profile/profile.component').then(m => m.ProfileComponent)
+  },
 
   {
     path: '**',

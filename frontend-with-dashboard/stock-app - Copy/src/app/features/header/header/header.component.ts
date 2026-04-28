@@ -31,6 +31,7 @@ export class HeaderComponent {
   @Output() langToggle = new EventEmitter<void>();
   @Output() themeToggle = new EventEmitter<void>();
   @Output() logout = new EventEmitter<void>();
+  @Output() profileClick = new EventEmitter<void>();
 
   onMenuToggle(): void {
     this.menuToggle.emit();
@@ -46,5 +47,9 @@ export class HeaderComponent {
 
   onLogout(): void {
     this.logout.emit();
+  }
+
+  onProfileClick(): void {
+    this.profileClick.emit();
   }
 }

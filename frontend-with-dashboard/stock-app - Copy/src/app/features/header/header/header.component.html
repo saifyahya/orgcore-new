@@ -30,6 +30,13 @@
 
   <button
     mat-icon-button
+    (click)="onProfileClick()"
+    [matTooltip]="'TOOLBAR.PROFILE' | translate">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+
+  <button
+    mat-icon-button
     (click)="onLogout()"
     [matTooltip]="'TOOLBAR.LOGOUT' | translate">
     <mat-icon color="warn">logout</mat-icon>
