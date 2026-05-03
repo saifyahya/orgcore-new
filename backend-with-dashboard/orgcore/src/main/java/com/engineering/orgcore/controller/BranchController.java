@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/branches")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class BranchController {
 
     private final BranchService branchService;

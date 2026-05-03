@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/stock-movements")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class StockMovementController {
 
     private final StockMovementService stockMovementService;

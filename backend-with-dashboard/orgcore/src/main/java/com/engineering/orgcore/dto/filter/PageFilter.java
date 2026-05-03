@@ -32,6 +32,8 @@ public class PageFilter {
 
     private Long categoryId; // just for product filtering
 
+    private Long branchId; // optional branch filtering
+
     public  Pageable toPageable() {
         String sortBy = (this.getSortBy() == null || this.getSortBy().isBlank()) ? "id" : this.getSortBy();
         Sort.Direction dir = "desc".equalsIgnoreCase(this.getSortDir())

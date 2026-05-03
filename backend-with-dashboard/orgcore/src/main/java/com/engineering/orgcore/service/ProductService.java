@@ -101,6 +101,7 @@ public class ProductService {
                     pageFilter.getSearch(),
                     pageFilter.getCategoryId(),
                     pageFilter.getIsActive(),
+                    pageFilter.getBranchId(),
                     pageFilter.toPageable()
             );
 

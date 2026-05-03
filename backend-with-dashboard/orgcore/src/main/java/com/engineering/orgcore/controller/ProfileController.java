@@ -6,13 +6,12 @@ import com.engineering.orgcore.dto.profile.UpdateTenantProfileDto;
 import com.engineering.orgcore.exceptions.NotFoundException;
 import com.engineering.orgcore.service.ProfileService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/profile")
-@RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@AllArgsConstructor
 public class ProfileController {
 
     private final ProfileService profileService;

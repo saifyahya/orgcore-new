@@ -53,7 +53,6 @@
 .profile-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
 
   .full-width {
     width: 100%;
@@ -95,7 +94,7 @@ mat-card-actions {
     }
   }
 }
-  }
+@media (max-width: 400px) {
 
   .form-actions {
     flex-direction: column;

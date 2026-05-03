@@ -30,6 +30,7 @@ export class AppComponent {
     { icon: 'bar_chart', route: '/reports', labelKey: 'NAV.REPORTS' },
     { icon: 'store', route: '/branches', labelKey: 'NAV.BRANCHES' },
     { icon: 'category', route: '/categories', labelKey: 'NAV.CATEGORIES' },
+    { icon: 'people', route: '/users', labelKey: 'NAV.USERS' },
     { icon: 'inventory', route: '/products', labelKey: 'NAV.PRODUCTS' },
     { icon: 'receipt_long', route: '/sales', labelKey: 'NAV.SALES' },
     { icon: 'warehouse', route: '/inventory', labelKey: 'NAV.INVENTORY' },

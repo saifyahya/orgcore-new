@@ -6,9 +6,6 @@
 
   <mat-card class="profile-card" *ngIf="!loading">
     <mat-card-header>
-      <button mat-icon-button (click)="goBack()" class="back-button">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
       <mat-card-title>{{ 'PROFILE.TITLE' | translate }}</mat-card-title>
     </mat-card-header>
 
@@ -38,7 +35,6 @@
         </mat-form-field>
       </div>
 
-      <mat-divider></mat-divider>
 
       <!-- Tenant Profile Section -->
       <div class="section">
@@ -73,12 +69,9 @@
       </div>
     </form>
 
-    <mat-divider></mat-divider>
-
     <mat-card-actions>
       <button
         mat-raised-button
-        color="accent"
         (click)="saveProfile()"
         [disabled]="!profileForm.valid || saving">
         <mat-icon *ngIf="!saving">save</mat-icon>

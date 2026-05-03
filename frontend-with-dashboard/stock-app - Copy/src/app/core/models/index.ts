@@ -72,6 +72,25 @@ export interface BranchRequest {
   isActive?: number;
 }
 
+// ---- User ----
+export interface User extends BaseEntity {
+  id?: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isActive?: number;
+  branch?: Branch;
+  branchId?: number;
+}
+
+export interface AddUserRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  branchId: number;
+}
+
 // ---- Product ----
 export interface Product extends BaseEntity {
   id?: number;

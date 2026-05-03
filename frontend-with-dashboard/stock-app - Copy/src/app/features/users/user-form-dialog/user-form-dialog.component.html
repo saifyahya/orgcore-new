@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>{{ (isEdit ? 'USERS.EDIT_USER' : 'USERS.ADD_USER') | translate }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'USERS.FORM.FIRST_NAME_LABEL' | translate }} *</mat-label>
+      <input matInput formControlName="firstName" [placeholder]="'USERS.FORM.FIRST_NAME_PLACEHOLDER' | translate">
+      <mat-error *ngIf="form.get('firstName')?.hasError('required')">{{ 'USERS.FORM.FIRST_NAME_REQUIRED' | translate }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'USERS.FORM.LAST_NAME_LABEL' | translate }} *</mat-label>
+      <input matInput formControlName="lastName" [placeholder]="'USERS.FORM.LAST_NAME_PLACEHOLDER' | translate">
+      <mat-error *ngIf="form.get('lastName')?.hasError('required')">{{ 'USERS.FORM.LAST_NAME_REQUIRED' | translate }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'USERS.FORM.EMAIL_LABEL' | translate }} *</mat-label>
+      <input matInput formControlName="email" [placeholder]="'USERS.FORM.EMAIL_PLACEHOLDER' | translate">
+      <mat-error *ngIf="form.get('email')?.hasError('required')">{{ 'USERS.FORM.EMAIL_REQUIRED' | translate }}</mat-error>
+      <mat-error *ngIf="form.get('email')?.hasError('email')">{{ 'USERS.FORM.EMAIL_INVALID' | translate }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width" *ngIf="!isEdit">
+      <mat-label>{{ 'USERS.FORM.PASSWORD_LABEL' | translate }} *</mat-label>
+      <input matInput type="password" formControlName="password" [placeholder]="'USERS.FORM.PASSWORD_PLACEHOLDER' | translate">
+      <mat-error *ngIf="form.get('password')?.hasError('required')">{{ 'USERS.FORM.PASSWORD_REQUIRED' | translate }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'USERS.FORM.BRANCH_LABEL' | translate }} *</mat-label>
+      <mat-select formControlName="branchId">
+        <mat-optgroup label="{{ 'COMMON.BRANCHES' | translate }}">
+          <mat-option *ngFor="let branch of branches" [value]="branch.id">
+            {{ branch.branchName }}
+          </mat-option>
+        </mat-optgroup>
+      </mat-select>
+      <mat-error *ngIf="form.get('branchId')?.hasError('required')">{{ 'USERS.FORM.BRANCH_REQUIRED' | translate }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'USERS.FORM.STATUS_LABEL' | translate }}</mat-label>
+      <mat-select formControlName="isActive">
+        <mat-option [value]="1">{{ 'COMMON.ACTIVE' | translate }}</mat-option>
+        <mat-option [value]="0">{{ 'COMMON.INACTIVE' | translate }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button [mat-dialog-close]="false" [disabled]="saving">{{ 'COMMON.CANCEL' | translate }}</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="form.invalid || saving || loadingBranches">
+    <mat-spinner *ngIf="saving" diameter="18" class="btn-spinner"></mat-spinner>
+    {{ (isEdit ? 'COMMON.UPDATE' : 'COMMON.CREATE') | translate }}
+  </button>
+</mat-dialog-actions>
+

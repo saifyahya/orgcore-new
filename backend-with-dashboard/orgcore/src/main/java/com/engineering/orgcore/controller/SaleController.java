@@ -20,7 +20,6 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/sales")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class SaleController {
 
     private final SaleService saleService;

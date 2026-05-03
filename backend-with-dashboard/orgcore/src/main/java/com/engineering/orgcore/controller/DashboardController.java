@@ -18,13 +18,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/dashboard")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class DashboardController {
 
     private final DashboardService dashboardService;
     private final Utils            utils;
-
-
 
     // ─── KPI Summary cards ────────────────────────────────────────────────────
 

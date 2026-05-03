@@ -194,7 +194,5 @@ export class ProfileComponent implements OnInit {
     this.saving = false;
   }
 
-  goBack(): void {
-    this.router.navigate(['/dashboard']);
-  }
+
 }

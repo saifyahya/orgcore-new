@@ -1,18 +1,14 @@
 package com.engineering.orgcore.service;
 
-import com.engineering.orgcore.config.Utils;
 import com.engineering.orgcore.dto.auth.AuthRequest;
 import com.engineering.orgcore.dto.auth.AuthResponse;
 import com.engineering.orgcore.dto.auth.LoginRequest;
 import com.engineering.orgcore.dto.auth.TenantDto;
-import com.engineering.orgcore.dto.user.AddUserRequest;
-import com.engineering.orgcore.entity.Branch;
 import com.engineering.orgcore.entity.Tenant;
 import com.engineering.orgcore.entity.Users;
 import com.engineering.orgcore.exceptions.ApiException;
 import com.engineering.orgcore.exceptions.MissingDataException;
 import com.engineering.orgcore.exceptions.NotFoundException;
-import com.engineering.orgcore.repository.BranchRepository;
 import com.engineering.orgcore.repository.TenantRepository;
 import com.engineering.orgcore.repository.UsersRepository;
 import com.engineering.orgcore.util.JwtUtil;
@@ -32,9 +28,7 @@ public class AuthenticationService {
 
     private final TenantRepository tenantRepository;
     private final UsersRepository usersRepository;
-    private final BranchRepository branchRepository;
     private final JwtUtil jwtUtil;
-    private final Utils utils;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional(rollbackFor = Exception.class)
@@ -126,36 +120,4 @@ public class AuthenticationService {
     }
 
 
-    @Transactional(rollbackFor = Exception.class)
-    public boolean addUser(Long tenantId, AddUserRequest newUser) throws NotFoundException, ApiException {
-        Tenant tenant = tenantRepository.findById(tenantId).orElseThrow(() -> new NotFoundException("tenant not found"));
-        if (tenant.getIsActive() != 1) {
-            throw new NotFoundException("tenant not found");
-        }
-        if (usersRepository.existsByEmailIgnoreCase(newUser.email())) {
-            throw new ApiException("email already exists for this tenant");
-        }
-        if (usersRepository.existsByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTenantId(newUser.firstName(), newUser.lastName(), tenantId)) {
-            throw new ApiException("Name already exists for this tenant");
-        }
-
-        Branch branch = branchRepository.findById(newUser.branchId()).orElseThrow(() -> new NotFoundException("branch not found"));
-        if (!branch.getCreatedBy().equals(utils.getCurrentUserEmail())) {
-            throw new NotFoundException("branch not found");
-        }
-        Users u = new Users();
-        u.setFirstName(newUser.firstName());
-        u.setLastName(newUser.lastName());
-        u.setEmail(newUser.email());
-        u.setPassword(passwordEncoder.encode(newUser.password()));
-        u.setIsActive(1);
-        u.setTenantId(tenantId);
-        u.setBranch(branch);
-        u.setCreatedBy(utils.getCurrentUserEmail());
-        u.setCreatedAt(LocalDateTime.now());
-        u.setUpdatedBy(utils.getCurrentUserEmail());
-        u.setUpdatedAt(LocalDateTime.now());
-        usersRepository.save(u);
-        return true;
-    }
 }

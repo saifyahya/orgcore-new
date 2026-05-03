@@ -1,5 +1,6 @@
 package com.engineering.orgcore.config;
 
+import com.engineering.orgcore.enums.RoleEnum;
 import com.engineering.orgcore.filter.JwtAuthFilter;
 import com.engineering.orgcore.util.JwtUtil;
 import lombok.AllArgsConstructor;
@@ -34,9 +35,12 @@ public class SecurityConfig {
 
         http
             .csrf(csrf -> csrf.disable())
+                .cors(c -> corsConfigurationSource())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()
+                .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/users/**").hasAuthority(RoleEnum.ADMIN.toString())
+                    .anyRequest().authenticated()
             )
             // ✅ filter before the UsernamePasswordAuthenticationFilter
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
